@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar',
+        'two_factor_code',       // Añadir esto
+        'two_factor_expires_at', // Añadir esto
     ];
 
     /**
@@ -45,4 +48,5 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
 }
