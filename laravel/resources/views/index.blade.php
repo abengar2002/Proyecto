@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cine Screenbites - Inicio</title>
+    <title>Screenbites Cinema - Home</title>
 
     <style>
         :root {
@@ -30,6 +30,7 @@
             width: 100%;
         }
 
+        /* --- HERO BACKGROUND --- */
         .hero-bg {
             position: absolute;
             top: 0;
@@ -40,12 +41,13 @@
             object-position: center;
             z-index: 1;
             transition: opacity 0.4s ease;
+
+            &.fade {
+                opacity: 0.2;
+            }
         }
 
-        .hero-bg.fade {
-            opacity: 0.2;
-        }
-
+        /* --- HEADER --- */
         header {
             position: fixed;
             top: 0;
@@ -60,51 +62,53 @@
             background-color: transparent;
             border-bottom: 1px solid transparent;
             transition: background-color 0.3s ease, box-shadow 0.3s ease, border-bottom 0.3s ease;
+
+            &.scrolled {
+                background-color: rgba(0, 0, 0, 0.95);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .logo img {
+                height: 50px;
+            }
+
+            nav {
+                ul {
+                    list-style: none;
+                    display: flex;
+                    align-items: center;
+                    gap: 30px;
+                }
+
+                a,
+                .logout-btn {
+                    text-decoration: none;
+                    color: var(--header-text-color, var(--color-negro));
+                    text-transform: uppercase;
+                    font-size: 13px;
+                    font-weight: 900;
+                    letter-spacing: 2px;
+                    transition: color 0.3s ease, transform 0.2s ease;
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    padding: 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    &:hover {
+                        color: var(--color-amarillo) !important;
+                        transform: scale(1.05);
+                    }
+                }
+            }
         }
 
-        header.scrolled {
-            background-color: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        header .logo img {
-            height: 50px;
-        }
-
-        header nav ul {
-            list-style: none;
-            display: flex;
-            align-items: center;
-            gap: 30px;
-        }
-
-        header nav a,
-        .logout-btn {
-            text-decoration: none;
-            color: var(--header-text-color, var(--color-negro));
-            text-transform: uppercase;
-            font-size: 13px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            transition: color 0.3s ease, transform 0.2s ease;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        header nav a:hover,
-        .logout-btn:hover {
-            color: var(--color-amarillo) !important;
-            transform: scale(1.05);
-        }
-
+        /* --- USER NAVIGATION --- */
         .user-nav {
             display: flex;
             align-items: center;
@@ -112,12 +116,88 @@
             border-left: 2px solid rgba(255, 255, 255, 0.2);
             padding-left: 20px;
             margin-left: 10px;
+
+            .user-profile {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: var(--header-text-color, var(--color-negro));
+                transition: color 0.3s ease;
+
+                .user-avatar {
+                    width: 35px;
+                    height: 35px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    border: none;
+                    transition: transform 0.3s ease;
+                }
+
+                .user-name,
+                .chevron-icon {
+                    color: var(--header-text-color, var(--color-negro));
+                    transition: color 0.3s ease;
+                }
+
+                .chevron-icon {
+                    width: 16px;
+                    height: 16px;
+                }
+
+                &:hover {
+                    .user-avatar {
+                        transform: scale(1.1);
+                    }
+                    .user-name,
+                    .chevron-icon {
+                        color: var(--color-amarillo);
+                    }
+                }
+            }
+
+            .nav-cart {
+                position: relative;
+                background: none;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                padding: 5px;
+                color: var(--header-text-color, var(--color-negro));
+                transition: color 0.3s ease, transform 0.2s ease;
+
+                svg {
+                    width: 26px;
+                    height: 26px;
+                }
+
+                .cart-badge {
+                    position: absolute;
+                    top: -5px;
+                    right: -8px;
+                    background-color: red;
+                    color: white;
+                    font-size: 11px;
+                    font-weight: bold;
+                    font-family: Arial, sans-serif;
+                    width: 18px;
+                    height: 18px;
+                    border-radius: 50%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+                    pointer-events: none;
+                }
+
+                &:hover {
+                    color: var(--color-amarillo) !important;
+                    transform: scale(1.1);
+                }
+            }
         }
 
-        .user-name {
-            color: var(--color-amarillo) !important;
-        }
-
+        /* --- HERO SECTION --- */
         .hero {
             height: 100vh;
             display: flex;
@@ -136,640 +216,722 @@
             padding-bottom: 5vh;
             position: relative;
             z-index: 10;
-        }
 
-        .hero-info {
-            width: 35%;
-        }
+            .hero-info {
+                width: 35%;
 
-        .title-wrapper {
-            display: flex;
-            align-items: flex-end;
-            gap: 20px;
-        }
+                .title-wrapper {
+                    display: flex;
+                    align-items: flex-end;
+                    gap: 20px;
 
-        .number {
-            font-size: 150px;
-            font-weight: 100;
-            font-family: Arial, sans-serif;
-            color: transparent;
-            -webkit-text-stroke: 2px currentColor;
-            line-height: 0.75;
-            transition: all 0.3s ease;
-        }
+                    .number {
+                        font-size: 150px;
+                        font-weight: 100;
+                        font-family: Arial, sans-serif;
+                        color: transparent;
+                        -webkit-text-stroke: 2px currentColor;
+                        line-height: 0.75;
+                        transition: all 0.3s ease;
+                    }
 
-        .title-details {
-            padding-bottom: 5px;
-        }
+                    .title-details {
+                        padding-bottom: 5px;
 
-        .title-details h1 {
-            font-size: 50px;
-            margin: 0 0 5px 0;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            letter-spacing: -1px;
-        }
+                        h1 {
+                            font-size: 50px;
+                            margin: 0 0 5px 0;
+                            font-weight: 900;
+                            display: flex;
+                            align-items: center;
+                            gap: 15px;
+                            letter-spacing: -1px;
+                            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 
-        .age-rating {
-            font-size: 14px;
-            border: 2px solid currentColor;
-            padding: 3px 8px;
-            border-radius: 4px;
-            letter-spacing: 1px;
-        }
+                            .age-rating {
+                                font-size: 14px;
+                                border: 2px solid currentColor;
+                                padding: 3px 8px;
+                                border-radius: 4px;
+                                letter-spacing: 1px;
+                                text-shadow: none;
+                            }
+                        }
 
-        .stars {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 5px;
-        }
+                        .stars {
+                            display: flex;
+                            align-items: center;
+                            gap: 4px;
+                            margin-top: 5px;
+                            filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.5));
 
-        .star-icon {
-            width: 18px;
-            height: auto;
-        }
+                            .star-icon {
+                                width: 18px;
+                                height: auto;
+                            }
+                        }
 
-        .genre {
-            font-size: 12px;
-            margin-top: 8px;
-            font-weight: bold;
-        }
+                        .genre {
+                            font-size: 12px;
+                            margin-top: 8px;
+                            font-weight: bold;
+                            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+                        }
+                    }
+                }
 
-        .hero-buttons {
-            margin-top: 40px;
-            display: flex;
-            gap: 20px;
-        }
+                .hero-buttons {
+                    margin-top: 40px;
+                    display: flex;
+                    gap: 20px;
 
-        .btn-primary,
-        .btn-secondary {
-            padding: 12px 25px;
-            font-weight: 900;
-            font-size: 12px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            border-radius: 4px;
-            border: none;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+                    .btn-primary,
+                    .btn-secondary {
+                        padding: 12px 25px;
+                        font-weight: 900;
+                        font-size: 12px;
+                        letter-spacing: 1px;
+                        text-transform: uppercase;
+                        cursor: pointer;
+                        border-radius: 4px;
+                        border: none;
+                        transition: all 0.3s ease;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
 
-        .btn-primary {
-            background: var(--color-negro);
-            color: #ffd000;
-            gap: 10px;
-        }
+                        &:hover {
+                            transform: scale(1.05);
+                        }
+                    }
 
-        .btn-primary img {
-            width: 20px;
-        }
+                    .btn-primary {
+                        background: var(--color-negro);
+                        color: #ffd000;
+                        gap: 10px;
 
-        .btn-secondary {
-            background: transparent;
-            border: 2px solid currentColor;
-            color: inherit;
-        }
+                        img {
+                            width: 20px;
+                        }
+                    }
 
-        .btn-primary:hover,
-        .btn-secondary:hover {
-            transform: scale(1.05);
-        }
+                    .btn-secondary {
+                        background: transparent;
+                        border: 2px solid currentColor;
+                        color: inherit;
+                        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+                    }
+                }
+            }
 
-        .hero-slider-section {
-            width: 45%;
-            position: relative;
-            height: 400px;
-        }
+            .hero-slider-section {
+                width: 45%;
+                position: relative;
+                height: 400px;
 
-        .custom-slider {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
+                .custom-slider {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
 
-        .slide-item {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 220px;
-            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-            pointer-events: none;
-        }
+                    .slide-item {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 220px;
+                        transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+                        pointer-events: none;
 
-        .slide-item img.poster-img {
-            width: 100%;
-            border-radius: 4px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 4px solid transparent;
-            transition: border-color 0.3s ease;
-            background-color: #111;
-        }
+                        img.poster-img {
+                            width: 100%;
+                            border-radius: 4px;
+                            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+                            border: 4px solid transparent;
+                            transition: border-color 0.3s ease;
+                            background-color: #111;
+                        }
 
-        .slide-item.active {
-            transform: translate(-50%, -60%) scale(1.15);
-            opacity: 1;
-            z-index: 10;
-            pointer-events: auto;
-        }
+                        &.active {
+                            transform: translate(-50%, -60%) scale(1.15);
+                            opacity: 1;
+                            z-index: 10;
+                            pointer-events: auto;
 
-        .slide-item.prev {
-            transform: translate(-140%, -50%) scale(0.85);
-            opacity: 0.5;
-            z-index: 5;
-            pointer-events: auto;
-            cursor: pointer;
-        }
+                            .progress-track {
+                                opacity: 1;
+                            }
 
-        .slide-item.next {
-            transform: translate(40%, -50%) scale(0.85);
-            opacity: 0.5;
-            z-index: 5;
-            pointer-events: auto;
-            cursor: pointer;
-        }
+                            .progress-fill {
+                                animation: fillBar 6s linear forwards;
+                            }
+                        }
 
-        .slide-item.hidden-left {
-            transform: translate(-250%, -50%) scale(0.5);
-            opacity: 0;
-            z-index: 1;
-        }
+                        &.prev {
+                            transform: translate(-140%, -50%) scale(0.85);
+                            opacity: 0.5;
+                            z-index: 5;
+                            pointer-events: auto;
+                            cursor: pointer;
+                        }
 
-        .slide-item.hidden-right {
-            transform: translate(150%, -50%) scale(0.5);
-            opacity: 0;
-            z-index: 1;
-        }
+                        &.next {
+                            transform: translate(40%, -50%) scale(0.85);
+                            opacity: 0.5;
+                            z-index: 5;
+                            pointer-events: auto;
+                            cursor: pointer;
+                        }
 
-        .progress-track {
-            position: absolute;
-            bottom: -15px;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: rgba(128, 128, 128, 0.3);
-            border-radius: 2px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+                        &.hidden-left {
+                            transform: translate(-250%, -50%) scale(0.5);
+                            opacity: 0;
+                            z-index: 1;
+                        }
 
-        .slide-item.active .progress-track {
-            opacity: 1;
-        }
+                        &.hidden-right {
+                            transform: translate(150%, -50%) scale(0.5);
+                            opacity: 0;
+                            z-index: 1;
+                        }
 
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: currentColor;
-            border-radius: 2px;
+                        .progress-track {
+                            position: absolute;
+                            bottom: -15px;
+                            left: 0;
+                            width: 100%;
+                            height: 4px;
+                            background: rgba(128, 128, 128, 0.3);
+                            border-radius: 2px;
+                            opacity: 0;
+                            transition: opacity 0.3s ease;
+
+                            .progress-fill {
+                                height: 100%;
+                                width: 0%;
+                                background: currentColor;
+                                border-radius: 2px;
+                            }
+                        }
+                    }
+                }
+
+                .hero-navigation {
+                    position: absolute;
+                    bottom: -40px;
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    gap: 25px;
+                    z-index: 20;
+
+                    .nav-btn {
+                        background: transparent;
+                        border: none;
+                        color: inherit;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 10px;
+                        opacity: 1;
+
+                        svg {
+                            width: 32px;
+                            height: 32px;
+                            stroke-width: 3;
+                            transition: transform 0.3s ease;
+                        }
+
+                        &:hover {
+                            transform: scale(1.15);
+                        }
+
+                        &#btn-prev:hover svg {
+                            transform: translateX(-5px);
+                        }
+
+                        &#btn-next:hover svg {
+                            transform: translateX(5px);
+                        }
+                    }
+                }
+            }
         }
 
         @keyframes fillBar {
             0% {
                 width: 0%;
             }
-
             100% {
                 width: 100%;
             }
         }
 
-        .slide-item.active .progress-fill {
-            animation: fillBar 6s linear forwards;
-        }
-
-        .hero-navigation {
-            position: absolute;
-            bottom: -20px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            z-index: 20;
-        }
-
-        .nav-btn {
-            width: 40px;
-            height: 40px;
-            border: 2px solid currentColor;
-            border-radius: 50%;
-            background: transparent;
-            color: inherit;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-btn:hover {
-            background: var(--color-negro);
-            color: white;
-            border-color: var(--color-negro);
-        }
-
+        /* --- MOVIES SECTION --- */
         .movies-section {
             padding: 80px 5%;
             background-color: var(--color-gris-oscuro);
             display: flex;
             flex-direction: column;
             align-items: center;
+
+            .movies-container {
+                width: 100%;
+                max-width: 1300px;
+                margin-bottom: 60px;
+
+                .row-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                    margin-bottom: 30px;
+                    border-bottom: 1px solid var(--color-gris-claro);
+                    padding-bottom: 15px;
+
+                    .row-title {
+                        font-size: 30px;
+                        font-weight: 900;
+                        text-transform: uppercase;
+                        letter-spacing: -1px;
+                        color: var(--color-blanco);
+                        border-left: 5px solid var(--color-amarillo);
+                        padding-left: 15px;
+                        line-height: 1;
+                    }
+                }
+
+                .movies-grid-full {
+                    display: grid;
+                    grid-template-columns: repeat(5, 1fr);
+                    gap: 20px;
+                    width: 100%;
+
+                    .movie-card {
+                        position: relative;
+                        border-radius: 6px;
+                        overflow: hidden;
+                        background-color: var(--color-negro);
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+                        img {
+                            width: 100%;
+                            aspect-ratio: 2 / 3;
+                            object-fit: cover;
+                            display: block;
+                            background-color: #111;
+                            cursor: pointer;
+                        }
+
+                        .date-badge {
+                            position: absolute;
+                            top: 10px;
+                            right: 10px;
+                            background-color: var(--color-amarillo);
+                            color: var(--color-negro);
+                            font-size: 11px;
+                            font-weight: 900;
+                            padding: 4px 8px;
+                            border-radius: 4px;
+                            text-transform: uppercase;
+                            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+                            z-index: 5;
+                        }
+
+                        .movie-card-overlay {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: flex-end;
+                            align-items: center;
+                            opacity: 0;
+                            transition: opacity 0.3s ease;
+                            padding: 20px;
+                            text-align: center;
+                            z-index: 4;
+                            pointer-events: none;
+
+                            .movie-card-title {
+                                font-size: 18px;
+                                margin-bottom: 5px;
+                                color: var(--color-blanco);
+                                line-height: 1.1;
+                                cursor: pointer;
+                            }
+
+                            .movie-card-genre {
+                                font-size: 11px;
+                                color: var(--color-amarillo);
+                                font-family: Arial, sans-serif;
+                                margin-bottom: 15px;
+                            }
+
+                            .btn-card {
+                                background: var(--color-amarillo);
+                                color: var(--color-negro);
+                                padding: 10px;
+                                font-size: 11px;
+                                font-weight: 900;
+                                text-transform: uppercase;
+                                border: none;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                letter-spacing: 1px;
+                                transition: background 0.2s;
+                                width: 100%;
+
+                                &:hover {
+                                    background: #ffffff;
+                                    color: black;
+                                    border-color: transparent;
+                                }
+
+                                &.btn-outline {
+                                    background: transparent;
+                                    color: var(--color-blanco);
+                                    border: 2px solid var(--color-blanco);
+                                    margin-top: 5px;
+                                }
+                            }
+                        }
+
+                        &:hover {
+                            transform: translateY(-8px);
+                            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.9);
+                            z-index: 2;
+
+                            .movie-card-overlay {
+                                opacity: 1;
+                                pointer-events: auto;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        .movies-container {
-            width: 100%;
-            max-width: 1300px;
-            margin-bottom: 60px;
-        }
-
-        .row-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--color-gris-claro);
-            padding-bottom: 15px;
-        }
-
-        .row-title {
-            font-size: 30px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            color: var(--color-blanco);
-            border-left: 5px solid var(--color-amarillo);
-            padding-left: 15px;
-            line-height: 1;
-        }
-
-        .movies-grid-full {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 20px;
-            width: 100%;
-        }
-
-        .movie-card {
-            position: relative;
-            border-radius: 6px;
-            overflow: hidden;
-            background-color: var(--color-negro);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .movie-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.9);
-            z-index: 2;
-        }
-
-        .movie-card img {
-            width: 100%;
-            aspect-ratio: 2 / 3;
-            object-fit: cover;
-            display: block;
-            background-color: #111;
-            cursor: pointer;
-        }
-
-        .date-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: var(--color-amarillo);
-            color: var(--color-negro);
-            font-size: 11px;
-            font-weight: 900;
-            padding: 4px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            z-index: 5;
-        }
-
-        .movie-card-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            padding: 20px;
-            text-align: center;
-            z-index: 4;
-            pointer-events: none;
-        }
-
-        .movie-card:hover .movie-card-overlay {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .movie-card-title {
-            font-size: 18px;
-            margin-bottom: 5px;
-            color: var(--color-blanco);
-            line-height: 1.1;
-            cursor: pointer;
-        }
-
-        .movie-card-genre {
-            font-size: 11px;
-            color: var(--color-amarillo);
-            font-family: Arial, sans-serif;
-            margin-bottom: 15px;
-        }
-
-        .btn-card {
-            background: var(--color-amarillo);
-            color: var(--color-negro);
-            padding: 10px;
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            letter-spacing: 1px;
-            transition: background 0.2s;
-            width: 100%;
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--color-blanco);
-            border: 2px solid var(--color-blanco);
-            margin-top: 5px;
-        }
-
-        .btn-card:hover {
-            background: #ffffff;
-            color: black;
-            border-color: transparent;
-        }
-
+        /* --- FOOD SECTION --- */
         .food-section {
             padding: 80px 5%;
             background-color: var(--color-negro);
             display: flex;
             flex-direction: column;
             align-items: center;
+            border-top: 1px solid #222;
+
+            .food-container {
+                width: 100%;
+                max-width: 1200px;
+
+                .food-header {
+                    text-align: center;
+                    margin-bottom: 50px;
+
+                    h2 {
+                        font-size: 40px;
+                        color: var(--color-blanco);
+                        text-transform: uppercase;
+                        letter-spacing: -1px;
+                        margin-bottom: 10px;
+
+                        span {
+                            color: var(--color-amarillo);
+                        }
+                    }
+
+                    p {
+                        font-family: Arial, sans-serif;
+                        color: #888888;
+                        font-size: 16px;
+                        max-width: 600px;
+                        margin: 0 auto;
+                    }
+                }
+
+                .food-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 30px;
+                    margin-bottom: 60px;
+
+                    .food-card {
+                        background-color: var(--color-gris-tarjeta);
+                        border-top: 4px solid var(--color-amarillo);
+                        padding: 40px 30px;
+                        border-radius: 6px;
+
+                        .food-card-header {
+                            display: flex;
+                            align-items: center;
+                            gap: 15px;
+                            margin-bottom: 30px;
+                            border-bottom: 1px solid #333;
+                            padding-bottom: 15px;
+
+                            .food-icon-svg {
+                                width: 35px;
+                                height: 35px;
+                                color: var(--color-amarillo);
+                            }
+
+                            h3 {
+                                color: var(--color-blanco);
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                font-size: 20px;
+                                margin: 0;
+                            }
+                        }
+
+                        ul {
+                            list-style: none;
+
+                            li {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                margin-bottom: 15px;
+                                font-family: Arial, sans-serif;
+                                font-size: 15px;
+                                border-bottom: 1px dashed #222;
+                                padding-bottom: 10px;
+                                color: #cccccc;
+
+                                .price-tag {
+                                    background-color: #222;
+                                    color: var(--color-amarillo);
+                                    font-weight: bold;
+                                    padding: 4px 8px;
+                                    border-radius: 4px;
+                                    font-size: 13px;
+                                    border: 1px solid #444;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .exclusive-section {
+                    width: 100%;
+                    background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+                    border-radius: 8px;
+                    border: 1px solid #333;
+                    padding: 50px;
+                    position: relative;
+                    overflow: hidden;
+
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        top: -50px;
+                        right: -50px;
+                        width: 150px;
+                        height: 150px;
+                        background: var(--color-amarillo);
+                        filter: blur(100px);
+                        opacity: 0.1;
+                    }
+
+                    .exclusive-title {
+                        text-align: center;
+                        margin-bottom: 40px;
+                        position: relative;
+                        z-index: 2;
+
+                        h3 {
+                            font-size: 30px;
+                            color: var(--color-amarillo);
+                            text-transform: uppercase;
+                            margin-bottom: 10px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 10px;
+                        }
+
+                        p {
+                            color: #aaa;
+                            font-family: Arial, sans-serif;
+                            font-size: 15px;
+                        }
+                    }
+
+                    .exclusive-grid {
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 20px;
+                        position: relative;
+                        z-index: 2;
+
+                        .exclusive-card {
+                            background-color: #0a0a0a;
+                            border: 1px solid #333;
+                            border-radius: 8px;
+                            overflow: hidden;
+                            transition: transform 0.3s ease, border-color 0.3s;
+                            text-align: center;
+                            padding-bottom: 20px;
+
+                            .exclusive-img {
+                                width: 100%;
+                                height: 200px;
+                                background-color: #111;
+                                object-fit: cover;
+                                border-bottom: 2px solid #222;
+                            }
+
+                            h4 {
+                                font-size: 18px;
+                                color: #fff;
+                                margin: 15px 0 5px;
+                                text-transform: uppercase;
+                            }
+
+                            p {
+                                font-size: 13px;
+                                color: #888;
+                                font-family: Arial, sans-serif;
+                                padding: 0 15px;
+                                margin-bottom: 15px;
+                                height: 40px;
+                            }
+
+                            .exclusive-tag {
+                                display: inline-block;
+                                background-color: var(--color-amarillo);
+                                color: #000;
+                                font-size: 11px;
+                                font-weight: bold;
+                                padding: 3px 10px;
+                                border-radius: 12px;
+                                text-transform: uppercase;
+                            }
+
+                            &:hover {
+                                transform: translateY(-5px);
+                                border-color: var(--color-amarillo);
+                                box-shadow: 0 10px 20px rgba(255, 208, 0, 0.1);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        .food-container {
-            width: 100%;
-            max-width: 1200px;
-        }
-
-        .food-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .food-header h2 {
-            font-size: 40px;
-            color: var(--color-blanco);
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            margin-bottom: 10px;
-        }
-
-        .food-header h2 span {
-            color: var(--color-amarillo);
-        }
-
-        .food-header p {
-            font-family: Arial, sans-serif;
-            color: #888888;
-            font-size: 16px;
-        }
-
-        .food-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-        }
-
-        .food-card {
-            background-color: var(--color-gris-tarjeta);
-            border-top: 4px solid var(--color-amarillo);
-            padding: 40px 30px;
-            border-radius: 6px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .food-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(255, 208, 0, 0.1);
-        }
-
-        .food-card-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .food-icon {
-            font-size: 35px;
-        }
-
-        .food-card h3 {
-            color: var(--color-blanco);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 20px;
-        }
-
-        .food-card ul {
-            list-style: none;
-        }
-
-        .food-card li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            border-bottom: 1px solid #222;
-            padding-bottom: 10px;
-            color: #cccccc;
-        }
-
-        .item-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .price-tag {
-            background-color: var(--color-amarillo);
-            color: var(--color-negro);
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        .qty-selector {
-            display: flex;
-            align-items: center;
-            background: #000;
-            border: 1px solid var(--color-amarillo);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .qty-btn {
-            background: transparent;
-            color: var(--color-amarillo);
-            border: none;
-            padding: 2px 10px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s, color 0.2s;
-        }
-
-        .qty-btn:hover {
-            background: var(--color-amarillo);
-            color: var(--color-negro);
-        }
-
-        .qty-number {
-            color: var(--color-blanco);
-            font-size: 13px;
-            font-weight: bold;
-            min-width: 20px;
-            text-align: center;
-        }
-
+        /* --- FOOTER --- */
         footer {
             background-color: var(--color-negro);
             padding: 60px 5% 40px;
             border-top: 1px solid var(--color-gris-claro);
-        }
 
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+            .footer-content {
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 40px;
+                max-width: 1200px;
+                margin: 0 auto;
 
-        .footer-col {
-            flex: 1;
-            min-width: 200px;
-        }
+                .footer-col {
+                    flex: 1;
+                    min-width: 200px;
 
-        .footer-logo img {
-            height: 45px;
-            margin-bottom: 20px;
-        }
+                    /* Ajustes para centrar la primera columna */
+                    &:first-child {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        text-align: center;
+                        
+                        .footer-logo img {
+                            height: 60px; /* Un poco más grande para destacar */
+                            margin-bottom: 20px;
+                        }
 
-        .footer-col p {
-            font-family: Arial, sans-serif;
-            color: #888;
-            font-size: 13px;
-            line-height: 1.6;
-        }
+                        p {
+                            max-width: 250px; /* Para que el texto no se extienda demasiado */
+                        }
+                    }
 
-        .footer-col h4 {
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            color: var(--color-amarillo);
-        }
+                    p {
+                        font-family: Arial, sans-serif;
+                        color: #888;
+                        font-size: 13px;
+                        line-height: 1.6;
+                    }
 
-        .footer-links {
-            list-style: none;
-        }
+                    h4 {
+                        font-size: 16px;
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+                        margin-bottom: 20px;
+                        color: var(--color-amarillo);
+                    }
 
-        .footer-links li {
-            margin-bottom: 10px;
-        }
+                    .footer-links {
+                        list-style: none;
 
-        .footer-links a {
-            color: var(--color-blanco);
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            transition: color 0.3s ease;
-        }
+                        li {
+                            margin-bottom: 10px;
 
-        .footer-links a:hover {
-            color: var(--color-amarillo);
-        }
+                            a {
+                                color: var(--color-blanco);
+                                text-decoration: none;
+                                font-family: Arial, sans-serif;
+                                font-size: 14px;
+                                transition: color 0.3s ease;
 
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 40px auto 0;
-            padding-top: 20px;
-            border-top: 1px solid var(--color-gris-claro);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            color: #666;
-        }
+                                &:hover {
+                                    color: var(--color-amarillo);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-        .cart-floating {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: var(--color-amarillo);
-            color: var(--color-negro);
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            z-index: 9999;
-            transition: transform 0.3s ease;
-        }
+            .footer-bottom {
+                max-width: 1200px;
+                margin: 40px auto 0;
+                padding-top: 20px;
+                border-top: 1px solid var(--color-gris-claro);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-family: Arial, sans-serif;
+                font-size: 12px;
+                color: #666;
 
-        .cart-floating:hover {
-            transform: scale(1.1);
-        }
+                .footer-credits {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    color: #888;
+                    font-family: Arial, sans-serif;
 
-        .cart-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: red;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-            font-family: Arial, sans-serif;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+                    span {
+                        color: var(--color-amarillo);
+                        font-weight: bold;
+                    }
+
+                    .heart-icon {
+                        width: 16px;
+                        height: 16px;
+                        color: #888;
+                        transition: color 0.3s ease;
+                    }
+
+                    &:hover .heart-icon {
+                        color: #ff4444;
+                        filter: drop-shadow(0 0 3px #ff4444);
+                    }
+                }
+            }
         }
     </style>
 </head>
@@ -777,10 +939,10 @@
 <body>
 
     <main class="hero" id="main-hero">
-        <img src="{{ asset('img/1-Kill-Bill/Portada.png') }}" alt="Fondo Pantalla" class="hero-bg" id="hero-bg">
+        <img src="{{ asset('img/1-Kill-Bill/Portada.png') }}" alt="Background Image" class="hero-bg" id="hero-bg">
 
         <header id="main-header">
-            <div class="logo"><img src="{{ asset('img/img/Logo-Negro.png') }}" alt="Cine Logo" id="main-logo"></div>
+            <div class="logo"><img src="{{ asset('img/img/Logo-Negro.png') }}" alt="Cinema Logo" id="main-logo"></div>
             <nav>
                 <ul>
                     <li><a href="/">HOME</a></li>
@@ -790,20 +952,35 @@
                     @auth
                     <div class="user-nav">
                         <li>
-                            <a href="#" class="user-name" title="Mi Perfil">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+                            <a href="#" class="user-profile" title="My Profile">
+                                <img src="{{ asset('img/avatars/' . Auth::user()->avatar) }}" alt="Avatar"
+                                    class="user-avatar" onerror="this.src='https://via.placeholder.com/35/333/ffd000'">
+                                <span class="user-name">{{ strtoupper(Auth::user()->name) }}</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="chevron-icon" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
+                                    <polyline points="6 9 12 15 18 9"></polyline>
                                 </svg>
-                                {{ strtoupper(Auth::user()->name) }}
                             </a>
                         </li>
+
+                        <li>
+                            <button class="nav-cart" onclick="alert('Checkout functionality in development')">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                </svg>
+                                <div class="cart-badge" id="nav-cart-counter">0</div>
+                            </button>
+                        </li>
+
                         <li>
                             <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                                 @csrf
-                                <button type="submit" class="logout-btn" title="Cerrar Sesión">
+                                <button type="submit" class="logout-btn" title="Sign Out">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                         stroke-linejoin="round">
@@ -818,7 +995,7 @@
                     @else
                     <div class="user-nav">
                         <li>
-                            <a href="{{ route('login') }}" title="Iniciar Sesión">
+                            <a href="{{ route('login') }}" title="Sign In">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
@@ -829,7 +1006,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('register') }}" title="Crear Cuenta">
+                            <a href="{{ route('register') }}" title="Create Account">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
@@ -866,8 +1043,18 @@
             <div class="hero-slider-section">
                 <div class="custom-slider" id="slider-track"></div>
                 <div class="hero-navigation">
-                    <button class="nav-btn" id="btn-prev">❮</button>
-                    <button class="nav-btn" id="btn-next">❯</button>
+                    <button class="nav-btn" id="btn-prev" title="Previous">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <button class="nav-btn" id="btn-next" title="Next">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
@@ -892,289 +1079,126 @@
     <section class="food-section" id="bar">
         <div class="food-container">
             <div class="food-header">
-                <h2>Screenbites <span>Menu</span></h2>
-                <p>Order your favorite cinema snacks and skip the line.</p>
+                <h2>Explore the <span>Menu</span></h2>
+                <p>Discover our delicious snacks and drinks. You can add them to your order during the seat selection
+                    process.</p>
             </div>
+
             <div class="food-grid">
 
                 <div class="food-card">
-                    <div class="food-card-header"><span class="food-icon">🍿</span>
-                        <h3>Popcorn & Combos</h3>
+                    <div class="food-card-header">
+                        <svg class="food-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7 2.5 9 6 11 3.5-2 6-4 6-11Z" />
+                            <path d="M12 3v3" />
+                            <path d="M10.3 4.2l1.4 2.5" />
+                            <path d="M13.7 4.2l-1.4 2.5" />
+                            <path d="M8 10h8" />
+                            <path d="M8 14h8" />
+                        </svg>
+                        <h3>Popcorn & Food</h3>
                     </div>
                     <ul>
-                        <li>Classic Salted (S)
-                            <div class="item-actions"><span class="price-tag">$4.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('pop-s', 4.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-pop-s">0</div><button class="qty-btn"
-                                        onclick="updateQty('pop-s', 4.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Classic Salted (M)
-                            <div class="item-actions"><span class="price-tag">$5.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('pop-m', 5.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-pop-m">0</div><button class="qty-btn"
-                                        onclick="updateQty('pop-m', 5.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Classic Salted (L)
-                            <div class="item-actions"><span class="price-tag">$7.00</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('pop-l', 7.00, -1)">-</button>
-                                    <div class="qty-number" id="qty-pop-l">0</div><button class="qty-btn"
-                                        onclick="updateQty('pop-l', 7.00, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Extra Butter (L)
-                            <div class="item-actions"><span class="price-tag">$8.00</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('pop-butter', 8.00, -1)">-</button>
-                                    <div class="qty-number" id="qty-pop-butter">0</div><button class="qty-btn"
-                                        onclick="updateQty('pop-butter', 8.00, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Caramel Crunch (M)
-                            <div class="item-actions"><span class="price-tag">$6.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('pop-caramel', 6.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-pop-caramel">0</div><button class="qty-btn"
-                                        onclick="updateQty('pop-caramel', 6.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Mixed (Sweet/Salty)
-                            <div class="item-actions"><span class="price-tag">$6.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('pop-mixed', 6.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-pop-mixed">0</div><button class="qty-btn"
-                                        onclick="updateQty('pop-mixed', 6.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Truffle (Premium)
-                            <div class="item-actions"><span class="price-tag">$8.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('pop-truffle', 8.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-pop-truffle">0</div><button class="qty-btn"
-                                        onclick="updateQty('pop-truffle', 8.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Mega Bucket
-                            <div class="item-actions"><span class="price-tag">$9.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('pop-mega', 9.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-pop-mega">0</div><button class="qty-btn"
-                                        onclick="updateQty('pop-mega', 9.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li
-                            style="margin-top: 20px; border-top: 1px dashed var(--color-amarillo); padding-top: 15px; color: var(--color-amarillo);">
-                            <strong>★ Combo 1: Popcorn L + 2 Sodas</strong>
-                            <div class="item-actions"><span class="price-tag" style="background:#fff;">$14.00</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('combo-1', 14.00, -1)">-</button>
-                                    <div class="qty-number" id="qty-combo-1">0</div><button class="qty-btn"
-                                        onclick="updateQty('combo-1', 14.00, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
+                        <li>Classic Salted Popcorn (M) <span class="price-tag">$5.50</span></li>
+                        <li>Classic Salted Popcorn (L) <span class="price-tag">$7.00</span></li>
+                        <li>Extra Butter Popcorn (L) <span class="price-tag">$8.00</span></li>
+                        <li>Sweet Caramel Popcorn (M) <span class="price-tag">$6.50</span></li>
+                        <li>Family Mega Bucket <span class="price-tag">$9.50</span></li>
+                        <li>Classic Hot Dog <span class="price-tag">$5.00</span></li>
+                        <li>XXL Cheese Hot Dog <span class="price-tag">$6.50</span></li>
+                        <li>Extra Cheese Nachos <span class="price-tag">$6.50</span></li>
+                        <li>Pepperoni Pizza Slice <span class="price-tag">$4.00</span></li>
                     </ul>
                 </div>
 
                 <div class="food-card">
-                    <div class="food-card-header"><span class="food-icon">🥤</span>
-                        <h3>Drinks & Slushies</h3>
+                    <div class="food-card-header">
+                        <svg class="food-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 11V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6" />
+                            <path d="M19 11l-1.37 8.22a2 2 0 0 1-1.97 1.78H8.34a2 2 0 0 1-1.97-1.78L5 11h14Z" />
+                            <path d="M12 11v10" />
+                            <path d="M8 15h8" />
+                        </svg>
+                        <h3>Fresh Drinks</h3>
                     </div>
                     <ul>
-                        <li>Coca-Cola / Zero (M)
-                            <div class="item-actions"><span class="price-tag">$4.00</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('drink-coca-m', 4.00, -1)">-</button>
-                                    <div class="qty-number" id="qty-drink-coca-m">0</div><button class="qty-btn"
-                                        onclick="updateQty('drink-coca-m', 4.00, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Coca-Cola / Zero (L)
-                            <div class="item-actions"><span class="price-tag">$5.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('drink-coca-l', 5.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-drink-coca-l">0</div><button class="qty-btn"
-                                        onclick="updateQty('drink-coca-l', 5.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Fanta Orange (M)
-                            <div class="item-actions"><span class="price-tag">$4.00</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('drink-fanta', 4.00, -1)">-</button>
-                                    <div class="qty-number" id="qty-drink-fanta">0</div><button class="qty-btn"
-                                        onclick="updateQty('drink-fanta', 4.00, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Sprite (L)
-                            <div class="item-actions"><span class="price-tag">$5.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('drink-sprite', 5.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-drink-sprite">0</div><button class="qty-btn"
-                                        onclick="updateQty('drink-sprite', 5.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Icee Slush (Blue)
-                            <div class="item-actions"><span class="price-tag">$5.00</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('drink-icee-blue', 5.00, -1)">-</button>
-                                    <div class="qty-number" id="qty-drink-icee-blue">0</div><button class="qty-btn"
-                                        onclick="updateQty('drink-icee-blue', 5.00, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Icee Slush (Cherry)
-                            <div class="item-actions"><span class="price-tag">$5.00</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('drink-icee-red', 5.00, -1)">-</button>
-                                    <div class="qty-number" id="qty-drink-icee-red">0</div><button class="qty-btn"
-                                        onclick="updateQty('drink-icee-red', 5.00, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Bottled Water
-                            <div class="item-actions"><span class="price-tag">$3.00</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('drink-water', 3.00, -1)">-</button>
-                                    <div class="qty-number" id="qty-drink-water">0</div><button class="qty-btn"
-                                        onclick="updateQty('drink-water', 3.00, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Craft Beer (IPA)
-                            <div class="item-actions"><span class="price-tag">$6.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('drink-beer', 6.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-drink-beer">0</div><button class="qty-btn"
-                                        onclick="updateQty('drink-beer', 6.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Hot Coffee
-                            <div class="item-actions"><span class="price-tag">$3.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('drink-coffee', 3.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-drink-coffee">0</div><button class="qty-btn"
-                                        onclick="updateQty('drink-coffee', 3.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
+                        <li>Coca-Cola / Zero (M) <span class="price-tag">$4.00</span></li>
+                        <li>Coca-Cola / Zero (L) <span class="price-tag">$5.50</span></li>
+                        <li>Fanta Orange (M) <span class="price-tag">$4.00</span></li>
+                        <li>Sprite (L) <span class="price-tag">$5.50</span></li>
+                        <li>Blue Icee Slush <span class="price-tag">$5.00</span></li>
+                        <li>Cherry Icee Slush <span class="price-tag">$5.00</span></li>
+                        <li>Bottled Mineral Water <span class="price-tag">$3.00</span></li>
+                        <li>Craft Beer (IPA) <span class="price-tag">$6.50</span></li>
+                        <li>Hot Coffee / Tea <span class="price-tag">$3.50</span></li>
                     </ul>
                 </div>
 
                 <div class="food-card">
-                    <div class="food-card-header"><span class="food-icon">🌭</span>
-                        <h3>Hot Snacks & Candies</h3>
+                    <div class="food-card-header">
+                        <svg class="food-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <line x1="3" y1="9" x2="21" y2="9" />
+                            <line x1="3" y1="15" x2="21" y2="15" />
+                            <line x1="9" y1="3" x2="9" y2="21" />
+                            <line x1="15" y1="3" x2="15" y2="21" />
+                        </svg>
+                        <h3>Snacks & Sweets</h3>
                     </div>
                     <ul>
-                        <li>Classic Hot Dog
-                            <div class="item-actions"><span class="price-tag">$5.00</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('snack-hotdog', 5.00, -1)">-</button>
-                                    <div class="qty-number" id="qty-snack-hotdog">0</div><button class="qty-btn"
-                                        onclick="updateQty('snack-hotdog', 5.00, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>XXL Cheese Hot Dog
-                            <div class="item-actions"><span class="price-tag">$6.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('snack-hotdog-xxl', 6.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-snack-hotdog-xxl">0</div><button class="qty-btn"
-                                        onclick="updateQty('snack-hotdog-xxl', 6.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Cheesy Nachos
-                            <div class="item-actions"><span class="price-tag">$6.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('snack-nachos', 6.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-snack-nachos">0</div><button class="qty-btn"
-                                        onclick="updateQty('snack-nachos', 6.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Pretzel Bites
-                            <div class="item-actions"><span class="price-tag">$4.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('snack-pretzel', 4.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-snack-pretzel">0</div><button class="qty-btn"
-                                        onclick="updateQty('snack-pretzel', 4.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Pizza Slice
-                            <div class="item-actions"><span class="price-tag">$4.00</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('snack-pizza', 4.00, -1)">-</button>
-                                    <div class="qty-number" id="qty-snack-pizza">0</div><button class="qty-btn"
-                                        onclick="updateQty('snack-pizza', 4.00, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>M&M's
-                            <div class="item-actions"><span class="price-tag">$3.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('candy-mms', 3.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-candy-mms">0</div><button class="qty-btn"
-                                        onclick="updateQty('candy-mms', 3.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Skittles
-                            <div class="item-actions"><span class="price-tag">$3.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('candy-skittles', 3.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-candy-skittles">0</div><button class="qty-btn"
-                                        onclick="updateQty('candy-skittles', 3.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Gummy Bears
-                            <div class="item-actions"><span class="price-tag">$3.00</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('candy-gummy', 3.00, -1)">-</button>
-                                    <div class="qty-number" id="qty-candy-gummy">0</div><button class="qty-btn"
-                                        onclick="updateQty('candy-gummy', 3.00, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li>Maltesers
-                            <div class="item-actions"><span class="price-tag">$3.50</span>
-                                <div class="qty-selector"><button class="qty-btn"
-                                        onclick="updateQty('candy-malts', 3.50, -1)">-</button>
-                                    <div class="qty-number" id="qty-candy-malts">0</div><button class="qty-btn"
-                                        onclick="updateQty('candy-malts', 3.50, 1)">+</button>
-                                </div>
-                            </div>
-                        </li>
+                        <li>Pretzel Bites <span class="price-tag">$4.50</span></li>
+                        <li>Chocolate M&M's Bag <span class="price-tag">$3.50</span></li>
+                        <li>Skittles Bag <span class="price-tag">$3.50</span></li>
+                        <li>Gummy Bears <span class="price-tag">$3.00</span></li>
+                        <li>Crispy Maltesers <span class="price-tag">$3.50</span></li>
+                        <li>Lacasitos <span class="price-tag">$3.00</span></li>
+                        <li>Red Licorice <span class="price-tag">$2.50</span></li>
+                        <li>Snickers Bar <span class="price-tag">$2.50</span></li>
+                        <li>Classic Magnum Ice Cream <span class="price-tag">$4.00</span></li>
                     </ul>
                 </div>
             </div>
+
+            <div class="exclusive-section">
+                <div class="exclusive-title">
+                    <h3><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                            </polygon>
+                        </svg> Exclusive Collectibles</h3>
+                    <p>Unlock these limited edition combos when purchasing a ticket for their respective movie.</p>
+                </div>
+
+                <div class="exclusive-grid">
+                    <div class="exclusive-card">
+                        <img src="{{ asset('img/1-Kill-Bill/kill-bill.jpeg') }}" class="exclusive-img">
+                        <h4>Vengeance Combo</h4>
+                        <p>Yellow suit design popcorn bucket + XL Katana Cup.</p>
+                        <span class="exclusive-tag">Kill Bill Only</span>
+                    </div>
+
+                    <div class="exclusive-card">
+                        <img src="{{ asset('img/4-Oppenheimer/oppenheimer.png') }}" class="exclusive-img">
+                        <h4>Atomic Combo</h4>
+                        <p>Extra Spicy Popcorn + Limited Edition Black Soda.</p>
+                        <span class="exclusive-tag">Oppenheimer Only</span>
+                    </div>
+
+                    <div class="exclusive-card">
+                        <img src="{{ asset('img/9-Barbie/barbie.png') }}" class="exclusive-img">
+                        <h4>Dreamhouse Snack</h4>
+                        <p>Sparkly pink bucket with sweet popcorn + Cotton Candy Drink.</p>
+                        <span class="exclusive-tag">Barbie Only</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
-
-    @auth
-    <div class="cart-floating" onclick="alert('Ir a la página del checkout!')">
-        🛒
-        <div class="cart-badge" id="cart-counter">0</div>
-    </div>
-    @endauth
 
     <footer>
         <div class="footer-content">
@@ -1207,7 +1231,15 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 Cine Screenbites. All rights reserved.</p>
+            <p>&copy; 2026 Screenbites Cinema. All rights reserved.</p>
+            <p class="footer-credits">
+                Design with
+                <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+                for <span>Beni</span>
+            </p>
         </div>
     </footer>
 
@@ -1222,15 +1254,15 @@
             { id: "07", title: "Alien", age: "+18", rating: 4, genre: "Horror, Sci-Fi", bg: "#051417", textColor: "white", bgImg: "{{ asset('img/7-Alien/Portada.png') }}", poster: "{{ asset('img/7-Alien/Mini.png') }}" },
             { id: "08", title: "Interstellar", age: "+12", rating: 5, genre: "Adventure, Sci-Fi", bg: "#090a0a", textColor: "white", bgImg: "{{ asset('img/8-Interstellar/Portada.png') }}", poster: "{{ asset('img/8-Interstellar/Mini.png') }}" },
             { id: "09", title: "Barbie", age: "TP", rating: 4, genre: "Comedy, Fantasy", bg: "#51caf5", textColor: "white", bgImg: "{{ asset('img/9-Barbie/Portada.png') }}", poster: "{{ asset('img/9-Barbie/Mini.png') }}" },
-            { id: "10", title: "Mamma Mia", age: "TP", rating: 5, genre: "Comedy, Musical", bg: "#444444", textColor: "black", bgImg: "{{ asset('img/10-MammaMia/Portada.jpg') }}", poster: "{{ asset('img/10-MammaMia/Mini.jpg') }}" }
+            { id: "10", title: "Mamma Mia", age: "TP", rating: 5, genre: "Comedy, Musical", bg: "#b3d0e2", textColor: "black", bgImg: "{{ asset('img/10-MammaMia/Portada.jpg') }}", poster: "{{ asset('img/10-MammaMia/Mini.jpg') }}" }
         ];
 
         const comingSoonMovies = [
-            { id: "11", title: "Deadpool & Wolverine", date: "25 JULY", genre: "Action, Comedy", poster: "{{ asset('img/11-Deadpool/Mini.jpg') }}" },
-            { id: "12", title: "Gladiator II", date: "15 NOVEMBER", genre: "Action, Drama", poster: "{{ asset('img/12-Gladiator/Mini.jpg') }}" },
-            { id: "13", title: "Venom 3", date: "24 OCTOBER", genre: "Sci-Fi, Action", poster: "{{ asset('img/13-Venom/Mini.png') }}" },
-            { id: "14", title: "Mufasa", date: "13 DECEMBER", genre: "Adventure, Family", poster: "{{ asset('img/14-Mufasa/Mini.jpg') }}" },
-            { id: "15", title: "Kraven", date: "20 DECEMBER", genre: "Action, Thriller", poster: "{{ asset('img/15-Kraven/Mini.png') }}" }
+            { id: "11", title: "Deadpool & Wolverine", date: "JULY 25", genre: "Action, Comedy", poster: "{{ asset('img/11-Deadpool/Mini.jpg') }}" },
+            { id: "12", title: "Gladiator II", date: "NOV 15", genre: "Action, Drama", poster: "{{ asset('img/12-Gladiator/Mini.jpg') }}" },
+            { id: "13", title: "Venom 3", date: "OCT 24", genre: "Sci-Fi, Action", poster: "{{ asset('img/13-Venom/Mini.png') }}" },
+            { id: "14", title: "Mufasa", date: "DEC 20", genre: "Adventure, Family", poster: "{{ asset('img/14-Mufasa/Mini.jpg') }}" },
+            { id: "15", title: "Kraven", date: "DEC 13", genre: "Action, Thriller", poster: "{{ asset('img/15-Kraven/Mini.png') }}" }
         ];
 
         let currentIndex = 0;
@@ -1259,7 +1291,6 @@
             }
         });
 
-        // INYECTAR "NOW PLAYING" 
         movies.forEach((movie, index) => {
             const slideDiv = document.createElement('div');
             slideDiv.classList.add('slide-item');
@@ -1277,14 +1308,13 @@
                 <div class="movie-card-overlay">
                     <h4 class="movie-card-title" onclick="window.location.href='/pelicula/${movie.id}'">${movie.title}</h4>
                     <p class="movie-card-genre">${movie.genre}</p>
-                    <button class="btn-card" onclick="addToCartMovie('Entrada: ${movie.title}', 8.50)">Buy Tickets</button>
-                    <button class="btn-card btn-outline" style="margin-top:8px;" onclick="window.location.href='/pelicula/${movie.id}'">Ver Info</button>
+                    <button class="btn-card" onclick="addToCartMovie('${movie.title} Ticket', 8.50)">Buy Tickets</button>
+                    <button class="btn-card btn-outline" style="margin-top:8px;" onclick="window.location.href='/pelicula/${movie.id}'">More Info</button>
                 </div>
             `;
             nowPlayingGrid.appendChild(npCard);
         });
 
-        // INYECTAR "COMING SOON"
         comingSoonMovies.forEach((movie) => {
             const csCard = document.createElement('div');
             csCard.classList.add('movie-card');
@@ -1294,7 +1324,7 @@
                 <div class="movie-card-overlay">
                     <h4 class="movie-card-title" onclick="window.location.href='/pelicula/${movie.id}'">${movie.title}</h4>
                     <p class="movie-card-genre">${movie.genre}</p>
-                    <button class="btn-card btn-outline" onclick="window.location.href='/pelicula/${movie.id}'">Ver Info</button>
+                    <button class="btn-card btn-outline" onclick="window.location.href='/pelicula/${movie.id}'">More Info</button>
                 </div>
             `;
             comingSoonGrid.appendChild(csCard);
@@ -1339,11 +1369,9 @@
             mainHero.style.color = color;
             document.getElementById('movie-id').style.webkitTextStroke = `2px ${color}`;
 
-            // LÓGICA DE BOTONES DEL HERO
             const btnBuyHero = document.getElementById('btn-buy');
-            btnBuyHero.setAttribute('onclick', `addToCartMovie('Entrada VIP: ${activeMovie.title}', 12.00)`);
+            btnBuyHero.setAttribute('onclick', `addToCartMovie('VIP Ticket: ${activeMovie.title}', 12.00)`);
 
-            // NUEVO BOTÓN VIEW FILM DEL HERO 
             const btnViewHero = document.getElementById('btn-view-film');
             btnViewHero.onclick = function () {
                 window.location.href = '/pelicula/' + activeMovie.id;
@@ -1380,48 +1408,18 @@
         updateCarousel();
         resetAutoPlay();
 
-        // LÓGICA DE CARRITO
         let cartTotalItems = 0;
-        let cartItems = {};
-
-        function updateQty(itemId, price, change) {
-            const counterElement = document.getElementById('cart-counter');
-            if (!counterElement) {
-                alert("Debes iniciar sesión para comprar entradas o comida.");
-                window.location.href = "/login";
-                return;
-            }
-            if (!cartItems[itemId]) { cartItems[itemId] = 0; }
-
-            let oldQty = cartItems[itemId];
-            let newQty = oldQty + change;
-            if (newQty < 0) newQty = 0;
-            let diff = newQty - oldQty;
-
-            if (diff !== 0) {
-                cartItems[itemId] = newQty;
-                cartTotalItems += diff;
-                document.getElementById('qty-' + itemId).textContent = newQty;
-                counterElement.textContent = cartTotalItems;
-
-                if (change > 0) {
-                    const cartBtn = document.querySelector('.cart-floating');
-                    cartBtn.style.transform = 'scale(1.3)';
-                    setTimeout(() => cartBtn.style.transform = 'scale(1)', 200);
-                }
-            }
-        }
 
         function addToCartMovie(itemName, price) {
-            const counterElement = document.getElementById('cart-counter');
+            const counterElement = document.getElementById('nav-cart-counter');
             if (counterElement) {
                 cartTotalItems++;
                 counterElement.textContent = cartTotalItems;
-                const cartBtn = document.querySelector('.cart-floating');
-                cartBtn.style.transform = 'scale(1.3)';
-                setTimeout(() => cartBtn.style.transform = 'scale(1)', 200);
+                const navCart = document.querySelector('.nav-cart');
+                navCart.style.transform = 'scale(1.3)';
+                setTimeout(() => navCart.style.transform = 'scale(1)', 200);
             } else {
-                alert("Debes iniciar sesión para comprar entradas o comida.");
+                alert("You must sign in to purchase tickets or food.");
                 window.location.href = "/login";
             }
         }

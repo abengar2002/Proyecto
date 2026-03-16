@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
+use App\Mail\SecurityCodeMail; // <-- ¡El cartero que creamos!
 
 class AuthController extends Controller
 {
@@ -32,10 +33,8 @@ class AuthController extends Controller
                 'two_factor_expires_at' => now()->addMinutes(10)
             ]);
 
-            // Enviar email
-            Mail::raw("Tu código secreto de acceso a Screenbites es: $code\n\nCaduca en 10 minutos.", function ($message) use ($user) {
-                $message->to($user->email)->subject('Código de Seguridad - Screenbites');
-            });
+            // Enviar email usando nuestro diseño personalizado
+            Mail::to($user->email)->send(new SecurityCodeMail($code, $user));
 
             // Guardar ID y mandar a la pantalla del código
             session(['2fa_user_id' => $user->id]);
@@ -75,10 +74,8 @@ class AuthController extends Controller
             'two_factor_expires_at' => now()->addMinutes(10)
         ]);
 
-        // 3. Le mandamos el correo de bienvenida y verificación
-        Mail::raw("¡Bienvenido a Screenbites, $user->name!\n\nTu código secreto de acceso es: $code\n\nCaduca en 10 minutos.", function ($message) use ($user) {
-            $message->to($user->email)->subject('Bienvenido - Código de Seguridad');
-        });
+        // 3. Le mandamos el correo de verificación con el diseño personalizado
+        Mail::to($user->email)->send(new SecurityCodeMail($code, $user));
 
         // 4. Guardamos su ID y lo mandamos directo a la pantalla de poner el código
         session(['2fa_user_id' => $user->id]);
