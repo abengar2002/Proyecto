@@ -146,7 +146,7 @@
         </div>
 
         <div class="footer">
-            &copy; 2024 Cine Screenbites. Todos los derechos reservados.<br>
+            &copy; 2026 Cine Screenbites. Todos los derechos reservados.<br>
             Experience cinema like never before.
         </div>
     </div>

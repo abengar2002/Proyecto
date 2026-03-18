@@ -56,7 +56,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 5%;
+            padding: 0 5% 0 3%;
             height: 100px;
             z-index: 1000;
             background-color: transparent;
@@ -72,7 +72,8 @@
             }
 
             .logo img {
-                height: 50px;
+                margin-top: 1rem;
+                height: 70px;
             }
 
             nav {
