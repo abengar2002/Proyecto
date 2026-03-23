@@ -43,7 +43,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 5%;
+            padding: 0 5% 0 3%;
             height: 100px;
             z-index: 1000;
             background-color: transparent;
@@ -59,7 +59,7 @@
             }
 
             .logo img {
-                height: 50px;
+                height: 60px;
             }
 
             nav {
@@ -202,8 +202,7 @@
                 object-fit: cover;
                 object-position: top;
                 z-index: 1;
-                opacity: 0.3;
-                filter: blur(5px);
+                opacity: 20%;
             }
 
             .backdrop-gradient {
@@ -706,7 +705,7 @@
                 @auth
                 <div class="user-nav">
                     <li>
-                        <a href="#" class="user-profile" title="My Profile">
+                        <a href="/profile" class="user-profile" title="My Profile">
                             <img src="{{ asset('img/avatars/' . Auth::user()->avatar) }}" alt="Avatar"
                                 class="user-avatar" onerror="this.src='https://via.placeholder.com/35/333/ffd000'">
                             <span class="user-name">{{ strtoupper(Auth::user()->name) }}</span>
@@ -795,7 +794,7 @@
 
                 <div class="action-buttons">
                     <button class="btn-buy" onclick="window.location.href='/booking/{{ $id }}'">
-                        <img src="{{ asset('img/img/Ticket-amarillo.png') }}" alt="Ticket"> BUY TICKETS - $8.50
+                        <img src="{{ asset('img/img/Ticket-amarillo.png') }}" alt="Ticket"> BUY TICKETS
                     </button>
                     <a href="/" class="btn-back">BACK TO FILMS</a>
                 </div>

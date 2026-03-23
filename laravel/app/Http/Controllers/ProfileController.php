@@ -16,7 +16,8 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
+        // Cambiamos 'profile.edit' por 'profile' que es el nombre de nuestra nueva vista
+        return view('profile', [
             'user' => $request->user(),
         ]);
     }
@@ -32,9 +33,15 @@ class ProfileController extends Controller
             $request->user()->email_verified_at = null;
         }
 
+        // Guardamos el avatar si viene en la petición
+        if ($request->has('avatar')) {
+            $request->user()->avatar = $request->avatar;
+        }
+
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        // Y pon esta, que te manda a la raíz de la web:
+        return Redirect::to('/')->with('status', 'Perfil actualizado con éxito');
     }
 
     /**

@@ -16,6 +16,10 @@
             --color-amarillo: #ffd000;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -72,8 +76,7 @@
             }
 
             .logo img {
-                margin-top: 1rem;
-                height: 70px;
+                height: 60px;
             }
 
             nav {
@@ -585,6 +588,7 @@
                                 letter-spacing: 1px;
                                 transition: background 0.2s;
                                 width: 100%;
+                                pointer-events: auto;
 
                                 &:hover {
                                     background: #ffffff;
@@ -946,14 +950,13 @@
             <div class="logo"><img src="{{ asset('img/img/Logo-Negro.png') }}" alt="Cinema Logo" id="main-logo"></div>
             <nav>
                 <ul>
-                    <li><a href="/">HOME</a></li>
-                    <li><a href="#cartelera">FILMS</a></li>
+                    <li><a href="#main-hero">HOME</a></li> <li><a href="#cartelera">FILMS</a></li>
                     <li><a href="#bar">MENUS</a></li>
 
                     @auth
                     <div class="user-nav">
                         <li>
-                            <a href="#" class="user-profile" title="My Profile">
+                            <a href="/profile" class="user-profile" title="My Profile">
                                 <img src="{{ asset('img/avatars/' . Auth::user()->avatar) }}" alt="Avatar"
                                     class="user-avatar" onerror="this.src='https://via.placeholder.com/35/333/ffd000'">
                                 <span class="user-name">{{ strtoupper(Auth::user()->name) }}</span>
@@ -1024,6 +1027,39 @@
             </nav>
         </header>
 
+        @if (session('status'))
+        <div id="toast-message" style="position: fixed; top: 120px; right: 5%; background-color: var(--color-amarillo); color: var(--color-negro); padding: 15px 25px; border-radius: 6px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: slideIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                @if(session('status') === 'profile-updated')
+                    Profile updated successfully!
+                @else
+                    {{ session('status') }}
+                @endif
+            </div>
+        </div>
+
+        <style>
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        </style>
+
+        <script>
+            // Autodestrucción del mensaje a los 4 segundos
+            setTimeout(() => {
+                const toast = document.getElementById('toast-message');
+                if(toast) {
+                    toast.style.transition = 'all 0.5s ease';
+                    toast.style.transform = 'translateX(100%)';
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 500);
+                }
+            }, 4000);
+        </script>
+        @endif
+
         <div class="hero-container">
             <div class="hero-info">
                 <div class="title-wrapper">
@@ -1035,7 +1071,7 @@
                     </div>
                 </div>
                 <div class="hero-buttons">
-                    <button class="btn-primary" id="btn-buy" onclick="addToCartMovie('Kill Bill Ticket', 8.50)">
+                    <button class="btn-primary" id="btn-buy" onclick="window.location.href='/booking/01'">
                         <img src="{{ asset('img/img/Ticket-amarillo.png') }}" id="ticket-icon"> BUY TICKETS
                     </button>
                     <button class="btn-secondary" id="btn-view-film">VIEW FILM</button>
@@ -1309,7 +1345,7 @@
                 <div class="movie-card-overlay">
                     <h4 class="movie-card-title" onclick="window.location.href='/pelicula/${movie.id}'">${movie.title}</h4>
                     <p class="movie-card-genre">${movie.genre}</p>
-                    <button class="btn-card" onclick="addToCartMovie('${movie.title} Ticket', 8.50)">Buy Tickets</button>
+                    <button class="btn-card" onclick="window.location.href='/booking/${movie.id}'">Buy Tickets</button>
                     <button class="btn-card btn-outline" style="margin-top:8px;" onclick="window.location.href='/pelicula/${movie.id}'">More Info</button>
                 </div>
             `;
@@ -1370,8 +1406,9 @@
             mainHero.style.color = color;
             document.getElementById('movie-id').style.webkitTextStroke = `2px ${color}`;
 
+            // CAMBIO AQUÍ: Ahora el botón del Hero principal también redirige a la reserva
             const btnBuyHero = document.getElementById('btn-buy');
-            btnBuyHero.setAttribute('onclick', `addToCartMovie('VIP Ticket: ${activeMovie.title}', 12.00)`);
+            btnBuyHero.setAttribute('onclick', `window.location.href='/booking/${activeMovie.id}'`);
 
             const btnViewHero = document.getElementById('btn-view-film');
             btnViewHero.onclick = function () {
@@ -1408,22 +1445,6 @@
 
         updateCarousel();
         resetAutoPlay();
-
-        let cartTotalItems = 0;
-
-        function addToCartMovie(itemName, price) {
-            const counterElement = document.getElementById('nav-cart-counter');
-            if (counterElement) {
-                cartTotalItems++;
-                counterElement.textContent = cartTotalItems;
-                const navCart = document.querySelector('.nav-cart');
-                navCart.style.transform = 'scale(1.3)';
-                setTimeout(() => navCart.style.transform = 'scale(1)', 200);
-            } else {
-                alert("You must sign in to purchase tickets or food.");
-                window.location.href = "/login";
-            }
-        }
     </script>
 </body>
 
