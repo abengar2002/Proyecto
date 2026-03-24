@@ -474,6 +474,61 @@
             }
         }
 
+        /* --- REVIEWS SECTION --- */
+        .reviews-section {
+            padding: 20px 5% 80px;
+            background-color: var(--color-negro);
+            max-width: 1400px;
+            margin: 0 auto;
+
+            .reviews-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 20px;
+
+                .review-card {
+                    background: #0a0a0a;
+                    border: 1px solid #222;
+                    border-radius: 8px;
+                    padding: 25px;
+                    transition: border-color 0.3s ease, transform 0.3s ease;
+
+                    &:hover { 
+                        border-color: var(--color-principal); 
+                        transform: translateY(-5px);
+                    }
+
+                    .review-stars {
+                        color: var(--color-principal);
+                        margin-bottom: 10px;
+                        font-size: 20px;
+                        letter-spacing: 2px;
+                    }
+
+                    h4 {
+                        font-size: 18px;
+                        color: var(--color-blanco);
+                        margin-bottom: 10px;
+                        text-transform: uppercase;
+                    }
+
+                    p {
+                        color: #aaa;
+                        font-size: 14px;
+                        line-height: 1.6;
+                        font-family: Arial, sans-serif;
+                    }
+                }
+            }
+
+            .no-reviews {
+                color: #666;
+                font-family: Arial, sans-serif;
+                font-style: italic;
+                padding: 20px 0;
+            }
+        }
+
         /* --- EXCLUSIVE MENU --- */
         .exclusive-movie-menu {
             padding: 20px 5% 80px;
@@ -851,6 +906,81 @@
             </button>
         </div>
     </section>
+
+    <section class="reviews-section" style="padding: 50px 10% 100px; background: #000; color: white;">
+        @if(session('error'))
+    <div style="background: #721c24; color: #f8d7da; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        {{ session('error') }}
+    </div>
+@endif
+
+@if(session('status'))
+    <div style="background: #155724; color: #d4edda; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        {{ session('status') }}
+    </div>
+@endif
+    <h2 style="color: var(--color-principal); margin-bottom: 30px; font-size: 2rem;">Audience Reviews</h2>
+
+    @auth
+        <div style="background: #111; padding: 25px; border-radius: 12px; margin-bottom: 40px; border: 1px solid #333;">
+            <h4 style="margin-bottom: 15px; color: #fff;">Hi {{ Auth::user()->name }}, share your thoughts!</h4>
+            
+            <form action="{{ route('pelicula.review', ['id' => $id]) }}" method="POST">
+                @csrf
+                <div style="margin-bottom: 15px;">
+                    <label style="color: #888; display: block; margin-bottom: 5px;">Score:</label>
+                    <select name="score" required style="background: #222; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px; width: 100px;">
+                        <option value="5">5 ★★★★★</option>
+                        <option value="4">4 ★★★★</option>
+                        <option value="3">3 ★★★</option>
+                        <option value="2">2 ★★</option>
+                        <option value="1">1 ★</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <textarea name="content" required placeholder="Write your review here..." rows="4" style="width: 100%; background: #222; color: #fff; border: 1px solid #444; padding: 15px; border-radius: 8px; resize: none;"></textarea>
+                </div>
+
+                <button type="submit" style="background: var(--color-principal); color: #000; padding: 12px 30px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase;">
+                    Submit Review
+                </button>
+            </form>
+        </div>
+    @else
+        <div style="background: #111; padding: 20px; border-radius: 10px; border: 1px dashed #444; text-align: center; margin-bottom: 40px;">
+            <p style="color: #aaa;">You must be <a href="{{ route('login') }}" style="color: var(--color-principal); text-decoration: none; font-weight: bold;">logged in</a> to write a review.</p>
+        </div>
+    @endauth
+
+    <div class="reviews-list" style="display: grid; gap: 20px;">
+    @forelse($reviews as $review)
+        <div style="background: #111; padding: 20px; border-radius: 12px; display: flex; gap: 20px; align-items: flex-start; border: 1px solid #222;">
+            
+            @php
+                // Generamos un hash del nombre o email para tener una imagen única
+                $userHash = md5(strtolower(trim($review['title']))); 
+                $avatarUrl = "https://www.gravatar.com/avatar/{$userHash}?d=identicon&s=100";
+            @endphp
+            <img src="{{ $avatarUrl }}" alt="User" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--color-principal);">
+
+            <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <strong style="color: #fff;">{{ str_replace('Review by ', '', $review['title']) }}</strong>
+                    <span style="color: var(--color-principal);">
+                        {{ str_repeat('★', $review['score']) }}{{ str_repeat('☆', 5 - $review['score']) }}
+                    </span>
+                </div>
+                <p style="color: #aaa; font-size: 0.95rem; line-height: 1.4; margin: 0;">
+                    "{{ $review['content'] }}"
+                </p>
+            </div>
+        </div>
+    @empty
+        <p style="color: #666; font-style: italic;">No reviews yet. Be the first one!</p>
+    @endforelse
+</div>
+</section>
 
     @if(in_array((int)$id, [1, 4, 9]) || in_array((string)$id, ['01', '04', '09']))
         @php

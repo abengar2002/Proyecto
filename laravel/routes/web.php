@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\PasswordController;
+use Illuminate\Support\Facades\Http; 
+use Illuminate\Http\Request; // <-- AÑADIDO para el formulario de reseñas
+use Illuminate\Support\Facades\Auth;
 
 // ==========================================
 // 1. RUTA PRINCIPAL (PORTADA)
@@ -27,8 +30,6 @@ Route::get('/pelicula/{id}', function ($id) {
         "08" => ["title" => "Interstellar", "age" => "+12", "genre" => "Adventure, Sci-Fi", "bgImg" => "img/8-Interstellar/Portada.png", "poster" => "img/8-Interstellar/Mini.png", "desc" => "Un equipo de exploradores viaja a través de un agujero de gusano en el espacio en un intento por asegurar la supervivencia de la humanidad.", "bg" => "#090a0a", "textColor" => "white"],
         "09" => ["title" => "Barbie", "age" => "TP", "genre" => "Comedy, Fantasy", "bgImg" => "img/9-Barbie/Portada.png", "poster" => "img/9-Barbie/Mini.png", "desc" => "Barbie sufre una crisis que la lleva a cuestionarse su mundo perfecto, emprendiendo un viaje al mundo real.", "bg" => "#51caf5", "textColor" => "white"],
         "10" => ["title" => "Mamma Mia", "age" => "TP", "genre" => "Comedy, Musical", "bgImg" => "img/10-MammaMia/Portada.jpg", "poster" => "img/10-MammaMia/Mini.jpg", "desc" => "La historia de una joven que, antes de casarse, decide invitar a los tres posibles padres que su madre tuvo en el pasado.", "bg" => "#b3d0e2", "textColor" => "black"],
-        
-        // Pelis 11 al 15 completadas con colores y fondos
         "11" => ["title" => "Deadpool & Wolverine", "age" => "+18", "genre" => "Action, Comedy", "bgImg" => "img/11-Deadpool/Portada.png", "poster" => "img/11-Deadpool/Mini.jpg", "desc" => "Deadpool y Wolverine se unen en una nueva y alocada aventura.", "bg" => "#aa0000", "textColor" => "white", "isComingSoon" => true, "releaseDate" => "JULY 25"],
         "12" => ["title" => "Gladiator II", "age" => "+16", "genre" => "Action, Drama", "bgImg" => "img/12-Gladiator/Portada.png", "poster" => "img/12-Gladiator/Mini.jpg", "desc" => "La esperada secuela de la épica historia de Roma.", "bg" => "#d4af37", "textColor" => "black", "isComingSoon" => true, "releaseDate" => "NOV 15"],
         "13" => ["title" => "Venom 3", "age" => "+16", "genre" => "Sci-Fi, Action", "bgImg" => "img/13-Venom/Portada.png", "poster" => "img/13-Venom/Mini.png", "desc" => "Eddie Brock y el simbionte se enfrentan a su mayor desafío.", "bg" => "#630000", "textColor" => "black", "isComingSoon" => true, "releaseDate" => "OCT 24"],
@@ -41,8 +42,79 @@ Route::get('/pelicula/{id}', function ($id) {
         "bgImg" => "", "poster" => "", "desc" => "No hay información disponible para esta película.", "bg" => "#ffd000", "textColor" => "black"
     ];
 
-    return view('pelicula', ['id' => $id, 'movie' => $movie]);
+    // ========================================================
+    // CONEXIÓN CON WORDPRESS (API REST) - LECTURA
+    // ========================================================
+    $wordpressUrl = 'http://127.0.0.1/proyecto/wp'; 
+    $reviews = [];
+
+    try {
+        $response = Http::withoutVerifying()->timeout(5)->get("{$wordpressUrl}/wp-json/wp/v2/reviews");
+
+        if ($response->successful()) {
+            $allReviews = $response->json();
+            foreach ($allReviews as $review) {
+                $wp_id = $review['acf']['id_pelicula_laravel'] ?? $review['acf']['id_laravel'] ?? null;
+                $wp_score = $review['acf']['puntuacion'] ?? 0;
+
+                if ($wp_id !== null && intval($wp_id) === intval($id)) {
+                    $reviews[] = [
+                        'title' => $review['title']['rendered'],
+                        'content' => strip_tags($review['content']['rendered']),
+                        'score' => intval($wp_score),
+                    ];
+                }
+            }
+        }
+    } catch (\Exception $e) {
+        $reviews = [];
+    }
+
+    return view('pelicula', ['id' => $id, 'movie' => $movie, 'reviews' => $reviews]);
 })->name('pelicula.show');
+
+// ==========================================
+// 5. GUARDAR RESEÑAS EN WORDPRESS (ESCRITURA)
+// ==========================================
+Route::post('/pelicula/{id}/review', function (Request $request, $id) {
+    $request->validate([
+        'content' => 'required|string|min:5',
+        'score' => 'required|integer|min:1|max:5',
+    ]);
+
+    $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
+    $userName = Auth::user()->name;
+
+    // --- NUEVO: COMPROBACIÓN DE DUPLICADOS ---
+    $checkResponse = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/reviews");
+    if ($checkResponse->successful()) {
+        $existingReviews = $checkResponse->json();
+        foreach ($existingReviews as $rev) {
+            $rev_laravel_id = $rev['acf']['id_pelicula_laravel'] ?? null;
+            // Si el título coincide con el nombre del usuario y el ID de película es el mismo...
+            if ($rev['title']['rendered'] == "Review by $userName" && intval($rev_laravel_id) == intval($id)) {
+                return back()->with('error', 'You have already reviewed this movie!');
+            }
+        }
+    }
+    // --- FIN COMPROBACIÓN ---
+
+    // Envío normal (el código que ya tenías del bot...)
+    $response = Http::withBasicAuth(env('WP_USER'), env('WP_PASSWORD'))
+        ->withoutVerifying()
+        ->post("{$wordpressUrl}/wp-json/wp/v2/reviews", [
+            'title'   => 'Review by ' . $userName,
+            'content' => $request->input('content'),
+            'status'  => 'publish',
+            'acf'     => [
+                'id_pelicula_laravel' => $id,
+                'puntuacion' => $request->input('score'),
+                'user_email' => Auth::user()->email // Enviamos el email para la foto
+            ]
+        ]);
+
+    return back()->with('status', 'Review published!');
+})->middleware('auth')->name('pelicula.review');
 
 
 // ==========================================
@@ -73,7 +145,6 @@ Route::middleware('auth')->group(function () {
 // ==========================================
 // 4. FLUJO DE COMPRA (BOOKING)
 // ==========================================
-
 $bookingMovies = [
     "01" => ["title" => "Kill Bill", "bgImg" => "img/1-Kill-Bill/Portada.png", "bg" => "#ffd000", "textColor" => "black"],
     "02" => ["title" => "Five Nights at Freddy's", "bgImg" => "img/2-Five-Nights/Portada.png", "bg" => "#1a0429", "textColor" => "white"],
@@ -85,8 +156,6 @@ $bookingMovies = [
     "08" => ["title" => "Interstellar", "bgImg" => "img/8-Interstellar/Portada.png", "bg" => "#090a0a", "textColor" => "white"],
     "09" => ["title" => "Barbie", "bgImg" => "img/9-Barbie/Portada.png", "bg" => "#51caf5", "textColor" => "white"],
     "10" => ["title" => "Mamma Mia", "bgImg" => "img/10-MammaMia/Portada.jpg", "bg" => "#b3d0e2", "textColor" => "black"],
-    
-    // Si alguien intenta entrar a comprar entradas de las pelis del 11 al 15
     "11" => ["title" => "Deadpool & Wolverine", "bgImg" => "img/11-Deadpool/Portada.png", "bg" => "#aa0000", "textColor" => "white"],
     "12" => ["title" => "Gladiator II", "bgImg" => "img/12-Gladiator/Portada.png", "bg" => "#d4af37", "textColor" => "black"],
     "13" => ["title" => "Venom 3", "bgImg" => "img/13-Venom/Portada.png", "bg" => "#630000", "textColor" => "black"],
