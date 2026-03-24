@@ -26,6 +26,10 @@
             padding: 0;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Arial Black', 'Arial Bold', sans-serif;
             overflow-x: hidden;
@@ -304,7 +308,7 @@
                                 filter: {{ ($movie['textColor'] ?? 'black') === 'white' ? 'invert(0)' : 'invert(1)' }}; 
                             }
 
-                            &:hover {
+                            &:hover:not(:disabled) {
                                 background: var(--color-blanco);
                                 color: var(--color-negro);
                                 transform: scale(1.05);
@@ -312,6 +316,12 @@
                                 img {
                                     filter: invert(1);
                                 }
+                            }
+                            
+                            &:disabled {
+                                opacity: 0.5;
+                                cursor: not-allowed;
+                                background-color: var(--color-principal);
                             }
                         }
 
@@ -496,14 +506,14 @@
 
                 .exclusive-img-container {
                     flex-shrink: 0;
-                    width: 380px; /* <--- FOTO MÁS GRANDE AQUÍ ---> */
-                    height: 260px; /* <--- ALTURA AJUSTADA ---> */
+                    width: 380px; 
+                    height: 260px; 
                     border-radius: 8px;
                     overflow: hidden;
                     border: 2px solid var(--color-principal);
                     position: relative;
                     z-index: 2;
-                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Pequeña sombra para destacar */
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
 
                     img {
                         width: 100%;
@@ -787,16 +797,24 @@
                     <span class="age-badge">{{ $movie['age'] ?? '+18' }}</span>
                     <span>{{ $movie['genre'] ?? 'Action' }}</span>
                     <span>2h 15m</span>
-                    <span>Available Now</span>
+                    <span style="color: var(--color-principal); font-weight: bold;">
+                        {{ isset($movie['isComingSoon']) && $movie['isComingSoon'] ? 'Coming Soon' : 'Available Now' }}
+                    </span>
                 </div>
 
                 <p class="movie-desc">{{ $movie['desc'] ?? 'Overview of the movie...' }}</p>
 
                 <div class="action-buttons">
-                    <button class="btn-buy" onclick="window.location.href='/booking/{{ $id }}'">
-                        <img src="{{ asset('img/img/Ticket-amarillo.png') }}" alt="Ticket"> BUY TICKETS
-                    </button>
-                    <a href="/" class="btn-back">BACK TO FILMS</a>
+                    @if(isset($movie['isComingSoon']) && $movie['isComingSoon'])
+                        <button class="btn-buy" disabled>
+                            AVAILABLE {{ $movie['releaseDate'] ?? 'SOON' }}
+                        </button>
+                    @else
+                        <button class="btn-buy" onclick="window.location.href='/booking/{{ $id }}'">
+                            <img src="{{ asset('img/img/Ticket-amarillo.png') }}" alt="Ticket"> BUY TICKETS
+                        </button>
+                    @endif
+                    <a href="/#cartelera" class="btn-back">BACK TO FILMS</a>
                 </div>
             </div>
         </div>

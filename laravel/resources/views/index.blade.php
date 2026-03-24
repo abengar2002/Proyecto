@@ -678,10 +678,11 @@
                             border-bottom: 1px solid #333;
                             padding-bottom: 15px;
 
-                            .food-icon-svg {
+                            /* CLASE PARA TUS IMÁGENES DE ICONOS */
+                            .food-icon-img {
                                 width: 35px;
                                 height: 35px;
-                                color: var(--color-amarillo);
+                                object-fit: contain;
                             }
 
                             h3 {
@@ -757,6 +758,11 @@
                             align-items: center;
                             justify-content: center;
                             gap: 10px;
+                            
+                            svg {
+                                width: 28px;
+                                height: 28px;
+                            }
                         }
 
                         p {
@@ -846,7 +852,6 @@
                     flex: 1;
                     min-width: 200px;
 
-                    /* Ajustes para centrar la primera columna */
                     &:first-child {
                         display: flex;
                         flex-direction: column;
@@ -854,12 +859,13 @@
                         text-align: center;
                         
                         .footer-logo img {
-                            height: 60px; /* Un poco más grande para destacar */
+                            height: 60px;
                             margin-bottom: 20px;
+                            display: block;
                         }
 
                         p {
-                            max-width: 250px; /* Para que el texto no se extienda demasiado */
+                            max-width: 250px;
                         }
                     }
 
@@ -950,7 +956,8 @@
             <div class="logo"><img src="{{ asset('img/img/Logo-Negro.png') }}" alt="Cinema Logo" id="main-logo"></div>
             <nav>
                 <ul>
-                    <li><a href="#main-hero">HOME</a></li> <li><a href="#cartelera">FILMS</a></li>
+                    <li><a href="#main-hero">HOME</a></li>
+                    <li><a href="#cartelera">FILMS</a></li>
                     <li><a href="#bar">MENUS</a></li>
 
                     @auth
@@ -1125,15 +1132,7 @@
 
                 <div class="food-card">
                     <div class="food-card-header">
-                        <svg class="food-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 8a6 6 0 0 0-12 0c0 7 2.5 9 6 11 3.5-2 6-4 6-11Z" />
-                            <path d="M12 3v3" />
-                            <path d="M10.3 4.2l1.4 2.5" />
-                            <path d="M13.7 4.2l-1.4 2.5" />
-                            <path d="M8 10h8" />
-                            <path d="M8 14h8" />
-                        </svg>
+                        <img src="{{ asset('img/svg/popcorn.svg') }}" alt="Popcorn Icon" class="food-icon-img">
                         <h3>Popcorn & Food</h3>
                     </div>
                     <ul>
@@ -1151,13 +1150,7 @@
 
                 <div class="food-card">
                     <div class="food-card-header">
-                        <svg class="food-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M7 11V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6" />
-                            <path d="M19 11l-1.37 8.22a2 2 0 0 1-1.97 1.78H8.34a2 2 0 0 1-1.97-1.78L5 11h14Z" />
-                            <path d="M12 11v10" />
-                            <path d="M8 15h8" />
-                        </svg>
+                        <img src="{{ asset('img/svg/drinks.svg') }}" alt="Drinks Icon" class="food-icon-img">
                         <h3>Fresh Drinks</h3>
                     </div>
                     <ul>
@@ -1175,14 +1168,7 @@
 
                 <div class="food-card">
                     <div class="food-card-header">
-                        <svg class="food-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                            <line x1="3" y1="9" x2="21" y2="9" />
-                            <line x1="3" y1="15" x2="21" y2="15" />
-                            <line x1="9" y1="3" x2="9" y2="21" />
-                            <line x1="15" y1="3" x2="15" y2="21" />
-                        </svg>
+                        <img src="{{ asset('img/svg/sweets.svg') }}" alt="Sweets Icon" class="food-icon-img">
                         <h3>Snacks & Sweets</h3>
                     </div>
                     <ul>
@@ -1406,7 +1392,6 @@
             mainHero.style.color = color;
             document.getElementById('movie-id').style.webkitTextStroke = `2px ${color}`;
 
-            // CAMBIO AQUÍ: Ahora el botón del Hero principal también redirige a la reserva
             const btnBuyHero = document.getElementById('btn-buy');
             btnBuyHero.setAttribute('onclick', `window.location.href='/booking/${activeMovie.id}'`);
 
