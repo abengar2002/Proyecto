@@ -5,101 +5,87 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\PasswordController;
 use Illuminate\Support\Facades\Http; 
-use Illuminate\Http\Request; // <-- AÑADIDO para el formulario de reseñas
+use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Auth;
 
-// ==========================================
-// 1. RUTA PRINCIPAL (PORTADA)
-// ==========================================
+// 1. PORTADA
 Route::get('/', function () {
     return view('index'); 
 })->name('home');
 
-// ==========================================
-// 2. RUTA DE DETALLES DE PELÍCULA
-// ==========================================
+// 2. DETALLES DE PELÍCULA
 Route::get('/pelicula/{id}', function ($id) {
-    $movies = [
-        "01" => ["title" => "Kill Bill", "age" => "+18", "genre" => "Action, Suspense", "bgImg" => "img/1-Kill-Bill/Portada.png", "poster" => "img/1-Kill-Bill/Mini.png", "desc" => "Una asesina despierta de un coma y jura vengarse de sus antiguos compañeros que la traicionaron el día de su boda.", "bg" => "#ffd000", "textColor" => "black"],
-        "02" => ["title" => "Five Nights at Freddy's", "age" => "+16", "genre" => "Horror, Thriller", "bgImg" => "img/2-Five-Nights/Portada.png", "poster" => "img/2-Five-Nights/Mini.png", "desc" => "Un guardia de seguridad nocturno comienza a trabajar en Freddy Fazbear's Pizza, donde descubre que los animatrónicos cobran vida.", "bg" => "#1a0429", "textColor" => "white"],
-        "03" => ["title" => "Godzilla", "age" => "+12", "genre" => "Action, Sci-Fi", "bgImg" => "img/3-Godzilla/Portada.png", "poster" => "img/3-Godzilla/Mini.png", "desc" => "El rey de los monstruos regresa para enfrentarse a criaturas gigantescas que amenazan la existencia de la humanidad.", "bg" => "#0a2233", "textColor" => "white"],
-        "04" => ["title" => "Oppenheimer", "age" => "+16", "genre" => "Biography, History", "bgImg" => "img/4-Oppenheimer/Portada.png", "poster" => "img/4-Oppenheimer/Mini.png", "desc" => "La fascinante y paradójica historia del científico J. Robert Oppenheimer y su papel clave en el desarrollo de la bomba atómica.", "bg" => "#2e1409", "textColor" => "white"],
-        "05" => ["title" => "Up", "age" => "TP", "genre" => "Animation, Adventure", "bgImg" => "img/5-Up/Portada.png", "poster" => "img/5-Up/Mini.png", "desc" => "Un viudo de 78 años viaja a Paradise Falls en su casa equipada con miles de globos, acompañado por un joven explorador.", "bg" => "#a1cce0", "textColor" => "black"],
-        "06" => ["title" => "The Joker", "age" => "+18", "genre" => "Crime, Drama", "bgImg" => "img/6-The-Joker/Portada.png", "poster" => "img/6-The-Joker/Mini.png", "desc" => "Un comediante fallido, ignorado por la sociedad, se vuelve loco y se convierte en un cerebro psicópata criminal en Gotham.", "bg" => "#120908", "textColor" => "white"],
-        "07" => ["title" => "Alien", "age" => "+18", "genre" => "Horror, Sci-Fi", "bgImg" => "img/7-Alien/Portada.png", "poster" => "img/7-Alien/Mini.png", "desc" => "La tripulación de una nave espacial comercial aterriza en un planeta desconocido y se encuentra con una letal forma de vida.", "bg" => "#051417", "textColor" => "white"],
-        "08" => ["title" => "Interstellar", "age" => "+12", "genre" => "Adventure, Sci-Fi", "bgImg" => "img/8-Interstellar/Portada.png", "poster" => "img/8-Interstellar/Mini.png", "desc" => "Un equipo de exploradores viaja a través de un agujero de gusano en el espacio en un intento por asegurar la supervivencia de la humanidad.", "bg" => "#090a0a", "textColor" => "white"],
-        "09" => ["title" => "Barbie", "age" => "TP", "genre" => "Comedy, Fantasy", "bgImg" => "img/9-Barbie/Portada.png", "poster" => "img/9-Barbie/Mini.png", "desc" => "Barbie sufre una crisis que la lleva a cuestionarse su mundo perfecto, emprendiendo un viaje al mundo real.", "bg" => "#51caf5", "textColor" => "white"],
-        "10" => ["title" => "Mamma Mia", "age" => "TP", "genre" => "Comedy, Musical", "bgImg" => "img/10-MammaMia/Portada.jpg", "poster" => "img/10-MammaMia/Mini.jpg", "desc" => "La historia de una joven que, antes de casarse, decide invitar a los tres posibles padres que su madre tuvo en el pasado.", "bg" => "#b3d0e2", "textColor" => "black"],
-        "11" => ["title" => "Deadpool & Wolverine", "age" => "+18", "genre" => "Action, Comedy", "bgImg" => "img/11-Deadpool/Portada.png", "poster" => "img/11-Deadpool/Mini.jpg", "desc" => "Deadpool y Wolverine se unen en una nueva y alocada aventura.", "bg" => "#aa0000", "textColor" => "white", "isComingSoon" => true, "releaseDate" => "JULY 25"],
-        "12" => ["title" => "Gladiator II", "age" => "+16", "genre" => "Action, Drama", "bgImg" => "img/12-Gladiator/Portada.png", "poster" => "img/12-Gladiator/Mini.jpg", "desc" => "La esperada secuela de la épica historia de Roma.", "bg" => "#d4af37", "textColor" => "black", "isComingSoon" => true, "releaseDate" => "NOV 15"],
-        "13" => ["title" => "Venom 3", "age" => "+16", "genre" => "Sci-Fi, Action", "bgImg" => "img/13-Venom/Portada.png", "poster" => "img/13-Venom/Mini.png", "desc" => "Eddie Brock y el simbionte se enfrentan a su mayor desafío.", "bg" => "#630000", "textColor" => "black", "isComingSoon" => true, "releaseDate" => "OCT 24"],
-        "14" => ["title" => "Mufasa", "age" => "TP", "genre" => "Adventure, Family", "bgImg" => "img/14-Mufasa/Portada.png", "poster" => "img/14-Mufasa/Mini.jpg", "desc" => "El origen del rey de la sabana contado a la nueva generación.", "bg" => "#ffa500", "textColor" => "black", "isComingSoon" => true, "releaseDate" => "DEC 20"],
-        "15" => ["title" => "Kraven", "age" => "+16", "genre" => "Action, Thriller", "bgImg" => "img/15-Kraven/Portada.png", "poster" => "img/15-Kraven/Mini.png", "desc" => "Descubre cómo surgió uno de los cazadores más letales del universo.", "bg" => "#8b4513", "textColor" => "white", "isComingSoon" => true, "releaseDate" => "DEC 13"]
-    ];
+    $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp'); 
 
-    $movie = $movies[$id] ?? [
+    $movie = [
         "title" => "Película Desconocida", "age" => "?", "genre" => "Desconocido", 
-        "bgImg" => "", "poster" => "", "desc" => "No hay información disponible para esta película.", "bg" => "#ffd000", "textColor" => "black"
+        "bgImg" => "", "poster" => "", "desc" => "No hay información disponible.", 
+        "bg" => "#222222", "textColor" => "white",
+        "menuSpecial" => ["enabled" => false, "title" => "", "text" => "", "image" => ""]
     ];
-
-    // ========================================================
-    // CONEXIÓN CON WORDPRESS (API REST) - LECTURA
-    // ========================================================
-    $wordpressUrl = 'http://127.0.0.1/proyecto/wp'; 
-    $reviews = [];
 
     try {
-        $response = Http::withoutVerifying()->timeout(5)->get("{$wordpressUrl}/wp-json/wp/v2/reviews");
+        // ¡TIEMPO AUMENTADO A 30 SEGUNDOS PARA QUE NO CORTE LA CONEXIÓN!
+        $response = Http::withoutVerifying()->timeout(30)->get("{$wordpressUrl}/wp-json/wp/v2/pelicula?acf_format=standard&per_page=100");
 
         if ($response->successful()) {
-            $allReviews = $response->json();
-            foreach ($allReviews as $review) {
-                $wp_id = $review['acf']['id_pelicula_laravel'] ?? $review['acf']['id_laravel'] ?? null;
-                $wp_score = $review['acf']['puntuacion'] ?? 0;
+            foreach ($response->json() as $wpMovie) {
+                $acf = $wpMovie['acf'] ?? [];
+                
+                if (isset($acf['id_laravel']) && (int)$acf['id_laravel'] === (int)$id) {
+                    $movie = [
+                        "title" => $wpMovie['title']['rendered'],
+                        "desc" => strip_tags($wpMovie['content']['rendered']),
+                        "age" => $acf['edad'] ?? "?",
+                        "genre" => $acf['genero'] ?? "Desconocido",
+                        "bgImg" => $acf['bgimg'] ?? "",
+                        "poster" => $acf['poster'] ?? "",
+                        "bg" => $acf['bg'] ?? "#000000",
+                        "textColor" => $acf['textcolor'] ?? "white",
+                        "isComingSoon" => filter_var($acf['iscomingsoon'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                        "releaseDate" => $acf['releasedate'] ?? "",
+                        "menuSpecial" => [
+                            // FORZAMOS A QUE ENTIENDA EL SÍ O NO CORRECTAMENTE
+                            "enabled" => filter_var($acf['menu_special_enable'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                            "title"   => $acf['menu_special_title'] ?? "",
+                            "text"    => $acf['menu_special_text'] ?? "",
+                            "image"   => $acf['menu_special_img'] ?? ""    
+                        ]
+                    ];
+                    break;
+                }
+            }
+        }
+    } catch (\Exception $e) { }
 
-                if ($wp_id !== null && intval($wp_id) === intval($id)) {
+    // RESEÑAS
+    $reviews = [];
+    try {
+        // TIEMPO AUMENTADO Y 100 RESEÑAS MÁXIMO
+        $responseReviews = Http::withoutVerifying()->timeout(30)->get("{$wordpressUrl}/wp-json/wp/v2/reviews?per_page=100");
+        if ($responseReviews->successful()) {
+            foreach ($responseReviews->json() as $review) {
+                $wp_id = $review['acf']['id_pelicula_laravel'] ?? $review['acf']['id_laravel'] ?? null;
+                if ($wp_id !== null && (int)$wp_id === (int)$id) {
                     $reviews[] = [
                         'title' => $review['title']['rendered'],
                         'content' => strip_tags($review['content']['rendered']),
-                        'score' => intval($wp_score),
+                        'score' => intval($review['acf']['puntuacion'] ?? 0),
                     ];
                 }
             }
         }
-    } catch (\Exception $e) {
-        $reviews = [];
-    }
+    } catch (\Exception $e) { }
 
     return view('pelicula', ['id' => $id, 'movie' => $movie, 'reviews' => $reviews]);
 })->name('pelicula.show');
 
-// ==========================================
-// 5. GUARDAR RESEÑAS EN WORDPRESS (ESCRITURA)
-// ==========================================
+// 3. GUARDAR RESEÑAS
 Route::post('/pelicula/{id}/review', function (Request $request, $id) {
-    $request->validate([
-        'content' => 'required|string|min:5',
-        'score' => 'required|integer|min:1|max:5',
-    ]);
-
+    $request->validate(['content' => 'required|string|min:5', 'score' => 'required|integer|min:1|max:5']);
     $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
     $userName = Auth::user()->name;
 
-    // --- NUEVO: COMPROBACIÓN DE DUPLICADOS ---
-    $checkResponse = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/reviews");
-    if ($checkResponse->successful()) {
-        $existingReviews = $checkResponse->json();
-        foreach ($existingReviews as $rev) {
-            $rev_laravel_id = $rev['acf']['id_pelicula_laravel'] ?? null;
-            // Si el título coincide con el nombre del usuario y el ID de película es el mismo...
-            if ($rev['title']['rendered'] == "Review by $userName" && intval($rev_laravel_id) == intval($id)) {
-                return back()->with('error', 'You have already reviewed this movie!');
-            }
-        }
-    }
-    // --- FIN COMPROBACIÓN ---
-
-    // Envío normal (el código que ya tenías del bot...)
     $response = Http::withBasicAuth(env('WP_USER'), env('WP_PASSWORD'))
         ->withoutVerifying()
         ->post("{$wordpressUrl}/wp-json/wp/v2/reviews", [
@@ -109,42 +95,26 @@ Route::post('/pelicula/{id}/review', function (Request $request, $id) {
             'acf'     => [
                 'id_pelicula_laravel' => $id,
                 'puntuacion' => $request->input('score'),
-                'user_email' => Auth::user()->email // Enviamos el email para la foto
+                'user_email' => Auth::user()->email
             ]
         ]);
-
     return back()->with('status', 'Review published!');
 })->middleware('auth')->name('pelicula.review');
 
-
-// ==========================================
-// 3. RUTAS DE USUARIOS (AUTENTICACIÓN Y PERFIL)
-// ==========================================
+// 4. AUTENTICACIÓN
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
-
     Route::get('/registro', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/registro', [AuthController::class, 'register']);
-
-    Route::get('/verificacion-2fa', [AuthController::class, 'show2faForm'])->name('2fa.form');
-    Route::post('/verificacion-2fa', [AuthController::class, 'verify2fa'])->name('2fa.verify');
 });
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
-    Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
 });
 
-
-// ==========================================
-// 4. FLUJO DE COMPRA (BOOKING)
-// ==========================================
+// 5. BOOKING (ESTÁTICO)
 $bookingMovies = [
     "01" => ["title" => "Kill Bill", "bgImg" => "img/1-Kill-Bill/Portada.png", "bg" => "#ffd000", "textColor" => "black"],
     "02" => ["title" => "Five Nights at Freddy's", "bgImg" => "img/2-Five-Nights/Portada.png", "bg" => "#1a0429", "textColor" => "white"],
@@ -167,13 +137,3 @@ Route::get('/booking/{id}', function ($id) use ($bookingMovies) {
     $movie = $bookingMovies[$id] ?? ["title" => "Película Desconocida", "bgImg" => "", "bg" => "#ffd000", "textColor" => "black"];
     return view('booking', ['id' => $id, 'movie' => $movie]);
 })->name('booking.show');
-
-Route::get('/booking/{id}/food', function ($id) use ($bookingMovies) {
-    $movie = $bookingMovies[$id] ?? ["title" => "Película Desconocida", "bgImg" => "", "bg" => "#ffd000", "textColor" => "black"];
-    return view('booking-food', ['id' => $id, 'movie' => $movie]);
-})->name('booking.food');
-
-Route::get('/booking/{id}/checkout', function ($id) use ($bookingMovies) {
-    $movie = $bookingMovies[$id] ?? ["title" => "Película Desconocida", "bgImg" => "", "bg" => "#ffd000", "textColor" => "black"];
-    return view('checkout', ['id' => $id, 'movie' => $movie]);
-})->name('booking.checkout');

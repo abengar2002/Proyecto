@@ -474,61 +474,6 @@
             }
         }
 
-        /* --- REVIEWS SECTION --- */
-        .reviews-section {
-            padding: 20px 5% 80px;
-            background-color: var(--color-negro);
-            max-width: 1400px;
-            margin: 0 auto;
-
-            .reviews-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 20px;
-
-                .review-card {
-                    background: #0a0a0a;
-                    border: 1px solid #222;
-                    border-radius: 8px;
-                    padding: 25px;
-                    transition: border-color 0.3s ease, transform 0.3s ease;
-
-                    &:hover { 
-                        border-color: var(--color-principal); 
-                        transform: translateY(-5px);
-                    }
-
-                    .review-stars {
-                        color: var(--color-principal);
-                        margin-bottom: 10px;
-                        font-size: 20px;
-                        letter-spacing: 2px;
-                    }
-
-                    h4 {
-                        font-size: 18px;
-                        color: var(--color-blanco);
-                        margin-bottom: 10px;
-                        text-transform: uppercase;
-                    }
-
-                    p {
-                        color: #aaa;
-                        font-size: 14px;
-                        line-height: 1.6;
-                        font-family: Arial, sans-serif;
-                    }
-                }
-            }
-
-            .no-reviews {
-                color: #666;
-                font-family: Arial, sans-serif;
-                font-style: italic;
-                padding: 20px 0;
-            }
-        }
-
         /* --- EXCLUSIVE MENU --- */
         .exclusive-movie-menu {
             padding: 20px 5% 80px;
@@ -639,6 +584,61 @@
                         }
                     }
                 }
+            }
+        }
+
+        /* --- REVIEWS SECTION --- */
+        .reviews-section {
+            padding: 20px 5% 80px;
+            background-color: var(--color-negro);
+            max-width: 1400px;
+            margin: 0 auto;
+
+            .reviews-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 20px;
+
+                .review-card {
+                    background: #0a0a0a;
+                    border: 1px solid #222;
+                    border-radius: 8px;
+                    padding: 25px;
+                    transition: border-color 0.3s ease, transform 0.3s ease;
+
+                    &:hover { 
+                        border-color: var(--color-principal); 
+                        transform: translateY(-5px);
+                    }
+
+                    .review-stars {
+                        color: var(--color-principal);
+                        margin-bottom: 10px;
+                        font-size: 20px;
+                        letter-spacing: 2px;
+                    }
+
+                    h4 {
+                        font-size: 18px;
+                        color: var(--color-blanco);
+                        margin-bottom: 10px;
+                        text-transform: uppercase;
+                    }
+
+                    p {
+                        color: #aaa;
+                        font-size: 14px;
+                        line-height: 1.6;
+                        font-family: Arial, sans-serif;
+                    }
+                }
+            }
+
+            .no-reviews {
+                color: #666;
+                font-family: Arial, sans-serif;
+                font-style: italic;
+                padding: 20px 0;
             }
         }
 
@@ -838,11 +838,11 @@
     </header>
 
     <div class="movie-hero">
-        <img src="{{ asset($movie['bgImg'] ?? '') }}" class="backdrop-img" onerror="this.src='https://via.placeholder.com/1920x1080/111/ffd000?text=Backdrop'">
+        <img src="{{ $movie['bgImg'] ?? '' }}" class="backdrop-img" onerror="this.src='https://via.placeholder.com/1920x1080/111/ffd000?text=Backdrop'">
         <div class="backdrop-gradient"></div>
 
         <div class="movie-content">
-            <img src="{{ asset($movie['poster'] ?? '') }}" class="movie-poster" onerror="this.src='https://via.placeholder.com/280x420/111/ffd000?text=Poster'">
+            <img src="{{ $movie['poster'] ?? '' }}" class="movie-poster" onerror="this.src='https://via.placeholder.com/280x420/111/ffd000?text=Poster'">
 
             <div class="movie-info">
                 <span class="movie-id">TICKET #{{ $id }}</span>
@@ -906,6 +906,38 @@
             </button>
         </div>
     </section>
+
+    @if($movie['menuSpecial']['enabled'])
+        <section class="exclusive-movie-menu">
+            <h2 class="section-title">Exclusive For This Movie</h2>
+            
+            <div class="exclusive-banner">
+                <div class="exclusive-img-container">
+                    @if(!empty($movie['menuSpecial']['image']))
+                        <img src="{{ $movie['menuSpecial']['image'] }}" alt="Special Menu" style="object-fit: cover; width: 100%; height: 100%;">
+                    @else
+                        <div style="width: 100%; height: 100%; background: #333; display: flex; align-items: center; justify-content: center;">
+                            <span style="color: #fff;">No Image</span>
+                        </div>
+                    @endif
+                </div>
+                
+                <div class="exclusive-info">
+                    <span class="tag">Limited Edition</span>
+                    <h3>{{ $movie['menuSpecial']['title'] ?? 'Exclusive Menu' }}</h3>
+                    <p>{{ $movie['menuSpecial']['text'] ?? 'Available for a limited time.' }}</p>
+                    
+                    <button class="btn-unlock" onclick="window.location.href='/booking/{{ $id }}'">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        GET TICKET TO UNLOCK
+                    </button>
+                </div>
+            </div>
+        </section>
+    @endif
 
     <section class="reviews-section" style="padding: 50px 10% 100px; background: #000; color: white;">
         @if(session('error'))
@@ -981,51 +1013,6 @@
     @endforelse
 </div>
 </section>
-
-    @if(in_array((int)$id, [1, 4, 9]) || in_array((string)$id, ['01', '04', '09']))
-        @php
-            $comboName = '';
-            $comboDesc = '';
-            $comboImg = '';
-
-            if ($id == '01' || $id == 1) {
-                $comboName = 'Vengeance Combo';
-                $comboDesc = 'Enhance your experience with the exclusive Kill Bill themed popcorn bucket styled after the iconic yellow suit, plus an XL drink cup featuring a realistic Katana hilt grip.';
-                $comboImg = 'img/1-Kill-Bill/kill-bill.jpeg';
-            } elseif ($id == '04' || $id == 4) {
-                $comboName = 'Atomic Combo';
-                $comboDesc = 'Experience the intensity with our Extra Spicy Popcorn and a Limited Edition Black Soda to cool down the heat.';
-                $comboImg = 'img/4-Oppenheimer/oppenheimer.png';
-            } elseif ($id == '09' || $id == 9) {
-                $comboName = 'Dreamhouse Snack';
-                $comboDesc = 'Step into the Dreamhouse with our sparkly pink bucket filled with sweet popcorn, paired with a refreshing Cotton Candy Drink.';
-                $comboImg = 'img/9-Barbie/barbie.png';
-            }
-        @endphp
-
-        <section class="exclusive-movie-menu">
-            <h2 class="section-title">Exclusive For This Movie</h2>
-            
-            <div class="exclusive-banner">
-                <div class="exclusive-img-container">
-                    <img src="{{ asset($comboImg) }}" alt="{{ $comboName }}" onerror="this.src='https://via.placeholder.com/380x260/111/{{ str_replace('#', '', $movie['bg'] ?? 'ffd000') }}?text=Combo'">
-                </div>
-                
-                <div class="exclusive-info">
-                    <span class="tag">Limited Edition</span>
-                    <h3>The {{ $comboName }}</h3>
-                    <p>{{ $comboDesc }}</p>
-                    <button class="btn-unlock" onclick="window.location.href='/booking/{{ $id }}'">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        GET TICKET TO UNLOCK
-                    </button>
-                </div>
-            </div>
-        </section>
-    @endif
 
     <footer>
         <div class="footer-content">
