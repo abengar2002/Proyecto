@@ -158,47 +158,6 @@
                     }
                 }
             }
-
-            .nav-cart {
-                position: relative;
-                background: none;
-                border: none;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                padding: 5px;
-                color: var(--header-text-color, var(--color-negro));
-                transition: color 0.3s ease, transform 0.2s ease;
-
-                svg {
-                    width: 26px;
-                    height: 26px;
-                }
-
-                .cart-badge {
-                    position: absolute;
-                    top: -5px;
-                    right: -8px;
-                    background-color: red;
-                    color: white;
-                    font-size: 11px;
-                    font-weight: bold;
-                    font-family: Arial, sans-serif;
-                    width: 18px;
-                    height: 18px;
-                    border-radius: 50%;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-                    pointer-events: none;
-                }
-
-                &:hover {
-                    color: var(--color-amarillo) !important;
-                    transform: scale(1.1);
-                }
-            }
         }
 
         /* --- HERO SECTION --- */
@@ -973,19 +932,6 @@
                                     <polyline points="6 9 12 15 18 9"></polyline>
                                 </svg>
                             </a>
-                        </li>
-
-                        <li>
-                            <button class="nav-cart" onclick="alert('Checkout functionality in development')">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <circle cx="9" cy="21" r="1"></circle>
-                                    <circle cx="20" cy="21" r="1"></circle>
-                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                                </svg>
-                                <div class="cart-badge" id="nav-cart-counter">0</div>
-                            </button>
                         </li>
 
                         <li>

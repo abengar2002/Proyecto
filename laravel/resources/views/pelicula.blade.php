@@ -875,6 +875,7 @@
         </div>
     </div>
 
+    @if(isset($movie['mediaCarousel']) && count($movie['mediaCarousel']) > 0)
     <section class="media-carousel-section">
         <h2 class="section-title">Media & Trailers</h2>
         
@@ -886,17 +887,20 @@
             <div class="carousel-viewport">
                 <div class="carousel-track" id="media-track">
                     
-                    <div class="media-item">
-                        </div>
-                    
-                    <div class="media-item">
-                        </div>
-
-                    <div class="media-item">
-                        </div>
-
-                    <div class="media-item">
-                        </div>
+                    @foreach($movie['mediaCarousel'] as $media)
+                        @if($media['type'] == 'video')
+                            <div class="media-item" onclick="window.open('{{ $media['url'] }}', '_blank')">
+                                <img src="{{ $media['thumbnail'] }}" alt="Trailer Thumbnail" onerror="this.src='https://via.placeholder.com/400x225/111/ffd000?text=Video+Not+Found'">
+                                <div class="play-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                </div>
+                            </div>
+                        @else
+                            <div class="media-item">
+                                <img src="{{ $media['url'] }}" alt="Movie Image" onerror="this.src='https://via.placeholder.com/400x225/111/ffd000?text=Image+Not+Found'">
+                            </div>
+                        @endif
+                    @endforeach
 
                 </div>
             </div>
@@ -906,8 +910,8 @@
             </button>
         </div>
     </section>
-
-    @if($movie['menuSpecial']['enabled'])
+    @endif
+    @if(isset($movie['menuSpecial']['enabled']) && $movie['menuSpecial']['enabled'])
         <section class="exclusive-movie-menu">
             <h2 class="section-title">Exclusive For This Movie</h2>
             
@@ -1070,6 +1074,10 @@
         // Lógica de Carrusel Infinito y Auto-Play
         document.addEventListener('DOMContentLoaded', () => {
             const track = document.getElementById('media-track');
+            
+            // Verificación por si la sección del carrusel no existe
+            if(!track) return; 
+
             const items = Array.from(track.children);
             const totalOriginals = items.length;
             
@@ -1093,6 +1101,8 @@
 
             function updatePosition() {
                 const itemElement = track.querySelector('.media-item');
+                if(!itemElement) return;
+
                 const gap = 20; // Igual que en el CSS
                 const itemWidth = itemElement.getBoundingClientRect().width + gap;
                 track.style.transition = 'none';
@@ -1108,6 +1118,8 @@
                 isTransitioning = true;
                 
                 const itemElement = track.querySelector('.media-item');
+                if(!itemElement) return;
+
                 const itemWidth = itemElement.getBoundingClientRect().width + 20;
                 
                 currentIndex += direction;
@@ -1120,6 +1132,8 @@
             track.addEventListener('transitionend', () => {
                 isTransitioning = false;
                 const itemElement = track.querySelector('.media-item');
+                if(!itemElement) return;
+
                 const itemWidth = itemElement.getBoundingClientRect().width + 20;
 
                 // Salto infinito de los clones al set real

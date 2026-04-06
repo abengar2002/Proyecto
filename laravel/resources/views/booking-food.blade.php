@@ -336,6 +336,11 @@
 </head>
 <body>
 
+<div id="countdown-widget" style="position: fixed; top: 100px; right: 5%; background: var(--color-amarillo, #ffd000); color: #000; padding: 12px 20px; border-radius: 8px; font-family: 'Arial Black', sans-serif; font-size: 16px; z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+    <span id="timer-display">10:00</span>
+</div>
+
     <img src="{{ asset($movie['bgImg'] ?? '') }}" class="page-bg" onerror="this.src='https://via.placeholder.com/1920x1080/111/333'">
     <div class="page-bg-gradient"></div>
 
@@ -646,6 +651,10 @@
         const seatsParam = urlParams.get('seats');
         const ticketsTotalParam = parseFloat(urlParams.get('ticketsTotal')) || 0;
         
+        // ¡LA MAGIA AQUÍ! Contamos cuántos asientos hay separados por coma.
+        // Si hay 3 asientos (ej: A1,A2,A3), el límite será 3. Si no hay, asumimos 1.
+        const maxItemsLimit = seatsParam ? seatsParam.split(',').length : 1;
+        
         let cart = {};
         
         if (seatsParam && ticketsTotalParam > 0) {
@@ -669,7 +678,14 @@
             let currentQty = parseInt(qtySpan.innerText);
             let newQty = currentQty + change;
             
+            // Límite por debajo (no puede ser negativo)
             if (newQty < 0) newQty = 0; 
+            
+            // LÍMITE POR ARRIBA (1 por persona/asiento)
+            if (newQty > maxItemsLimit) {
+                alert(`You can only order up to ${maxItemsLimit} of this item (${maxItemsLimit} seat/s selected).`);
+                newQty = maxItemsLimit;
+            }
             
             qtySpan.innerText = newQty;
 
@@ -717,6 +733,51 @@
         }
 
         renderCart();
+
+        // 10 minutos en milisegundos
+    const TIME_LIMIT = 10 * 60 * 1000; 
+
+    // Revisamos si ya hay un tiempo guardado en la sesión
+    let endTime = sessionStorage.getItem('booking_end_time');
+
+    // Si no lo hay (es la primera vez que entra a la página de comida), lo creamos
+    if (!endTime) {
+        endTime = Date.now() + TIME_LIMIT;
+        sessionStorage.setItem('booking_end_time', endTime);
+    }
+
+    function updateTimer() {
+        const now = Date.now();
+        const timeLeft = Math.max(0, endTime - now);
+        
+        // Calculamos minutos y segundos
+        const minutes = Math.floor((timeLeft / 1000) / 60);
+        const seconds = Math.floor((timeLeft / 1000) % 60);
+        
+        // Lo mostramos en formato MM:SS
+        document.getElementById('timer-display').innerText = 
+            String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+
+        // Efecto visual: Si quedan menos de 2 minutos, se pone en rojo
+        if (timeLeft <= 120000) {
+            document.getElementById('countdown-widget').style.backgroundColor = '#ff4444';
+            document.getElementById('countdown-widget').style.color = 'white';
+        }
+
+        // Si el tiempo se acaba
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            sessionStorage.removeItem('booking_end_time'); // Limpiamos la sesión
+            
+            // Avisamos al usuario y lo mandamos de vuelta a la cartelera
+            alert("⏳ Your reservation time has expired. The seats have been released. Please start again.");
+            window.location.href = "/"; // O a /pelicula/{{ $id }}
+        }
+    }
+
+    // Actualizamos cada segundo
+    const timerInterval = setInterval(updateTimer, 1000);
+    updateTimer(); // Llamada inicial para que no tarde 1 segundo en aparecer
     </script>
 </body>
 </html>

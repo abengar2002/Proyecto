@@ -35,354 +35,294 @@
             display: flex; 
             flex-direction: column; 
             position: relative;
-
-            /* --- FONDO INMERSIVO DE LA PELI --- */
-            .page-bg {
-                position: fixed;
-                top: 0; left: 0; width: 100%; height: 100%;
-                z-index: -2;
-                object-fit: cover;
-                opacity: 0.15;
-                filter: blur(8px);
-            }
-
-            .page-bg-gradient {
-                position: fixed;
-                top: 0; left: 0; width: 100%; height: 100%;
-                z-index: -1;
-                background: radial-gradient(circle at center, transparent 0%, var(--color-negro) 80%);
-            }
-
-            /* --- HEADER --- */
-            header { 
-                padding: 20px 5%; 
-                display: flex; 
-                justify-content: space-between; 
-                align-items: center; 
-                border-bottom: 1px solid rgba(255,255,255,0.05); 
-                background-color: rgba(0,0,0,0.8);
-                backdrop-filter: blur(10px);
-                position: sticky;
-                top: 0;
-                z-index: 100;
-
-                .logo img { 
-                    height: 40px; 
-                }
-
-                .back-btn { 
-                    color: var(--color-blanco); 
-                    text-decoration: none; 
-                    display: flex; 
-                    align-items: center; 
-                    gap: 8px; 
-                    font-weight: bold; 
-                    font-size: 14px; 
-                    text-transform: uppercase; 
-                    transition: color 0.3s ease; 
-
-                    &:hover { 
-                        color: var(--color-amarillo); 
-                    }
-                }
-            }
-
-            /* --- CONTENEDOR PRINCIPAL --- */
-            .booking-container { 
-                display: flex; 
-                flex: 1; 
-                padding: 40px 5%; 
-                gap: 50px; 
-                max-width: 1400px; 
-                margin: 0 auto; 
-                width: 100%; 
-
-                /* ZONA IZQUIERDA: MAPA DE ASIENTOS */
-                .seating-section { 
-                    flex: 3; 
-                    display: flex; 
-                    flex-direction: column; 
-                    align-items: center; 
-                    
-                    .movie-info { 
-                        text-align: center; 
-                        margin-bottom: 50px; 
-
-                        h1 { 
-                            font-family: 'Arial Black', sans-serif; 
-                            font-size: 42px; 
-                            color: var(--color-blanco); 
-                            text-transform: uppercase; 
-                            letter-spacing: 2px; 
-                            margin-bottom: 10px; 
-                            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
-                        }
-
-                        p { 
-                            color: var(--color-amarillo); 
-                            font-size: 16px; 
-                            font-weight: bold;
-                            letter-spacing: 1px;
-                        }
-                    }
-
-                    /* PANTALLA DEL CINE */
-                    .screen-container { 
-                        width: 100%; 
-                        max-width: 600px; 
-                        margin-bottom: 60px; 
-                        perspective: 400px; 
-
-                        .screen { 
-                            height: 70px; 
-                            width: 100%; 
-                            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), transparent); 
-                            transform: rotateX(-45deg); 
-                            box-shadow: 0 15px 50px rgba(255, 255, 255, 0.15); 
-                            border-top: 4px solid var(--color-blanco); 
-                            border-radius: 5px 5px 0 0; 
-                            display: flex; 
-                            justify-content: center; 
-                            align-items: center; 
-                            color: var(--color-blanco); 
-                            font-weight: 900; 
-                            letter-spacing: 8px; 
-                            text-transform: uppercase; 
-                            font-size: 12px; 
-                            opacity: 0.8;
-                        }
-                    }
-
-                    /* ASIENTOS */
-                    .seats-grid { 
-                        display: flex; 
-                        flex-direction: column; 
-                        gap: 15px; 
-                        margin-bottom: 50px; 
-
-                        .seat-row { 
-                            display: flex; 
-                            gap: 12px; 
-                            justify-content: center; 
-                            align-items: center; 
-
-                            .row-label { 
-                                color: #666; 
-                                font-size: 12px; 
-                                width: 20px; 
-                                text-align: center; 
-                                font-weight: bold; 
-                            }
-
-                            .seat { 
-                                width: 38px; 
-                                height: 38px; 
-                                background-color: var(--color-asiento-libre); 
-                                border-radius: 8px 8px 4px 4px; 
-                                cursor: pointer; 
-                                transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-                                position: relative; 
-                                border: 1px solid #333;
-
-                                &::after { 
-                                    content: ''; 
-                                    position: absolute; 
-                                    bottom: -5px; 
-                                    left: 10%; 
-                                    width: 80%; 
-                                    height: 5px; 
-                                    background-color: rgba(0,0,0,0.5); 
-                                    border-radius: 0 0 4px 4px; 
-                                }
-                                
-                                &:hover:not(.occupied) { 
-                                    transform: translateY(-5px) scale(1.1); 
-                                    background-color: #555; 
-                                    border-color: #777;
-                                }
-
-                                &.selected { 
-                                    background-color: var(--color-amarillo); 
-                                    border-color: var(--color-amarillo);
-                                    box-shadow: 0 0 15px rgba(255, 208, 0, 0.4); 
-                                    transform: scale(1.1);
-                                }
-
-                                &.occupied { 
-                                    background-color: var(--color-asiento-ocupado); 
-                                    border-color: #111;
-                                    cursor: not-allowed; 
-                                    opacity: 0.4; 
-                                }
-
-                                &.vip { 
-                                    background-color: var(--color-asiento-vip); 
-                                    border-color: #724db8; 
-
-                                    &.selected { 
-                                        background-color: var(--color-amarillo); 
-                                        border-color: var(--color-amarillo); 
-                                    }
-                                }
-
-                                /* Pasillo central */
-                                &:nth-child(6) { 
-                                    margin-right: 30px; 
-                                } 
-                            }
-                        }
-                    }
-
-                    /* LEYENDA */
-                    .legend { 
-                        display: flex; 
-                        justify-content: center; 
-                        gap: 30px; 
-                        margin-top: 20px; 
-                        padding: 20px 40px; 
-                        background-color: rgba(20,20,20,0.8); 
-                        border-radius: 50px; 
-                        border: 1px solid #333;
-                        backdrop-filter: blur(5px);
-
-                        .legend-item { 
-                            display: flex; 
-                            align-items: center; 
-                            gap: 10px; 
-                            font-size: 13px; 
-                            color: #aaa; 
-                            font-weight: bold;
-
-                            .legend-seat { 
-                                width: 20px; 
-                                height: 20px; 
-                                border-radius: 4px 4px 2px 2px; 
-                            }
-                        }
-                    }
-                }
-
-                /* ZONA DERECHA: RESUMEN DEL PEDIDO */
-                .summary-section { 
-                    flex: 1; 
-                    min-width: 350px; 
-                    background-color: rgba(20, 20, 20, 0.85); 
-                    backdrop-filter: blur(15px);
-                    border-radius: 12px; 
-                    padding: 35px; 
-                    border: 1px solid rgba(255,255,255,0.1); 
-                    height: fit-content; 
-                    position: sticky; 
-                    top: 120px; 
-                    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-
-                    .summary-title { 
-                        font-family: 'Arial Black', sans-serif; 
-                        font-size: 20px; 
-                        color: var(--color-blanco); 
-                        text-transform: uppercase; 
-                        border-bottom: 2px solid var(--color-amarillo); 
-                        padding-bottom: 15px; 
-                        margin-bottom: 25px; 
-                    }
-                    
-                    .summary-details { 
-                        margin-bottom: 30px; 
-
-                        .summary-row { 
-                            display: flex; 
-                            justify-content: space-between; 
-                            margin-bottom: 18px; 
-                            font-size: 14px; 
-                            color: #ccc; 
-
-                            span.val { 
-                                color: var(--color-blanco); 
-                                font-weight: bold; 
-                                text-align: right; 
-                            }
-                            
-                            .selected-seats-list { 
-                                display: flex; 
-                                flex-wrap: wrap; 
-                                gap: 8px; 
-                                margin-top: 10px; 
-
-                                .seat-badge { 
-                                    background-color: transparent; 
-                                    color: var(--color-amarillo); 
-                                    border: 1px solid var(--color-amarillo);
-                                    padding: 4px 10px; 
-                                    border-radius: 4px; 
-                                    font-size: 12px; 
-                                    font-weight: bold; 
-                                }
-                            }
-                        }
-                    }
-
-                    .total-row { 
-                        display: flex; 
-                        justify-content: space-between; 
-                        align-items: center; 
-                        border-top: 1px dashed #555; 
-                        padding-top: 25px; 
-                        margin-top: 15px; 
-                        
-                        .total-label { 
-                            font-size: 16px; 
-                            color: #888; 
-                            font-weight: bold; 
-                            text-transform: uppercase; 
-                            letter-spacing: 1px;
-                        }
-                        
-                        .total-price { 
-                            font-size: 32px; 
-                            color: var(--color-amarillo); 
-                            font-family: 'Arial Black', sans-serif; 
-                        }
-                    }
-
-                    .btn-checkout { 
-                        width: 100%; 
-                        background-color: var(--color-amarillo); 
-                        color: var(--color-texto-btn); 
-                        border: none; 
-                        padding: 18px; 
-                        border-radius: 6px; 
-                        font-family: 'Arial Black', sans-serif; 
-                        font-size: 14px; 
-                        text-transform: uppercase; 
-                        cursor: pointer; 
-                        transition: all 0.3s ease; 
-                        margin-top: 35px; 
-                        display: flex; 
-                        justify-content: center; 
-                        align-items: center; 
-                        gap: 10px; 
-
-                        &:hover:not(:disabled) { 
-                            background-color: var(--color-blanco); 
-                            color: var(--color-negro);
-                            transform: translateY(-3px); 
-                            box-shadow: 0 10px 20px rgba(0,0,0,0.3); 
-                        }
-
-                        &:disabled { 
-                            background-color: #333; 
-                            color: #666; 
-                            cursor: not-allowed; 
-                        }
-                    }
-                }
-            }
         }
+
+        /* --- FONDO INMERSIVO DE LA PELI --- */
+        .page-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            object-fit: cover;
+            opacity: 0.15;
+            filter: blur(8px);
+        }
+
+        .page-bg-gradient {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, transparent 0%, var(--color-negro) 80%);
+        }
+
+        /* --- HEADER --- */
+        header { 
+            padding: 20px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .logo img { height: 40px; }
+
+        header .back-btn { 
+            color: var(--color-blanco); 
+            text-decoration: none; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-weight: bold; 
+            font-size: 14px; 
+            text-transform: uppercase; 
+            transition: color 0.3s ease; 
+        }
+
+        header .back-btn:hover { color: var(--color-amarillo); }
+
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .booking-container { 
+            display: flex; 
+            flex: 1; 
+            padding: 40px 5%; 
+            gap: 50px; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            width: 100%; 
+        }
+
+        /* ZONA IZQUIERDA: MAPA DE ASIENTOS */
+        .seating-section { 
+            flex: 3; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+
+        .movie-info { text-align: center; margin-bottom: 50px; }
+        .movie-info h1 { 
+            font-family: 'Arial Black', sans-serif; 
+            font-size: 42px; 
+            color: var(--color-blanco); 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            margin-bottom: 10px; 
+            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .movie-info p { 
+            color: var(--color-amarillo); 
+            font-size: 16px; 
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* PANTALLA DEL CINE */
+        .screen-container { 
+            width: 100%; 
+            max-width: 600px; 
+            margin-bottom: 60px; 
+            perspective: 400px; 
+        }
+
+        .screen { 
+            height: 70px; 
+            width: 100%; 
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), transparent); 
+            transform: rotateX(-45deg); 
+            box-shadow: 0 15px 50px rgba(255, 255, 255, 0.15); 
+            border-top: 4px solid var(--color-blanco); 
+            border-radius: 5px 5px 0 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            color: var(--color-blanco); 
+            font-weight: 900; 
+            letter-spacing: 8px; 
+            text-transform: uppercase; 
+            font-size: 12px; 
+            opacity: 0.8;
+        }
+
+        /* ASIENTOS */
+        .seats-grid { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            margin-bottom: 50px; 
+        }
+
+        .seat-row { 
+            display: flex; 
+            gap: 12px; 
+            justify-content: center; 
+            align-items: center; 
+        }
+
+        .row-label { 
+            color: #666; 
+            font-size: 12px; 
+            width: 20px; 
+            text-align: center; 
+            font-weight: bold; 
+        }
+
+        .seat { 
+            width: 38px; 
+            height: 38px; 
+            background-color: var(--color-asiento-libre); 
+            border-radius: 8px 8px 4px 4px; 
+            cursor: pointer; 
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            position: relative; 
+            border: 1px solid #333;
+        }
+
+        .seat::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -5px; 
+            left: 10%; 
+            width: 80%; 
+            height: 5px; 
+            background-color: rgba(0,0,0,0.5); 
+            border-radius: 0 0 4px 4px; 
+        }
+        
+        .seat:hover:not(.occupied) { 
+            transform: translateY(-5px) scale(1.1); 
+            background-color: #555; 
+            border-color: #777;
+        }
+
+        .seat.selected { 
+            background-color: var(--color-amarillo); 
+            border-color: var(--color-amarillo);
+            box-shadow: 0 0 15px rgba(255, 208, 0, 0.4); 
+            transform: scale(1.1);
+        }
+
+        .seat.occupied { 
+            background-color: var(--color-asiento-ocupado); 
+            border-color: #111;
+            cursor: not-allowed; 
+            opacity: 0.4; 
+        }
+
+        .seat.vip { 
+            background-color: var(--color-asiento-vip); 
+            border-color: #724db8; 
+        }
+        .seat.vip.selected { 
+            background-color: var(--color-amarillo); 
+            border-color: var(--color-amarillo); 
+        }
+
+        /* Pasillo central */
+        .seat:nth-child(6) { margin-right: 30px; } 
+
+        /* LEYENDA */
+        .legend { 
+            display: flex; 
+            justify-content: center; 
+            gap: 30px; 
+            margin-top: 20px; 
+            padding: 20px 40px; 
+            background-color: rgba(20,20,20,0.8); 
+            border-radius: 50px; 
+            border: 1px solid #333;
+            backdrop-filter: blur(5px);
+        }
+
+        .legend-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #aaa; font-weight: bold; }
+        .legend-seat { width: 20px; height: 20px; border-radius: 4px 4px 2px 2px; }
+
+        /* ZONA DERECHA: RESUMEN DEL PEDIDO */
+        .summary-section { 
+            flex: 1; 
+            min-width: 350px; 
+            background-color: rgba(20, 20, 20, 0.85); 
+            backdrop-filter: blur(15px);
+            border-radius: 12px; 
+            padding: 35px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            height: fit-content; 
+            position: sticky; 
+            top: 120px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .summary-title { 
+            font-family: 'Arial Black', sans-serif; 
+            font-size: 20px; 
+            color: var(--color-blanco); 
+            text-transform: uppercase; 
+            border-bottom: 2px solid var(--color-amarillo); 
+            padding-bottom: 15px; 
+            margin-bottom: 25px; 
+        }
+        
+        .summary-details { margin-bottom: 30px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 14px; color: #ccc; }
+        .summary-row span.val { color: var(--color-blanco); font-weight: bold; text-align: right; }
+        
+        .selected-seats-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .seat-badge { 
+            background-color: transparent; 
+            color: var(--color-amarillo); 
+            border: 1px solid var(--color-amarillo);
+            padding: 4px 10px; 
+            border-radius: 4px; 
+            font-size: 12px; 
+            font-weight: bold; 
+        }
+
+        .total-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-top: 1px dashed #555; 
+            padding-top: 25px; 
+            margin-top: 15px; 
+        }
+        .total-label { font-size: 16px; color: #888; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .total-price { font-size: 32px; color: var(--color-amarillo); font-family: 'Arial Black', sans-serif; }
+
+        .btn-checkout { 
+            width: 100%; 
+            background-color: var(--color-amarillo); 
+            color: var(--color-texto-btn); 
+            border: none; 
+            padding: 18px; 
+            border-radius: 6px; 
+            font-family: 'Arial Black', sans-serif; 
+            font-size: 14px; 
+            text-transform: uppercase; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            margin-top: 35px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 10px; 
+        }
+
+        .btn-checkout:hover:not(:disabled) { 
+            background-color: var(--color-blanco); 
+            color: var(--color-negro);
+            transform: translateY(-3px); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3); 
+        }
+
+        .btn-checkout:disabled { background-color: #333; color: #666; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
-    <img src="{{ asset($movie['bgImg'] ?? '') }}" class="page-bg" onerror="this.src='https://via.placeholder.com/1920x1080/111/333'">
+    <img src="{{ $movie['bgImg'] ?? '' }}" class="page-bg" onerror="this.src='https://via.placeholder.com/1920x1080/111/333'">
     <div class="page-bg-gradient"></div>
 
     <header>
@@ -391,7 +331,8 @@
             Back to Movie
         </a>
         <div class="logo"><a href="/"><img src="{{ asset('img/img/Logo-Blanco.png') }}" alt="Screenbites Logo"></a></div>
-        <div style="width: 130px;"></div> </header>
+        <div style="width: 130px;"></div> 
+    </header>
 
     <div class="booking-container">
         
@@ -450,59 +391,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </button>
         </div>
-
     </div>
-
-    @php
-        // Convertimos el ID de la película en un número único.
-        // Así, Kill Bill (01) siempre generará el mismo patrón, y Godzilla (03) el suyo propio.
-        $seed = crc32($id);
-        mt_srand($seed);
-
-        $rowsArray = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
-        $seatsPerRowArray = 10;
-        $occupiedArray = [];
-
-        // Cada película tendrá entre 10 y 35 asientos ocupados (de 70 totales)
-        $targetOccupied = mt_rand(10, 35); 
-        $currentOccupied = 0;
-        $attempts = 0;
-
-        while ($currentOccupied < $targetOccupied && $attempts < 200) {
-            $attempts++;
-            
-            // Lógica de agrupaciones:
-            // Es mucho más común ver parejas (2) o tríos (3). 
-            // A veces va alguien solo (1) y rara vez grupos grandes (4 o 5).
-            $groupSizes = [1, 2, 2, 2, 3, 3, 4, 5];
-            $groupSize = $groupSizes[mt_rand(0, count($groupSizes) - 1)];
-
-            $randomRow = $rowsArray[mt_rand(0, count($rowsArray) - 1)];
-            $startSeat = mt_rand(1, $seatsPerRowArray - $groupSize + 1);
-
-            $canPlace = true;
-            $tempSeats = [];
-            
-            // Comprobar si ese bloque de butacas está libre
-            for ($i = 0; $i < $groupSize; $i++) {
-                $seatId = $randomRow . ($startSeat + $i);
-                if (in_array($seatId, $occupiedArray)) {
-                    $canPlace = false;
-                    break;
-                }
-                $tempSeats[] = $seatId;
-            }
-
-            // Si están libres, los ocupamos
-            if ($canPlace) {
-                $occupiedArray = array_merge($occupiedArray, $tempSeats);
-                $currentOccupied += $groupSize;
-            }
-        }
-        
-        // Devolvemos el generador a la normalidad para no afectar a Laravel
-        mt_srand();
-    @endphp
 
     <script>
         const STANDARD_PRICE = 8.50;
@@ -512,8 +401,8 @@
         const seatsPerRow = 10;
         const vipRows = ['D', 'E']; // Filas D y E son VIP
         
-        // RECIBIMOS LOS ASIENTOS OCUPADOS DESDE PHP PARA ESTA PELÍCULA EN CONCRETO
-        const occupiedSeats = {!! json_encode($occupiedArray) !!};
+        // LA MAGIA ESTÁ AQUÍ: Ahora toma los asientos de WP reales
+        const occupiedSeats = {!! json_encode($realOccupied ?? []) !!};
 
         let selectedSeats = [];
         let currentTotal = 0;
