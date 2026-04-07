@@ -75,6 +75,15 @@
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             }
 
+            /* 👇 REGLA AÑADIDA: FUERZA EL TEXTO A BLANCO AL HACER SCROLL 👇 */
+            &.scrolled nav a,
+            &.scrolled nav .logout-btn,
+            &.scrolled .user-profile .user-name,
+            &.scrolled .user-profile .chevron-icon {
+                color: var(--color-blanco) !important;
+                text-shadow: none !important; /* Quitamos la sombra negra cuando el fondo es negro oscuro para que quede limpio */
+            }
+
             .logo img {
                 height: 60px;
             }
@@ -90,12 +99,13 @@
                 a,
                 .logout-btn {
                     text-decoration: none;
-                    color: var(--header-text-color, var(--color-negro));
+                    color: var(--header-text-color, var(--color-blanco));
                     text-transform: uppercase;
                     font-size: 13px;
                     font-weight: 900;
                     letter-spacing: 2px;
-                    transition: color 0.3s ease, transform 0.2s ease;
+                    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+                    transition: color 0.3s ease, transform 0.2s ease, text-shadow 0.3s ease;
                     background: none;
                     border: none;
                     cursor: pointer;
@@ -107,6 +117,7 @@
                     &:hover {
                         color: var(--color-amarillo) !important;
                         transform: scale(1.05);
+                        text-shadow: 0px 2px 10px rgba(0, 0, 0, 1), 0px 0px 4px rgba(0, 0, 0, 1) !important;
                     }
                 }
             }
@@ -117,7 +128,7 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            border-left: 2px solid rgba(255, 255, 255, 0.2);
+            border-left: 2px solid rgba(255, 255, 255, 0.4);
             padding-left: 20px;
             margin-left: 10px;
 
@@ -125,7 +136,7 @@
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                color: var(--header-text-color, var(--color-negro));
+                color: var(--header-text-color, var(--color-blanco));
                 transition: color 0.3s ease;
 
                 .user-avatar {
@@ -134,13 +145,14 @@
                     border-radius: 50%;
                     object-fit: cover;
                     border: none;
-                    transition: transform 0.3s ease;
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
                 }
 
                 .user-name,
                 .chevron-icon {
-                    color: var(--header-text-color, var(--color-negro));
-                    transition: color 0.3s ease;
+                    color: var(--header-text-color, var(--color-blanco));
+                    transition: color 0.3s ease, text-shadow 0.3s ease;
                 }
 
                 .chevron-icon {
@@ -151,10 +163,12 @@
                 &:hover {
                     .user-avatar {
                         transform: scale(1.1);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
                     }
                     .user-name,
                     .chevron-icon {
-                        color: var(--color-amarillo);
+                        color: var(--color-amarillo) !important;
+                        text-shadow: 0px 2px 10px rgba(0, 0, 0, 1), 0px 0px 4px rgba(0, 0, 0, 1) !important;
                     }
                 }
             }
@@ -637,7 +651,6 @@
                             border-bottom: 1px solid #333;
                             padding-bottom: 15px;
 
-                            /* CLASE PARA TUS IMÁGENES DE ICONOS */
                             .food-icon-img {
                                 width: 35px;
                                 height: 35px;

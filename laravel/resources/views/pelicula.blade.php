@@ -62,6 +62,15 @@
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             }
 
+            /* 👇 REGLA AÑADIDA: FUERZA EL TEXTO A BLANCO AL HACER SCROLL 👇 */
+            &.scrolled nav a,
+            &.scrolled nav .logout-btn,
+            &.scrolled .user-profile .user-name,
+            &.scrolled .user-profile .chevron-icon {
+                color: var(--color-blanco) !important;
+                text-shadow: none !important;
+            }
+
             .logo img {
                 height: 60px;
             }
@@ -82,7 +91,8 @@
                     font-size: 13px;
                     font-weight: 900;
                     letter-spacing: 2px;
-                    transition: color 0.3s ease, transform 0.2s ease;
+                    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+                    transition: color 0.3s ease, transform 0.2s ease, text-shadow 0.3s ease;
                     background: none;
                     border: none;
                     cursor: pointer;
@@ -94,6 +104,7 @@
                     &:hover {
                         color: var(--color-principal) !important;
                         transform: scale(1.05);
+                        text-shadow: 0px 2px 10px rgba(0, 0, 0, 1), 0px 0px 4px rgba(0, 0, 0, 1) !important;
                     }
                 }
             }
@@ -104,7 +115,7 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            border-left: 2px solid rgba(255, 255, 255, 0.2);
+            border-left: 2px solid rgba(255, 255, 255, 0.4);
             padding-left: 20px;
             margin-left: 10px;
 
@@ -121,13 +132,14 @@
                     border-radius: 50%;
                     object-fit: cover;
                     border: none;
-                    transition: transform 0.3s ease;
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
                 }
 
                 .user-name,
                 .chevron-icon {
                     color: var(--header-text-color, var(--color-blanco));
-                    transition: color 0.3s ease;
+                    transition: color 0.3s ease, text-shadow 0.3s ease;
                 }
 
                 .chevron-icon {
@@ -138,52 +150,13 @@
                 &:hover {
                     .user-avatar {
                         transform: scale(1.1);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
                     }
                     .user-name,
                     .chevron-icon {
-                        color: var(--color-principal);
+                        color: var(--color-principal) !important;
+                        text-shadow: 0px 2px 10px rgba(0, 0, 0, 1), 0px 0px 4px rgba(0, 0, 0, 1) !important;
                     }
-                }
-            }
-
-            .nav-cart {
-                position: relative;
-                background: none;
-                border: none;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                padding: 5px;
-                color: var(--header-text-color, var(--color-blanco));
-                transition: color 0.3s ease, transform 0.2s ease;
-
-                svg {
-                    width: 26px;
-                    height: 26px;
-                }
-
-                .cart-badge {
-                    position: absolute;
-                    top: -5px;
-                    right: -8px;
-                    background-color: red;
-                    color: white;
-                    font-size: 11px;
-                    font-weight: bold;
-                    font-family: Arial, sans-serif;
-                    width: 18px;
-                    height: 18px;
-                    border-radius: 50%;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-                    pointer-events: none;
-                }
-
-                &:hover {
-                    color: var(--color-principal) !important;
-                    transform: scale(1.1);
                 }
             }
         }
@@ -772,9 +745,9 @@
                     <li>
                         <a href="/profile" class="user-profile" title="My Profile">
                             <img src="{{ asset('img/avatars/' . Auth::user()->avatar) }}" alt="Avatar"
-                                class="user-avatar" onerror="this.src='https://via.placeholder.com/35/333/ffd000'">
+                                class="user-avatar" onerror="this.src='[https://via.placeholder.com/35/333/ffd000](https://via.placeholder.com/35/333/ffd000)'">
                             <span class="user-name">{{ strtoupper(Auth::user()->name) }}</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="chevron-icon" viewBox="0 0 24 24" fill="none"
+                            <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" class="chevron-icon" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
@@ -782,22 +755,10 @@
                     </li>
 
                     <li>
-                        <button class="nav-cart" onclick="alert('Checkout functionality in development')">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="9" cy="21" r="1"></circle>
-                                <circle cx="20" cy="21" r="1"></circle>
-                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                            </svg>
-                            <div class="cart-badge" id="nav-cart-counter">0</div>
-                        </button>
-                    </li>
-
-                    <li>
                         <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                             @csrf
                             <button type="submit" class="logout-btn" title="Sign Out">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+                                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="22" height="22" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
                                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -812,7 +773,7 @@
                 <div class="user-nav">
                     <li>
                         <a href="{{ route('login') }}" title="Sign In">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
                                 <polyline points="10 17 15 12 10 7"></polyline>
@@ -822,7 +783,7 @@
                     </li>
                     <li>
                         <a href="{{ route('register') }}" title="Create Account">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
@@ -838,11 +799,11 @@
     </header>
 
     <div class="movie-hero">
-        <img src="{{ $movie['bgImg'] ?? '' }}" class="backdrop-img" onerror="this.src='https://via.placeholder.com/1920x1080/111/ffd000?text=Backdrop'">
+        <img src="{{ $movie['bgImg'] ?? '' }}" class="backdrop-img" onerror="this.src='[https://via.placeholder.com/1920x1080/111/ffd000?text=Backdrop](https://via.placeholder.com/1920x1080/111/ffd000?text=Backdrop)'">
         <div class="backdrop-gradient"></div>
 
         <div class="movie-content">
-            <img src="{{ $movie['poster'] ?? '' }}" class="movie-poster" onerror="this.src='https://via.placeholder.com/280x420/111/ffd000?text=Poster'">
+            <img src="{{ $movie['poster'] ?? '' }}" class="movie-poster" onerror="this.src='[https://via.placeholder.com/280x420/111/ffd000?text=Poster](https://via.placeholder.com/280x420/111/ffd000?text=Poster)'">
 
             <div class="movie-info">
                 <span class="movie-id">TICKET #{{ $id }}</span>
@@ -881,7 +842,7 @@
         
         <div class="carousel-container">
             <button class="media-nav-btn prev" onclick="moveCarousel(-1)" title="Previous">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
 
             <div class="carousel-viewport">
@@ -890,14 +851,14 @@
                     @foreach($movie['mediaCarousel'] as $media)
                         @if($media['type'] == 'video')
                             <div class="media-item" onclick="window.open('{{ $media['url'] }}', '_blank')">
-                                <img src="{{ $media['thumbnail'] }}" alt="Trailer Thumbnail" onerror="this.src='https://via.placeholder.com/400x225/111/ffd000?text=Video+Not+Found'">
+                                <img src="{{ $media['thumbnail'] }}" alt="Trailer Thumbnail" onerror="this.src='[https://via.placeholder.com/400x225/111/ffd000?text=Video+Not+Found](https://via.placeholder.com/400x225/111/ffd000?text=Video+Not+Found)'">
                                 <div class="play-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                    <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                                 </div>
                             </div>
                         @else
                             <div class="media-item">
-                                <img src="{{ $media['url'] }}" alt="Movie Image" onerror="this.src='https://via.placeholder.com/400x225/111/ffd000?text=Image+Not+Found'">
+                                <img src="{{ $media['url'] }}" alt="Movie Image" onerror="this.src='[https://via.placeholder.com/400x225/111/ffd000?text=Image+Not+Found](https://via.placeholder.com/400x225/111/ffd000?text=Image+Not+Found)'">
                             </div>
                         @endif
                     @endforeach
@@ -906,11 +867,12 @@
             </div>
 
             <button class="media-nav-btn next" onclick="moveCarousel(1)" title="Next">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </button>
         </div>
     </section>
     @endif
+    
     @if(isset($movie['menuSpecial']['enabled']) && $movie['menuSpecial']['enabled'])
         <section class="exclusive-movie-menu">
             <h2 class="section-title">Exclusive For This Movie</h2>
@@ -932,7 +894,7 @@
                     <p>{{ $movie['menuSpecial']['text'] ?? 'Available for a limited time.' }}</p>
                     
                     <button class="btn-unlock" onclick="window.location.href='/booking/{{ $id }}'">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
@@ -996,7 +958,7 @@
             @php
                 // Generamos un hash del nombre o email para tener una imagen única
                 $userHash = md5(strtolower(trim($review['title']))); 
-                $avatarUrl = "https://www.gravatar.com/avatar/{$userHash}?d=identicon&s=100";
+                $avatarUrl = "[https://www.gravatar.com/avatar/](https://www.gravatar.com/avatar/){$userHash}?d=identicon&s=100";
             @endphp
             <img src="{{ $avatarUrl }}" alt="User" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--color-principal);">
 
@@ -1052,7 +1014,7 @@
             <p>&copy; 2026 Screenbites Cinema. All rights reserved.</p>
             <p class="footer-credits">
                 Design with
-                <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <svg class="heart-icon" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                 </svg>
                 for <span>Beni</span>
