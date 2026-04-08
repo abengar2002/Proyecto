@@ -75,13 +75,13 @@
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             }
 
-            /* 👇 REGLA AÑADIDA: FUERZA EL TEXTO A BLANCO AL HACER SCROLL 👇 */
+            /* FUERZA EL TEXTO A BLANCO AL HACER SCROLL */
             &.scrolled nav a,
             &.scrolled nav .logout-btn,
             &.scrolled .user-profile .user-name,
             &.scrolled .user-profile .chevron-icon {
                 color: var(--color-blanco) !important;
-                text-shadow: none !important; /* Quitamos la sombra negra cuando el fondo es negro oscuro para que quede limpio */
+                text-shadow: none !important; 
             }
 
             .logo img {
@@ -287,8 +287,10 @@
                         color: #ffd000;
                         gap: 10px;
 
-                        img {
+                        /* SVG DEL BOTON DE COMPRA */
+                        svg {
                             width: 20px;
+                            height: auto;
                         }
                     }
 
@@ -1038,7 +1040,11 @@
                 </div>
                 <div class="hero-buttons">
                     <button class="btn-primary" id="btn-buy" onclick="window.location.href='/booking/01'">
-                        <img src="{{ asset('img/img/Ticket-amarillo.png') }}" id="ticket-icon"> BUY TICKETS
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="ticket-icon">
+                            <path d="M5 7h14a2 2 0 0 1 2 2v1.5a1.5 1.5 0 0 0 0 3V15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1.5a1.5 1.5 0 0 0 0-3V9a2 2 0 0 1 2-2z"></path>
+                            <line x1="8" y1="7" x2="8" y2="17" stroke-dasharray="2 2"></line>
+                        </svg> 
+                        BUY TICKETS
                     </button>
                     <button class="btn-secondary" id="btn-view-film">VIEW FILM</button>
                 </div>
@@ -1226,26 +1232,9 @@
     </footer>
 
     <script>
-        const movies = [
-            { id: "01", title: "Kill Bill", age: "+18", rating: 4, genre: "Action, Suspense", bg: "#ffd000", textColor: "black", bgImg: "{{ asset('img/1-Kill-Bill/Portada.png') }}", poster: "{{ asset('img/1-Kill-Bill/Mini.png') }}" },
-            { id: "02", title: "Five Nights", age: "+16", rating: 3, genre: "Horror, Thriller", bg: "#1a0429", textColor: "white", bgImg: "{{ asset('img/2-Five-Nights/Portada.png') }}", poster: "{{ asset('img/2-Five-Nights/Mini.png') }}" },
-            { id: "03", title: "Godzilla", age: "+12", rating: 4, genre: "Action, Sci-Fi", bg: "#0a2233", textColor: "white", bgImg: "{{ asset('img/3-Godzilla/Portada.png') }}", poster: "{{ asset('img/3-Godzilla/Mini.png') }}" },
-            { id: "04", title: "Oppenheimer", age: "+16", rating: 5, genre: "Biography, History", bg: "#2e1409", textColor: "white", bgImg: "{{ asset('img/4-Oppenheimer/Portada.png') }}", poster: "{{ asset('img/4-Oppenheimer/Mini.png') }}" },
-            { id: "05", title: "Up", age: "TP", rating: 5, genre: "Animation, Adventure", bg: "#a1cce0", textColor: "black", bgImg: "{{ asset('img/5-Up/Portada.png') }}", poster: "{{ asset('img/5-Up/Mini.png') }}" },
-            { id: "06", title: "The Joker", age: "+18", rating: 5, genre: "Crime, Drama", bg: "#120908", textColor: "white", bgImg: "{{ asset('img/6-The-Joker/Portada.png') }}", poster: "{{ asset('img/6-The-Joker/Mini.png') }}" },
-            { id: "07", title: "Alien", age: "+18", rating: 4, genre: "Horror, Sci-Fi", bg: "#051417", textColor: "white", bgImg: "{{ asset('img/7-Alien/Portada.png') }}", poster: "{{ asset('img/7-Alien/Mini.png') }}" },
-            { id: "08", title: "Interstellar", age: "+12", rating: 5, genre: "Adventure, Sci-Fi", bg: "#090a0a", textColor: "white", bgImg: "{{ asset('img/8-Interstellar/Portada.png') }}", poster: "{{ asset('img/8-Interstellar/Mini.png') }}" },
-            { id: "09", title: "Barbie", age: "TP", rating: 4, genre: "Comedy, Fantasy", bg: "#51caf5", textColor: "white", bgImg: "{{ asset('img/9-Barbie/Portada.png') }}", poster: "{{ asset('img/9-Barbie/Mini.png') }}" },
-            { id: "10", title: "Mamma Mia", age: "TP", rating: 5, genre: "Comedy, Musical", bg: "#b3d0e2", textColor: "black", bgImg: "{{ asset('img/10-MammaMia/Portada.jpg') }}", poster: "{{ asset('img/10-MammaMia/Mini.jpg') }}" }
-        ];
-
-        const comingSoonMovies = [
-            { id: "11", title: "Deadpool & Wolverine", date: "JULY 25", genre: "Action, Comedy", poster: "{{ asset('img/11-Deadpool/Mini.jpg') }}" },
-            { id: "12", title: "Gladiator II", date: "NOV 15", genre: "Action, Drama", poster: "{{ asset('img/12-Gladiator/Mini.jpg') }}" },
-            { id: "13", title: "Venom 3", date: "OCT 24", genre: "Sci-Fi, Action", poster: "{{ asset('img/13-Venom/Mini.png') }}" },
-            { id: "14", title: "Mufasa", date: "DEC 20", genre: "Adventure, Family", poster: "{{ asset('img/14-Mufasa/Mini.jpg') }}" },
-            { id: "15", title: "Kraven", date: "DEC 13", genre: "Action, Thriller", poster: "{{ asset('img/15-Kraven/Mini.png') }}" }
-        ];
+        // LA MAGIA ESTÁ AQUÍ: ARRAY DINÁMICO DESDE LARAVEL
+        const movies = @json($movies);
+        const comingSoonMovies = @json($comingSoonMovies);
 
         let currentIndex = 0;
         const totalMovies = movies.length;
@@ -1261,6 +1250,7 @@
         const logoEl = document.getElementById('main-logo');
 
         window.addEventListener('scroll', () => {
+            if (totalMovies === 0) return;
             const activeMovie = movies[currentIndex];
             if (window.scrollY >= window.innerHeight - 100) {
                 headerEl.classList.add('scrolled');
@@ -1273,48 +1263,54 @@
             }
         });
 
-        movies.forEach((movie, index) => {
-            const slideDiv = document.createElement('div');
-            slideDiv.classList.add('slide-item');
-            slideDiv.innerHTML = `<img src="${movie.poster}" alt="${movie.title}" class="poster-img"><div class="progress-track"><div class="progress-fill"></div></div>`;
-            slideDiv.addEventListener('click', () => {
-                if (slideDiv.classList.contains('prev')) moveSlider(-1);
-                if (slideDiv.classList.contains('next')) moveSlider(1);
+        if (totalMovies > 0) {
+            movies.forEach((movie, index) => {
+                const slideDiv = document.createElement('div');
+                slideDiv.classList.add('slide-item');
+                slideDiv.innerHTML = `<img src="${movie.poster}" alt="${movie.title}" class="poster-img" onerror="this.src='https://via.placeholder.com/280x420/111/ffd000?text=Poster'"><div class="progress-track"><div class="progress-fill"></div></div>`;
+                slideDiv.addEventListener('click', () => {
+                    if (slideDiv.classList.contains('prev')) moveSlider(-1);
+                    if (slideDiv.classList.contains('next')) moveSlider(1);
+                });
+                sliderTrack.appendChild(slideDiv);
+
+                const npCard = document.createElement('div');
+                npCard.classList.add('movie-card');
+                npCard.innerHTML = `
+                    <img src="${movie.poster}" alt="${movie.title}" onerror="this.src='https://via.placeholder.com/280x420/111/ffd000?text=Poster'" onclick="window.location.href='/pelicula/${movie.id}'">
+                    <div class="movie-card-overlay">
+                        <h4 class="movie-card-title" onclick="window.location.href='/pelicula/${movie.id}'">${movie.title}</h4>
+                        <p class="movie-card-genre">${movie.genre}</p>
+                        <button class="btn-card" onclick="window.location.href='/booking/${movie.id}'">Buy Tickets</button>
+                        <button class="btn-card btn-outline" style="margin-top:8px;" onclick="window.location.href='/pelicula/${movie.id}'">More Info</button>
+                    </div>
+                `;
+                nowPlayingGrid.appendChild(npCard);
             });
-            sliderTrack.appendChild(slideDiv);
+        }
 
-            const npCard = document.createElement('div');
-            npCard.classList.add('movie-card');
-            npCard.innerHTML = `
-                <img src="${movie.poster}" alt="${movie.title}" onclick="window.location.href='/pelicula/${movie.id}'">
-                <div class="movie-card-overlay">
-                    <h4 class="movie-card-title" onclick="window.location.href='/pelicula/${movie.id}'">${movie.title}</h4>
-                    <p class="movie-card-genre">${movie.genre}</p>
-                    <button class="btn-card" onclick="window.location.href='/booking/${movie.id}'">Buy Tickets</button>
-                    <button class="btn-card btn-outline" style="margin-top:8px;" onclick="window.location.href='/pelicula/${movie.id}'">More Info</button>
-                </div>
-            `;
-            nowPlayingGrid.appendChild(npCard);
-        });
-
-        comingSoonMovies.forEach((movie) => {
-            const csCard = document.createElement('div');
-            csCard.classList.add('movie-card');
-            csCard.innerHTML = `
-                <div class="date-badge">${movie.date}</div>
-                <img src="${movie.poster}" alt="${movie.title}" onclick="window.location.href='/pelicula/${movie.id}'">
-                <div class="movie-card-overlay">
-                    <h4 class="movie-card-title" onclick="window.location.href='/pelicula/${movie.id}'">${movie.title}</h4>
-                    <p class="movie-card-genre">${movie.genre}</p>
-                    <button class="btn-card btn-outline" onclick="window.location.href='/pelicula/${movie.id}'">More Info</button>
-                </div>
-            `;
-            comingSoonGrid.appendChild(csCard);
-        });
+        if (comingSoonMovies.length > 0) {
+            comingSoonMovies.forEach((movie) => {
+                const csCard = document.createElement('div');
+                csCard.classList.add('movie-card');
+                csCard.innerHTML = `
+                    <div class="date-badge">${movie.date}</div>
+                    <img src="${movie.poster}" alt="${movie.title}" onerror="this.src='https://via.placeholder.com/280x420/111/ffd000?text=Poster'" onclick="window.location.href='/pelicula/${movie.id}'">
+                    <div class="movie-card-overlay">
+                        <h4 class="movie-card-title" onclick="window.location.href='/pelicula/${movie.id}'">${movie.title}</h4>
+                        <p class="movie-card-genre">${movie.genre}</p>
+                        <button class="btn-card btn-outline" onclick="window.location.href='/pelicula/${movie.id}'">More Info</button>
+                    </div>
+                `;
+                comingSoonGrid.appendChild(csCard);
+            });
+        }
 
         const slides = document.querySelectorAll('.slide-item');
 
         function updateCarousel() {
+            if (totalMovies === 0) return;
+            
             slides.forEach((slide, index) => {
                 slide.className = 'slide-item';
                 let diff = (index - currentIndex + totalMovies) % totalMovies;
@@ -1336,7 +1332,7 @@
             document.getElementById('movie-title').innerHTML = `${activeMovie.title} <span class="age-rating">${activeMovie.age}</span>`;
             document.getElementById('movie-genre').textContent = `Genre: ${activeMovie.genre}`;
 
-            const isBlackStar = activeMovie.id === "01";
+            const isBlackStar = activeMovie.textColor === "black";
             const starFilled = isBlackStar ? "{{ asset('img/img/Estrella-Negra.svg') }}" : "{{ asset('img/img/Estrella-Amarilla.svg') }}";
             const starEmpty = isBlackStar ? "{{ asset('img/img/Estrella-Negra-Vacia.svg') }}" : "{{ asset('img/img/Estrella-Amarilla-Vacia.svg') }}";
 
@@ -1374,12 +1370,14 @@
         }
 
         function moveSlider(direction) {
+            if (totalMovies === 0) return;
             currentIndex = (currentIndex + direction + totalMovies) % totalMovies;
             updateCarousel();
             resetAutoPlay();
         }
 
         function resetAutoPlay() {
+            if (totalMovies === 0) return;
             clearInterval(autoPlayTimer);
             autoPlayTimer = setInterval(() => { moveSlider(1); }, AUTO_PLAY_DELAY);
         }
@@ -1387,8 +1385,10 @@
         document.getElementById('btn-prev').addEventListener('click', () => moveSlider(-1));
         document.getElementById('btn-next').addEventListener('click', () => moveSlider(1));
 
-        updateCarousel();
-        resetAutoPlay();
+        if (totalMovies > 0) {
+            updateCarousel();
+            resetAutoPlay();
+        }
     </script>
 </body>
 

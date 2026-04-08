@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Screenbites - Food & Drinks</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
         :root {
             --color-negro: #000000;
@@ -269,12 +272,46 @@
         const cartContainer = document.getElementById('cart-items-container');
         const grandTotalDisplay = document.getElementById('grand-total');
 
+        // --- FUNCIÓN TOASTIFY PERSONALIZADA (CON SVGs) ---
+        function showToast(message, type = 'info') {
+            let iconSvg = '';
+            
+            if (type === 'warning') {
+                // Icono de Alerta (Triángulo)
+                iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-amarillo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+            } else if (type === 'ticket') {
+                // Icono de Ticket
+                iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-amarillo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2" ry="2"></rect><path d="M2 12h20"></path><path d="M7 7v10"></path><path d="M17 7v10"></path></svg>`;
+            } else {
+                // Icono de Info (Círculo)
+                iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-amarillo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+            }
+
+            Toastify({
+                // Metemos el SVG y el texto en un contenedor flexbox para que queden alineados
+                text: `<div style="display: flex; align-items: center; gap: 10px;">${iconSvg} <span>${message}</span></div>`,
+                escapeMarkup: false, // <-- IMPORTANTE: Permite que Toastify lea nuestro código HTML/SVG
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "#141414",
+                    color: "#ffffff",
+                    borderLeft: "4px solid var(--color-amarillo)",
+                    fontFamily: "'Arial Black', sans-serif",
+                    fontSize: "12px",
+                    borderRadius: "4px",
+                    boxShadow: "0 5px 15px rgba(0,0,0,0.5)"
+                }
+            }).showToast();
+        }
+
         function updateQty(btn, change) {
             const card = btn.closest('.food-card');
             const name = card.dataset.name;
             const price = parseFloat(card.dataset.price);
             const stock = parseInt(card.dataset.stock); 
-            const isExclusive = card.dataset.exclusive === "true"; // Verificamos si es exclusivo
+            const isExclusive = card.dataset.exclusive === "true";
             const qtySpan = card.querySelector('.qty-val');
             
             let currentQty = parseInt(qtySpan.innerText);
@@ -282,20 +319,20 @@
             
             if (newQty < 0) newQty = 0; 
 
-            // Límite de stock de WordPress
+            // Límite de stock real
             if (newQty > stock) {
-                alert(`Sorry, we only have ${stock} in stock!`);
+                showToast(`Sorry, we only have ${stock} units left!`, 'warning');
                 newQty = stock;
             }
 
-            // APLICAMOS LA NUEVA REGLA (1 si es exclusivo, 2 si es normal)
+            // Límite de carrito: 1 si es exclusivo, 2 si es normal
             const allowedLimit = isExclusive ? maxItemsLimit : maxItemsLimit * 2;
             
             if (newQty > allowedLimit) { 
                 if (isExclusive) {
-                    alert(`Exclusive combos are limited to 1 per person in your party.`);
+                    showToast(`Exclusive combos are limited to 1 per person.`, 'ticket');
                 } else {
-                    alert(`Maximum order limit reached for your party size.`);
+                    showToast(`Maximum order limit reached for your party size.`, 'info');
                 }
                 newQty = allowedLimit;
             }
@@ -342,7 +379,7 @@
         }
         renderCart();
 
-        // TIMER LOGIC
+        // TIMER LOGIC (CON SWEETALERT2)
         const TIME_LIMIT = 10 * 60 * 1000; 
         let endTime = sessionStorage.getItem('booking_end_time');
         if (!endTime) {
@@ -365,11 +402,25 @@
                 widget.style.color = 'white';
             }
 
+            // SI SE ACABA EL TIEMPO: BLOQUEO DE PANTALLA
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
                 sessionStorage.removeItem('booking_end_time'); 
-                alert("Your reservation time has expired. The seats have been released.");
-                window.location.href = "/";
+                
+                Swal.fire({
+                    title: 'TIME EXPIRED',
+                    text: 'Your reservation time has ended. The seats have been released.',
+                    icon: 'error',
+                    background: '#141414',
+                    color: '#ffffff',
+                    confirmButtonColor: 'var(--color-amarillo)',
+                    confirmButtonText: '<span style="color: black; font-weight: bold;">START AGAIN</span>',
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/";
+                    }
+                });
             }
         }
         const timerInterval = setInterval(updateTimer, 1000);

@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Screenbites - Seat Selection</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
     <style>
         :root {
             --color-negro: #000000;
@@ -399,9 +404,8 @@
         
         const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
         const seatsPerRow = 10;
-        const vipRows = ['D', 'E']; // Filas D y E son VIP
+        const vipRows = ['D', 'E']; 
         
-        // LA MAGIA ESTÁ AQUÍ: Ahora toma los asientos de WP reales
         const occupiedSeats = {!! json_encode($realOccupied ?? []) !!};
 
         let selectedSeats = [];
@@ -412,6 +416,38 @@
         const ticketsPriceDisplay = document.getElementById('tickets-price');
         const totalPriceDisplay = document.getElementById('total-price');
         const btnContinue = document.getElementById('btn-continue');
+
+        // --- FUNCIÓN TOASTIFY PERSONALIZADA (CON SVGs REALES) ---
+        function showToast(message, type = 'info') {
+            let iconSvg = '';
+            
+            if (type === 'warning') {
+                iconSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-amarillo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+            } else if (type === 'ticket') {
+                iconSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-amarillo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14a2 2 0 0 1 2 2v1.5a1.5 1.5 0 0 0 0 3V15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1.5a1.5 1.5 0 0 0 0-3V9a2 2 0 0 1 2-2z"></path><line x1="8" y1="7" x2="8" y2="17" stroke-dasharray="2 2"></line></svg>`;
+            } else {
+                iconSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-amarillo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+            }
+
+            Toastify({
+                text: `<div style="display: flex; align-items: center; gap: 12px;">${iconSvg} <span>${message}</span></div>`,
+                escapeMarkup: false, 
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "#141414",
+                    color: "#ffffff",
+                    borderLeft: "4px solid var(--color-amarillo)",
+                    fontFamily: "'Arial Black', sans-serif",
+                    fontSize: "13px",
+                    borderRadius: "4px",
+                    boxShadow: "0 5px 15px rgba(0,0,0,0.5)",
+                    display: "flex",
+                    alignItems: "center"
+                }
+            }).showToast();
+        }
 
         function generateSeats() {
             rows.forEach(row => {
@@ -462,8 +498,8 @@
                 seatElement.classList.remove('selected');
                 selectedSeats = selectedSeats.filter(s => s.id !== seatId);
             } else {
-                if(selectedSeats.length >= 8) {
-                    alert("You can only select up to 8 seats per transaction.");
+                if(selectedSeats.length >= 4) {
+                    showToast("You can only select up to 4 seats per transaction.", "ticket");
                     return;
                 }
                 seatElement.classList.add('selected');

@@ -28,7 +28,7 @@ Route::get('/', function () {
                 $acf = $wpMovie['acf'] ?? [];
                 $isComingSoon = filter_var($acf['iscomingsoon'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
-                // Formateamos el ID para que siempre tenga 2 dígitos (ej: "01", "02") igual que tenías en tu JS
+                // Formateamos el ID para que siempre tenga 2 dígitos (ej: "01", "02")
                 $laravelId = str_pad($acf['id_laravel'] ?? 0, 2, '0', STR_PAD_LEFT);
 
                 $movieData = [
@@ -53,12 +53,15 @@ Route::get('/', function () {
         }
     } catch (\Exception $e) {}
 
-    // Salvavidas: por si WordPress está apagado, que no explote el carrusel de JS
+    // Salvavidas: por si WordPress está apagado
     if (empty($nowPlaying)) {
         $nowPlaying[] = [
             'id' => "00", 'title' => "No Movies Found", 'age' => "TP", 'rating' => 0, 'genre' => "Error",
             'bg' => "#000000", 'textColor' => "white", 'bgImg' => "", 'poster' => "", 'date' => ""
         ];
+    } else {
+        $nowPlaying = collect($nowPlaying)->sortBy('id')->values()->toArray();
+        $comingSoon = collect($comingSoon)->sortBy('id')->values()->toArray();
     }
 
     return view('index', [
