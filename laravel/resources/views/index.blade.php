@@ -924,7 +924,7 @@
 <body>
 
     <main class="hero" id="main-hero">
-        <img src="{{ asset('img/1-Kill-Bill/Portada.png') }}" alt="Background Image" class="hero-bg" id="hero-bg">
+        <img src="{{ count($movies) > 0 ? $movies[0]['bgImg'] : asset('img/1-Kill-Bill/Portada.png') }}" alt="Background Image" class="hero-bg" id="hero-bg">
 
         <header id="main-header">
             <div class="logo"><img src="{{ asset('img/img/Logo-Negro.png') }}" alt="Cinema Logo" id="main-logo"></div>

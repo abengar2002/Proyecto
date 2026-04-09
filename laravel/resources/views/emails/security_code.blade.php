@@ -142,7 +142,11 @@
         </div>
 
         <div class="logo-section">
-            <img src="cid:logo.png" alt="Logo Cine Screenbites">
+            @if(file_exists(public_path('img/img/Logo-Blanco.png')))
+                <img src="{{ $message->embed(public_path('img/img/Logo-Blanco.png')) }}" alt="Screenbites Cinema Logo">
+            @else
+                <img src="{{ asset('img/img/Logo-Blanco.png') }}" alt="Screenbites Cinema Logo">
+            @endif
         </div>
 
         <div class="footer">

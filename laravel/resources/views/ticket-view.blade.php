@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket - {{ $ticket['movie'] }}</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         :root {
             --peli-bg: {{ $ticket['bg'] }};
@@ -178,9 +181,9 @@
             <div class="actions-area">
                 <button onclick="window.print()" class="btn btn-download">Download Ticket</button>
                 
-                <form action="{{ route('reserva.destroy', $ticket['id']) }}" method="POST" onsubmit="return confirm('Do you really want to cancel this reservation?')">
+                <form id="cancel-form" action="{{ route('reserva.destroy', $ticket['id']) }}" method="POST">
                     @csrf @method('DELETE')
-                    <button type="submit" class="btn btn-cancel">Cancel Booking</button>
+                    <button type="button" class="btn btn-cancel" onclick="confirmCancel()">Cancel Booking</button>
                 </form>
             </div>
         </div>
@@ -194,5 +197,29 @@
         </div>
     </div>
 
+    <script>
+        function confirmCancel() {
+            Swal.fire({
+                title: 'Cancel Booking?',
+                text: "Are you sure you want to cancel this reservation? This action cannot be undone.",
+                icon: 'warning',
+                background: '#141414',
+                color: '#ffffff',
+                showCancelButton: true,
+                confirmButtonColor: '#ff4444',
+                cancelButtonColor: '#333333',
+                confirmButtonText: 'Yes, cancel it',
+                cancelButtonText: 'No, keep it',
+                customClass: {
+                    title: 'swal-title-custom'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Si el usuario hace clic en "Yes", enviamos el formulario manualmente
+                    document.getElementById('cancel-form').submit();
+                }
+            });
+        }
+    </script>
 </body>
 </html>

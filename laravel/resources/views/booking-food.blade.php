@@ -277,20 +277,16 @@
             let iconSvg = '';
             
             if (type === 'warning') {
-                // Icono de Alerta (Triángulo)
                 iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-amarillo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
             } else if (type === 'ticket') {
-                // Icono de Ticket
                 iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-amarillo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2" ry="2"></rect><path d="M2 12h20"></path><path d="M7 7v10"></path><path d="M17 7v10"></path></svg>`;
             } else {
-                // Icono de Info (Círculo)
                 iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-amarillo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
             }
 
             Toastify({
-                // Metemos el SVG y el texto en un contenedor flexbox para que queden alineados
                 text: `<div style="display: flex; align-items: center; gap: 10px;">${iconSvg} <span>${message}</span></div>`,
-                escapeMarkup: false, // <-- IMPORTANTE: Permite que Toastify lea nuestro código HTML/SVG
+                escapeMarkup: false, 
                 duration: 3000,
                 gravity: "top",
                 position: "right",
@@ -319,13 +315,11 @@
             
             if (newQty < 0) newQty = 0; 
 
-            // Límite de stock real
             if (newQty > stock) {
                 showToast(`Sorry, we only have ${stock} units left!`, 'warning');
                 newQty = stock;
             }
 
-            // Límite de carrito: 1 si es exclusivo, 2 si es normal
             const allowedLimit = isExclusive ? maxItemsLimit : maxItemsLimit * 2;
             
             if (newQty > allowedLimit) { 
@@ -373,18 +367,26 @@
             grandTotalDisplay.innerText = `$${grandTotal.toFixed(2)}`;
         }
 
+        // --- LÓGICA DE ABANDONO VS PROCEDER ---
+        let isProceedingToCheckout = false;
+
         function proceedToCheckout() {
+            isProceedingToCheckout = true; // El usuario avanza, no cancelamos asientos
             sessionStorage.setItem('screenbites_cart', JSON.stringify(cart));
             window.location.href = `/booking/{{ $id }}/checkout`;
         }
         renderCart();
 
-        // TIMER LOGIC (CON SWEETALERT2)
+        // TIMER LOGIC 
         const TIME_LIMIT = 10 * 60 * 1000; 
         let endTime = sessionStorage.getItem('booking_end_time');
-        if (!endTime) {
+        
+        if (!endTime || isNaN(endTime) || parseInt(endTime) < Date.now()) {
             endTime = Date.now() + TIME_LIMIT;
             sessionStorage.setItem('booking_end_time', endTime);
+            sessionStorage.removeItem('screenbites_cart');
+        } else {
+            endTime = parseInt(endTime);
         }
 
         function updateTimer() {
@@ -402,10 +404,10 @@
                 widget.style.color = 'white';
             }
 
-            // SI SE ACABA EL TIEMPO: BLOQUEO DE PANTALLA
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
                 sessionStorage.removeItem('booking_end_time'); 
+                sessionStorage.removeItem('screenbites_cart');
                 
                 Swal.fire({
                     title: 'TIME EXPIRED',
@@ -425,6 +427,26 @@
         }
         const timerInterval = setInterval(updateTimer, 1000);
         updateTimer();
+
+        // MAGIA: Liberar asientos y tiempo si abandonan la página sin pagar
+        window.addEventListener('beforeunload', function (e) {
+            // Solo liberamos si no ha pulsado el botón de Proceed to Checkout y tiene asientos cogidos
+            if (!isProceedingToCheckout && typeof seatsParam !== 'undefined' && seatsParam) {
+                
+                let formData = new FormData();
+                formData.append('movie_title', '{{ $movie["title"] ?? "" }}');
+                formData.append('seats', seatsParam);
+                formData.append('_token', '{{ csrf_token() }}'); // Ojo a este token que es crucial en Laravel
+                
+                // Manda el aviso a la ruta nueva del web.php
+                navigator.sendBeacon('/api/unlock-seats', formData);
+                
+                // Borramos el tiempo y el carrito local para que empiece limpio
+                sessionStorage.removeItem('booking_end_time');
+                sessionStorage.removeItem('screenbites_cart');
+            }
+        });
+
     </script>
 </body>
 </html>

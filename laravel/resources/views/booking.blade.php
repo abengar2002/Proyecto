@@ -406,7 +406,8 @@
         const seatsPerRow = 10;
         const vipRows = ['D', 'E']; 
         
-        const occupiedSeats = {!! json_encode($realOccupied ?? []) !!};
+        // Forzamos a que siempre sea un array limpio para que JS no explote
+        const occupiedSeats = Object.values({!! json_encode($realOccupied ?? []) !!});
 
         let selectedSeats = [];
         let currentTotal = 0;

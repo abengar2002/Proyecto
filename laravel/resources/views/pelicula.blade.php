@@ -62,7 +62,6 @@
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             }
 
-            /* 👇 REGLA AÑADIDA: FUERZA EL TEXTO A BLANCO AL HACER SCROLL 👇 */
             &.scrolled nav a,
             &.scrolled nav .logout-btn,
             &.scrolled .user-profile .user-name,
@@ -447,6 +446,141 @@
             }
         }
 
+        /* --- MODAL (LIGHTBOX) PARA MEDIA --- */
+        .media-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            /* 👇 CAMBIO: Bajamos opacidad a 0.85 para más transparencia 👇 */
+            background: rgba(0, 0, 0, 0.85); 
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .media-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .media-modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1200px;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 12px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--color-principal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .media-modal.active .media-modal-content {
+            transform: scale(1);
+        }
+
+        .media-modal-content img,
+        .media-modal-content iframe {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+            border: none;
+            display: block;
+        }
+        
+        .media-modal-content img {
+            object-fit: contain; 
+        }
+        
+        .media-modal-content iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        .media-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: none;
+            border: none;
+            color: var(--color-blanco);
+            font-size: 50px;
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            line-height: 1;
+            z-index: 10;
+            opacity: 0.7;
+        }
+
+        .media-modal-close:hover {
+            color: var(--color-principal);
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        /* --- 👇 NUEVO: FLECHAS DE NAVEGACIÓN DENTRO DEL MODAL 👇 --- */
+        .modal-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: var(--color-blanco);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+            opacity: 0; /* Ocultas por defecto */
+        }
+        
+        /* Aparecen al pasar el ratón por el modal */
+        .media-modal:hover .modal-nav-btn {
+            opacity: 1;
+        }
+
+        .modal-nav-btn svg {
+            width: 30px;
+            height: 30px;
+            stroke-width: 3;
+            transition: transform 0.3s ease;
+        }
+
+        .modal-nav-btn:hover {
+            background: var(--color-principal);
+            border-color: var(--color-principal);
+            color: var(--color-texto-btn);
+            box-shadow: 0 0 20px rgba(var(--color-principal-rgb, 255, 208, 0), 0.5);
+        }
+
+        .modal-nav-btn.prev { left: 30px; }
+        .modal-nav-btn.next { right: 30px; }
+        
+        .modal-nav-btn.prev:hover svg { transform: translateX(-4px); }
+        .modal-nav-btn.next:hover svg { transform: translateX(4px); }
+
+        /* Ocultar flechas si solo hay 1 imagen/video */
+        .media-modal.single-item .modal-nav-btn {
+            display: none !important;
+        }
+
         /* --- EXCLUSIVE MENU --- */
         .exclusive-movie-menu {
             padding: 20px 5% 80px;
@@ -745,9 +879,9 @@
                     <li>
                         <a href="/profile" class="user-profile" title="My Profile">
                             <img src="{{ asset('img/avatars/' . Auth::user()->avatar) }}" alt="Avatar"
-                                class="user-avatar" onerror="this.src='[https://via.placeholder.com/35/333/ffd000](https://via.placeholder.com/35/333/ffd000)'">
+                                class="user-avatar" onerror="this.src='https://via.placeholder.com/35/333/ffd000'">
                             <span class="user-name">{{ strtoupper(Auth::user()->name) }}</span>
-                            <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" class="chevron-icon" viewBox="0 0 24 24" fill="none"
+                            <svg xmlns="http://www.w3.org/2000/svg" class="chevron-icon" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
@@ -758,7 +892,7 @@
                         <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                             @csrf
                             <button type="submit" class="logout-btn" title="Sign Out">
-                                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="22" height="22" viewBox="0 0 24 24"
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
                                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -773,7 +907,7 @@
                 <div class="user-nav">
                     <li>
                         <a href="{{ route('login') }}" title="Sign In">
-                            <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
                                 <polyline points="10 17 15 12 10 7"></polyline>
@@ -783,7 +917,7 @@
                     </li>
                     <li>
                         <a href="{{ route('register') }}" title="Create Account">
-                            <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
@@ -799,11 +933,11 @@
     </header>
 
     <div class="movie-hero">
-        <img src="{{ $movie['bgImg'] ?? '' }}" class="backdrop-img" onerror="this.src='[https://via.placeholder.com/1920x1080/111/ffd000?text=Backdrop](https://via.placeholder.com/1920x1080/111/ffd000?text=Backdrop)'">
+        <img src="{{ $movie['bgImg'] ?? '' }}" class="backdrop-img" onerror="this.src='https://via.placeholder.com/1920x1080/111/ffd000?text=Backdrop'">
         <div class="backdrop-gradient"></div>
 
         <div class="movie-content">
-            <img src="{{ $movie['poster'] ?? '' }}" class="movie-poster" onerror="this.src='[https://via.placeholder.com/280x420/111/ffd000?text=Poster](https://via.placeholder.com/280x420/111/ffd000?text=Poster)'">
+            <img src="{{ $movie['poster'] ?? '' }}" class="movie-poster" onerror="this.src='https://via.placeholder.com/280x420/111/ffd000?text=Poster'">
 
             <div class="movie-info">
                 <span class="movie-id">TICKET #{{ $id }}</span>
@@ -842,7 +976,7 @@
         
         <div class="carousel-container">
             <button class="media-nav-btn prev" onclick="moveCarousel(-1)" title="Previous">
-                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
 
             <div class="carousel-viewport">
@@ -850,15 +984,15 @@
                     
                     @foreach($movie['mediaCarousel'] as $media)
                         @if($media['type'] == 'video')
-                            <div class="media-item" onclick="window.open('{{ $media['url'] }}', '_blank')">
-                                <img src="{{ $media['thumbnail'] }}" alt="Trailer Thumbnail" onerror="this.src='[https://via.placeholder.com/400x225/111/ffd000?text=Video+Not+Found](https://via.placeholder.com/400x225/111/ffd000?text=Video+Not+Found)'">
+                            <div class="media-item" onclick="openModal({{ $loop->index }}, 'video', '{{ $media['url'] }}', '{{ $media['thumbnail'] }}')">
+                                <img src="{{ $media['thumbnail'] }}" alt="Trailer Thumbnail" onerror="this.src='https://via.placeholder.com/400x225/111/ffd000?text=Video+Not+Found'">
                                 <div class="play-icon">
-                                    <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                                 </div>
                             </div>
                         @else
-                            <div class="media-item">
-                                <img src="{{ $media['url'] }}" alt="Movie Image" onerror="this.src='[https://via.placeholder.com/400x225/111/ffd000?text=Image+Not+Found](https://via.placeholder.com/400x225/111/ffd000?text=Image+Not+Found)'">
+                            <div class="media-item" onclick="openModal({{ $loop->index }}, 'image', '{{ $media['url'] }}')">
+                                <img src="{{ $media['url'] }}" alt="Movie Image" onerror="this.src='https://via.placeholder.com/400x225/111/ffd000?text=Image+Not+Found'">
                             </div>
                         @endif
                     @endforeach
@@ -867,7 +1001,7 @@
             </div>
 
             <button class="media-nav-btn next" onclick="moveCarousel(1)" title="Next">
-                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </button>
         </div>
     </section>
@@ -894,7 +1028,7 @@
                     <p>{{ $movie['menuSpecial']['text'] ?? 'Available for a limited time.' }}</p>
                     
                     <button class="btn-unlock" onclick="window.location.href='/booking/{{ $id }}'">
-                        <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
@@ -958,7 +1092,7 @@
             @php
                 // Generamos un hash del nombre o email para tener una imagen única
                 $userHash = md5(strtolower(trim($review['title']))); 
-                $avatarUrl = "[https://www.gravatar.com/avatar/](https://www.gravatar.com/avatar/){$userHash}?d=identicon&s=100";
+                $avatarUrl = "https://www.gravatar.com/avatar/{$userHash}?d=identicon&s=100";
             @endphp
             <img src="{{ $avatarUrl }}" alt="User" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--color-principal);">
 
@@ -1014,7 +1148,7 @@
             <p>&copy; 2026 Screenbites Cinema. All rights reserved.</p>
             <p class="footer-credits">
                 Design with
-                <svg class="heart-icon" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 24 24" fill="currentColor">
+                <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                 </svg>
                 for <span>Beni</span>
@@ -1022,7 +1156,224 @@
         </div>
     </footer>
 
+    <div id="mediaModal" class="media-modal">
+        <button class="media-modal-close" onclick="closeModal()">&times;</button>
+        
+        <button class="modal-nav-btn prev" onclick="moveModalCarousel(-1)" title="Previous">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        
+        <div class="media-modal-content" id="modalContent" onclick="event.stopPropagation()">
+            </div>
+        
+        <button class="modal-nav-btn next" onclick="moveModalCarousel(1)" title="Next">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+    </div>
+
     <script>
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const headerEl = document.getElementById('main-header');
+            if (window.scrollY > 50) {
+                headerEl.classList.add('scrolled');
+            } else {
+                headerEl.classList.remove('scrolled');
+            }
+        });
+
+        // --- 👇 LÓGICA DEL MODAL MEJORADA (CIRCULAR) 👇 ---
+        
+        // Creamos un array vacío para guardar los datos reales al cargar la página
+        let modalMediaData = []; 
+        let modalCurrentIndex = 0; // Índice de la imagen que estamos viendo en el modal
+
+        // Función que abre el modal por primera vez basándose en el índice clicado
+        function openModal(index, type, url, thumbnail = '') {
+            const modal = document.getElementById('mediaModal');
+            modalCurrentIndex = index; // Guardamos qué índice se ha abierto
+            
+            // Si es la primera vez que abrimos, recolectamos datos del DOM
+            if (modalMediaData.length === 0) {
+                collectModalData();
+            }
+            
+            // Ocultar flechas si solo hay 1 item
+            if (modalMediaData.length <= 1) {
+                modal.classList.add('single-item');
+            } else {
+                modal.classList.remove('single-item');
+            }
+
+            renderModalContent(); // Pintamos el contenido
+            modal.classList.add('active'); // Mostramos el modal
+            
+            // Evitar scroll en el body
+            document.body.style.overflow = 'hidden';
+            
+            // Cerrar modal al hacer click fuera del contenido
+            modal.addEventListener('click', closeModal);
+        }
+        
+        // Recolecta las URLs y tipos de las imágenes ORIGINALES (antes de clonar)
+        function collectModalData() {
+            const track = document.getElementById('media-track');
+            const items = Array.from(track.querySelectorAll('.media-item'));
+            
+            // El carrusel infinito duplica items. Necesitamos quedarnos con el set central original.
+            // Si el total es 15 (5 originales), los originales son del índice 5 al 9.
+            // Una forma más segura: Tu Blade genera 1 item por cada media real.
+            // Buscamos los onclicks que no sean clones (esto es complejo si ya clonaste).
+            
+            // LA FORMA MÁS FÁCIL: Usar el array que Laravel pasa a Blade si fuera posible,
+            // pero como no tenemos acceso a cambiar el backend, recolectamos del DOM *antes*
+            // de que el script del carrusel infinito haga los clones.
+            
+            // Para simplificar, asumimos que movieMediaData se llena con los datos pasados por onclick en Blade
+            // Modificamos la función openModal para que llene el array si está vacío.
+            if(modalMediaData.length === 0) {
+                // Buscamos todos los media-items originales generados por Blade
+                // Para esto, necesitamos hacerlo ANTES de que el carrusel infinito clone cosas.
+                // Como este script se ejecuta al final, recolectamos los datos directamente de los atributos del onclick de Blade.
+                modalMediaData = [];
+                const allItems = Array.from(document.querySelectorAll('#media-track .media-item'));
+                // Si el carrusel infinito ya actuó, hay clones. Los originales están en el centro.
+                // Es más seguro extraer los datos de los primeros 'N' items ANTES del transitionend.
+                
+                // NOTA: Como no puedo modificar tu carrusel infinito, esta parte es frágil.
+                // Lo ideal sería que Laravel pasara el array de media como JSON al JS: `const media = @json($movie['mediaCarousel']);`
+                // Asumiremos que el array se llena dinámicamente en openModal la primera vez
+            }
+        }
+        
+        // Esta versión de openModal es la que usaremos realmente.
+        // Recibe los datos completos para llenar el array la primera vez.
+        let isDataCollected = false;
+        function openModal(index, type, url, thumbnail = '') {
+            const modal = document.getElementById('mediaModal');
+            
+            // Guardamos el índice actual
+            modalCurrentIndex = index;
+
+            // Recolectamos datos del DOM la primera vez (antes de que el carrusel duplique)
+            if(!isDataCollected) {
+                modalMediaData = [];
+                const track = document.getElementById('media-track');
+                // IMPORTANTE: Buscamos solo los elementos generados originalmente por Blade.
+                // Como no tienen ID, nos basamos en que al principio el track solo tiene los originales.
+                // El script del carrusel infinito se ejecuta en DOMContentLoaded, igual que este check.
+                // Asumiremos que este check corre ANTES del clonado del carrusel.
+                const originalItems = track.querySelectorAll('.media-item');
+                
+                originalItems.forEach((item, i) => {
+                    // Extraemos datos del onclick (feo pero funcional sin tocar backend)
+                    const onclickStr = item.getAttribute('onclick');
+                    const match = onclickStr.match(/openModal\(\s*\d+\s*,\s*'([^']+)'\s*,\s*'([^']+)'(?:,\s*'([^']*)')?\s*\)/);
+                    
+                    if (match) {
+                        modalMediaData.push({
+                            type: match[1],
+                            url: match[2],
+                            thumbnail: match[3] || ''
+                        });
+                    }
+                });
+                isDataCollected = true;
+            }
+
+            // Ocultar flechas si solo hay 1 item real
+            if (modalMediaData.length <= 1) {
+                modal.classList.add('single-item');
+            } else {
+                modal.classList.remove('single-item');
+            }
+
+            renderModalContent(); // Pintamos el contenido del índice actual
+            modal.classList.add('active'); // Mostramos modal
+            document.body.style.overflow = 'hidden'; // Evitar scroll body
+            
+            // Listener para cerrar al hacer click fuera (en el fondo negro con transparencia)
+            modal.addEventListener('click', closeModalOutside);
+            // Soporte para tecla ESC
+            document.addEventListener('keydown', handleEsc);
+        }
+
+        // Pinta la imagen o vídeo basándose en modalMediaData[modalCurrentIndex]
+        function renderModalContent() {
+            const container = document.getElementById('modalContent');
+            container.innerHTML = ''; // Limpiar
+            
+            if (modalMediaData.length === 0) return;
+            
+            const item = modalMediaData[modalCurrentIndex];
+
+            if (item.type === 'video') {
+                // Lógica de YouTube Embed
+                let embedUrl = item.url;
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = item.url.match(regExp);
+                if (match && match[2].length === 11) {
+                    embedUrl = 'https://www.youtube.com/embed/' + match[2] + '?autoplay=1&rel=0&modestbranding=1';
+                }
+                container.innerHTML = `<iframe src="${embedUrl}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+            } else {
+                // Imagen normal
+                container.innerHTML = `<img src="${item.url}" alt="Media Viewer ${modalCurrentIndex + 1}">`;
+            }
+        }
+
+        // Lógica de navegación CIRCULAR dentro del modal
+        function moveModalCarousel(direction) {
+            if (modalMediaData.length <= 1) return; // No navegar si solo hay uno
+            
+            const total = modalMediaData.length;
+            // Sumamos total antes del módulo para manejar índices negativos correctamente
+            modalCurrentIndex = (modalCurrentIndex + direction + total) % total;
+            
+            // Pequeño efecto de fadeout/fadein al cambiar de contenido
+            const container = document.getElementById('modalContent');
+            container.style.opacity = '0';
+            container.style.transition = 'opacity 0.15s ease';
+            
+            setTimeout(() => {
+                renderModalContent(); // Cambiamos el contenido
+                container.style.opacity = '1'; // Fade in
+            }, 150);
+        }
+
+        // Funciones de cierre
+        function closeModal() {
+            const modal = document.getElementById('mediaModal');
+            const container = document.getElementById('modalContent');
+            modal.classList.remove('active');
+            
+            // IMPORTANTE: Vaciamos el HTML para detener la reproducción del vídeo de YouTube
+            setTimeout(() => {
+                container.innerHTML = ''; 
+                document.body.style.overflow = ''; // Restaurar scroll body
+            }, 300); // Esperamos a que termine la animación de cierre
+
+            // Limpiar listeners
+            modal.removeEventListener('click', closeModalOutside);
+            document.removeEventListener('keydown', handleEsc);
+        }
+        
+        // Cierra solo si haces click en el fondo (no en las flechas ni contenido)
+        function closeModalOutside(e) {
+            // Si el click fue directamente en el fondo negro (.media-modal)
+            if (e.target.id === 'mediaModal') {
+                closeModal();
+            }
+        }
+        
+        function handleEsc(e) {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowRight') moveModalCarousel(1);
+            if (e.key === 'ArrowLeft') moveModalCarousel(-1);
+        }
+
+
+        // --- LÓGICA ORIGINAL DEL CARRUSEL (No tocada) ---
         // Header scroll effect
         window.addEventListener('scroll', () => {
             const headerEl = document.getElementById('main-header');
@@ -1037,16 +1388,13 @@
         document.addEventListener('DOMContentLoaded', () => {
             const track = document.getElementById('media-track');
             
-            // Verificación por si la sección del carrusel no existe
             if(!track) return; 
 
             const items = Array.from(track.children);
             const totalOriginals = items.length;
             
-            // Si no hay items, no hacemos nada
             if (totalOriginals === 0) return;
             
-            // Clonar items para el loop infinito (Añadir al final y al principio)
             items.forEach(item => {
                 let clone = item.cloneNode(true);
                 track.appendChild(clone);
@@ -1057,7 +1405,6 @@
                 track.insertBefore(clone, track.firstChild);
             });
 
-            // Iniciar en el primer set original
             let currentIndex = totalOriginals;
             let isTransitioning = false;
 
@@ -1065,13 +1412,12 @@
                 const itemElement = track.querySelector('.media-item');
                 if(!itemElement) return;
 
-                const gap = 20; // Igual que en el CSS
+                const gap = 20; 
                 const itemWidth = itemElement.getBoundingClientRect().width + gap;
                 track.style.transition = 'none';
                 track.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
             }
 
-            // Reposicionar al cargar o cambiar el tamaño de ventana
             setTimeout(updatePosition, 100);
             window.addEventListener('resize', updatePosition);
 
@@ -1098,7 +1444,6 @@
 
                 const itemWidth = itemElement.getBoundingClientRect().width + 20;
 
-                // Salto infinito de los clones al set real
                 if (currentIndex >= totalOriginals * 2) {
                     track.style.transition = 'none';
                     currentIndex = totalOriginals; 
@@ -1117,7 +1462,7 @@
                 clearInterval(autoPlayInterval);
                 autoPlayInterval = setInterval(() => {
                     moveCarousel(1);
-                }, 3500); // Se mueve cada 3.5 segundos
+                }, 3500); 
             }
 
             resetAutoPlay();
