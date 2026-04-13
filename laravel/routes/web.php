@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
-// 1. PORTADA
+// =====================================================================
+// 1. PORTADA (HOME)
+// =====================================================================
 Route::get('/', function () {
     $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
     $nowPlaying = [];
@@ -27,8 +29,6 @@ Route::get('/', function () {
             foreach ($response->json() as $wpMovie) {
                 $acf = $wpMovie['acf'] ?? [];
                 $isComingSoon = filter_var($acf['iscomingsoon'] ?? false, FILTER_VALIDATE_BOOLEAN);
-
-                // Formateamos el ID para que siempre tenga 2 dígitos (ej: "01", "02")
                 $laravelId = str_pad($acf['id_laravel'] ?? 0, 2, '0', STR_PAD_LEFT);
 
                 $movieData = [
@@ -44,34 +44,26 @@ Route::get('/', function () {
                     'date' => $acf['releasedate'] ?? 'SOON'
                 ];
 
-                if ($isComingSoon) {
-                    $comingSoon[] = $movieData;
-                } else {
-                    $nowPlaying[] = $movieData;
-                }
+                if ($isComingSoon) { $comingSoon[] = $movieData; } 
+                else { $nowPlaying[] = $movieData; }
             }
         }
     } catch (\Exception $e) {}
 
-    // Salvavidas: por si WordPress está apagado
     if (empty($nowPlaying)) {
-        $nowPlaying[] = [
-            'id' => "00", 'title' => "No Movies Found", 'age' => "TP", 'rating' => 0, 'genre' => "Error",
-            'bg' => "#000000", 'textColor' => "white", 'bgImg' => "", 'poster' => "", 'date' => ""
-        ];
+        $nowPlaying[] = ['id' => "00", 'title' => "No Movies Found", 'age' => "TP", 'rating' => 0, 'genre' => "Error", 'bg' => "#000000", 'textColor' => "white", 'bgImg' => "", 'poster' => "", 'date' => ""];
     } else {
-        // ORDENAMOS LAS PELÍCULAS POR ID PARA QUE KILL BILL SEA LA PRIMERA
         $nowPlaying = collect($nowPlaying)->sortBy('id')->values()->toArray();
         $comingSoon = collect($comingSoon)->sortBy('id')->values()->toArray();
     }
 
-    return view('index', [
-        'movies' => $nowPlaying,
-        'comingSoonMovies' => $comingSoon
-    ]);
+    return view('index', ['movies' => $nowPlaying, 'comingSoonMovies' => $comingSoon]);
 })->name('home');
 
+
+// =====================================================================
 // 2. DETALLES DE PELÍCULA
+// =====================================================================
 Route::get('/pelicula/{id}', function ($id) {
     $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp'); 
 
@@ -94,8 +86,7 @@ Route::get('/pelicula/{id}', function ($id) {
                     $mediaItems = [];
                     $getYoutubeThumb = function($url) {
                         if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $url, $match)) {
-                            $ytId = $match[1];
-                            return "https://img.youtube.com/vi/{$ytId}/maxresdefault.jpg";
+                            return "https://img.youtube.com/vi/{$match[1]}/maxresdefault.jpg";
                         }
                         return null;
                     };
@@ -112,7 +103,6 @@ Route::get('/pelicula/{id}', function ($id) {
                         }
                     }
 
-                    // BUSCAMOS SI HAY UN MENÚ EXCLUSIVO PARA ESTA PELÍCULA EN EL POST TYPE "COMIDA"
                     $menuSpecial = ["enabled" => false, "title" => "", "text" => "", "image" => ""];
                     try {
                         $foodResponse = Http::withoutVerifying()->timeout(10)->get("{$wordpressUrl}/wp-json/wp/v2/comida?acf_format=standard&per_page=100");
@@ -123,7 +113,6 @@ Route::get('/pelicula/{id}', function ($id) {
                                 $matchesMovie = (int)($acfFood['id_pelicula'] ?? 0) === (int)$id;
                                 $isSpent = filter_var($acfFood['spent'] ?? false, FILTER_VALIDATE_BOOLEAN);
                                 
-                                // Si es exclusivo, coincide el ID, y NO está marcado como gastado manualmente
                                 if ($isExclusive && $matchesMovie && !$isSpent) {
                                     $menuSpecial = [
                                         "enabled" => true,
@@ -157,47 +146,13 @@ Route::get('/pelicula/{id}', function ($id) {
         }
     } catch (\Exception $e) { }
 
-    $reviews = [];
-    try {
-        $responseReviews = Http::withoutVerifying()->timeout(30)->get("{$wordpressUrl}/wp-json/wp/v2/reviews?per_page=100");
-        if ($responseReviews->successful()) {
-            foreach ($responseReviews->json() as $review) {
-                $wp_id = $review['acf']['id_pelicula_laravel'] ?? $review['acf']['id_laravel'] ?? null;
-                if ($wp_id !== null && (int)$wp_id === (int)$id) {
-                    $reviews[] = [
-                        'title' => $review['title']['rendered'],
-                        'content' => strip_tags($review['content']['rendered']),
-                        'score' => intval($review['acf']['puntuacion'] ?? 0),
-                    ];
-                }
-            }
-        }
-    } catch (\Exception $e) { }
-
-    return view('pelicula', ['id' => $id, 'movie' => $movie, 'reviews' => $reviews]);
+    return view('pelicula', ['id' => $id, 'movie' => $movie]);
 })->name('pelicula.show');
 
-// 3. GUARDAR RESEÑAS
-Route::post('/pelicula/{id}/review', function (Request $request, $id) {
-    $request->validate(['content' => 'required|string|min:5', 'score' => 'required|integer|min:1|max:5']);
-    $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
-    $userName = Auth::user()->name;
 
-    Http::withBasicAuth(env('WP_USER'), env('WP_PASSWORD'))->withoutVerifying()
-        ->post("{$wordpressUrl}/wp-json/wp/v2/reviews", [
-            'title'   => 'Review by ' . $userName,
-            'content' => $request->input('content'),
-            'status'  => 'publish',
-            'acf'     => [
-                'id_pelicula_laravel' => $id,
-                'puntuacion' => $request->input('score'),
-                'user_email' => Auth::user()->email
-            ]
-        ]);
-    return back()->with('status', 'Review published!');
-})->middleware('auth')->name('pelicula.review');
-
-// 4. AUTENTICACIÓN
+// =====================================================================
+// 3. AUTENTICACIÓN Y PERFIL
+// =====================================================================
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
@@ -208,87 +163,9 @@ Route::middleware('guest')->group(function () {
 Route::get('/2fa', [AuthController::class, 'show2faForm'])->name('2fa.form');
 Route::post('/2fa', [AuthController::class, 'verify2fa'])->name('2fa.verify');
 
-// RUTAS PROTEGIDAS
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // --- NUEVO: RUTA PARA LIBERAR ASIENTOS AL ABANDONAR LA COMPRA ---
-    Route::post('/api/unlock-seats', function (Request $request) {
-        $movieTitle = $request->input('movie_title');
-        $seatsString = $request->input('seats');
-        
-        if (!empty($movieTitle) && !empty($seatsString)) {
-            $seatsArray = explode(',', $seatsString);
-            foreach ($seatsArray as $seat) {
-                Cache::forget('locked_' . Str::slug($movieTitle) . '_' . trim($seat));
-            }
-        }
-        return response()->json(['success' => true]);
-    })->name('api.unlock.seats');
-
-    // --- RUTA PARA ELIMINAR RESERVA (LIMPIA CACHÉ Y LUEGO BORRA) ---
-    Route::delete('/reserva/{id}', function ($id) {
-        $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
-        
-        try {
-            // 1. Obtenemos datos de la reserva para limpiar los asientos fantasma
-            $resResponse = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/reservas/{$id}?acf_format=standard");
-            if ($resResponse->successful()) {
-                $acf = $resResponse->json()['acf'] ?? [];
-                $movieTitle = $acf['movie_title'] ?? '';
-                $seatsString = $acf['seats'] ?? '';
-                
-                if (!empty($movieTitle) && !empty($seatsString)) {
-                    $movieSlug = Str::slug($movieTitle);
-                    $seatsArray = explode(',', $seatsString);
-                    foreach ($seatsArray as $seat) {
-                        Cache::forget('locked_' . $movieSlug . '_' . trim($seat));
-                    }
-                }
-            }
-
-            // 2. Borramos la entrada en WordPress
-            Http::withBasicAuth(env('WP_USER'), env('WP_PASSWORD'))->withoutVerifying()
-                ->delete("{$wordpressUrl}/wp-json/wp/v2/reservas/{$id}?force=true");
-
-        } catch (\Exception $e) {}
-
-        return redirect()->route('profile.edit', ['tab' => 'bookings'])->with('status', 'Booking cancelled successfully.');
-    })->name('reserva.destroy');
-
-    // --- RUTA PARA VER ENTRADA INDIVIDUAL ---
-    Route::get('/ticket/{id}', function ($id) {
-        $user = Auth::user();
-        $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
-
-        try {
-            $resResponse = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/reservas/{$id}?acf_format=standard");
-            $reserva = $resResponse->json();
-            $acf = $reserva['acf'] ?? [];
-
-            if (($acf['user_email'] ?? '') !== $user->email) abort(403);
-
-            $movieTitle = $acf['movie_title'];
-            $moviesResponse = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/pelicula?acf_format=standard&per_page=100");
-            $movieData = collect($moviesResponse->json())->firstWhere('title.rendered', $movieTitle);
-
-            $ticket = [
-                'id'     => $id,
-                'movie'  => $movieTitle,
-                'seats'  => $acf['seats'],
-                'total'  => $acf['total_price'],
-                'items'  => json_decode($acf['items_json'] ?? '[]', true),
-                'date'   => $reserva['date'],
-                'poster' => $movieData['acf']['poster'] ?? '',
-                'bg'     => $movieData['acf']['bg'] ?? '#141414',
-                'color'  => $movieData['acf']['textcolor'] ?? 'white'
-            ];
-
-            return view('ticket-view', compact('ticket'));
-        } catch (\Exception $e) { abort(404); }
-    })->name('ticket.show');
-    
-    // --- PERFIL ---
     Route::get('/profile', function () {
         $user = Auth::user();
         $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
@@ -329,15 +206,19 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [AuthController::class, 'updatePassword'])->name('password.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-    // 5. BOOKING (CON ASIENTOS REALES Y BLOQUEOS TEMPORALES)
+
+// =====================================================================
+// 4. RESERVAS (BOOKING, COMIDA Y ASIENTOS)
+// =====================================================================
+Route::middleware('auth')->group(function () {
     Route::get('/booking/{id}', function ($id) {
         $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp'); 
         $movie = ["title" => "Película Desconocida", "bgImg" => "", "bg" => "#222222", "textColor" => "white"];
         $occupiedSeats = []; 
 
         try {
-            // 1. Obtenemos título de la peli
             $response = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/pelicula?acf_format=standard&per_page=100");
             $movieTitle = "";
             if ($response->successful()) {
@@ -351,7 +232,6 @@ Route::middleware('auth')->group(function () {
                 }
             }
 
-            // 2. Extraemos reservas PERMANENTES de WordPress
             if (!empty($movieTitle)) {
                 $resResponse = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/reservas?per_page=100&acf_format=standard");
                 if ($resResponse->successful()) {
@@ -360,8 +240,7 @@ Route::middleware('auth')->group(function () {
                         if (($acfRes['movie_title'] ?? '') === $movieTitle) {
                             $seatsString = $acfRes['seats'] ?? '';
                             if (!empty($seatsString)) {
-                                $seatsArray = explode(',', $seatsString);
-                                foreach($seatsArray as $s) {
+                                foreach(explode(',', $seatsString) as $s) {
                                     $occupiedSeats[] = trim($s);
                                 }
                             }
@@ -369,7 +248,6 @@ Route::middleware('auth')->group(function () {
                     }
                 }
 
-                // 3. Extraemos bloqueos TEMPORALES (10 minutos) de la Caché de Laravel
                 $rowsArray = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
                 foreach ($rowsArray as $row) {
                     for ($i = 1; $i <= 10; $i++) {
@@ -383,22 +261,14 @@ Route::middleware('auth')->group(function () {
         } catch (\Exception $e) { }
 
         $occupiedSeats = array_unique($occupiedSeats);
-
         return view('booking', ['id' => $id, 'movie' => $movie, 'realOccupied' => $occupiedSeats]);
-    })->middleware('auth')->name('booking.show');
+    })->name('booking.show');
 
 
-    // 6. COMIDA (APLICA EL BLOQUEO DE 10 MINUTOS Y CARGA MENÚ REAL)
     Route::get('/booking/{id}/food', function (Request $request, $id) {
         $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp'); 
         $movie = ["title" => "Película Desconocida", "bgImg" => "", "bg" => "#222222", "textColor" => "white"];
-        
-        $menu = [
-            'exclusive' => [], 
-            'popcorn'   => [], 
-            'drinks'    => [], 
-            'snacks'    => []
-        ];
+        $menu = ['exclusive' => [], 'popcorn' => [], 'drinks' => [], 'snacks' => []];
 
         try {
             $response = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/pelicula?acf_format=standard&per_page=100");
@@ -406,18 +276,12 @@ Route::middleware('auth')->group(function () {
                 foreach ($response->json() as $wpMovie) {
                     $acf = $wpMovie['acf'] ?? [];
                     if (isset($acf['id_laravel']) && (int)$acf['id_laravel'] === (int)$id) {
-                        $movie = [
-                            "title" => $wpMovie['title']['rendered'], 
-                            "bgImg" => $acf['bgimg'] ?? "", 
-                            "bg" => $acf['bg'] ?? "#000000", 
-                            "textColor" => $acf['textcolor'] ?? "white"
-                        ];
+                        $movie = ["title" => $wpMovie['title']['rendered'], "bgImg" => $acf['bgimg'] ?? "", "bg" => $acf['bg'] ?? "#000000", "textColor" => $acf['textcolor'] ?? "white"];
                         break;
                     }
                 }
             }
 
-            // BLOQUEO DE ASIENTOS: Los metemos en la caché por 10 minutos
             $seatsParam = $request->query('seats');
             if (!empty($seatsParam) && !empty($movie['title'])) {
                 $seatsArray = explode(',', $seatsParam);
@@ -426,13 +290,11 @@ Route::middleware('auth')->group(function () {
                 }
             }
 
-            // OBTENEMOS LA COMIDA DE WORDPRESS
             $foodResponse = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/comida?acf_format=standard&per_page=100");
             if ($foodResponse->successful()) {
                 foreach ($foodResponse->json() as $item) {
                     $acfFood = $item['acf'] ?? [];
                     $categoria = strtolower($acfFood['category'] ?? 'snacks'); 
-                    
                     $foodObj = [
                         'name'  => $item['title']['rendered'],
                         'price' => (float)($acfFood['price'] ?? 0),
@@ -447,27 +309,20 @@ Route::middleware('auth')->group(function () {
                             $menu['exclusive'][] = $foodObj;
                         }
                     } else {
-                        if (isset($menu[$categoria])) {
-                            $menu[$categoria][] = $foodObj;
-                        } else {
-                            $menu['snacks'][] = $foodObj;
-                        }
+                        if (isset($menu[$categoria])) { $menu[$categoria][] = $foodObj; } 
+                        else { $menu['snacks'][] = $foodObj; }
                     }
                 }
             }
-
         } catch (\Exception $e) { }
 
         return view('booking-food', [
-            'id' => $id, 
-            'movie' => $movie, 
-            'menu' => $menu, 
-            'seats' => $request->query('seats'), 
-            'ticketsTotal' => $request->query('ticketsTotal')
+            'id' => $id, 'movie' => $movie, 'menu' => $menu, 
+            'seats' => $request->query('seats'), 'ticketsTotal' => $request->query('ticketsTotal')
         ]);
-    })->middleware('auth')->name('booking.food');
+    })->name('booking.food');
 
-    // 7. CHECKOUT VISTA
+
     Route::get('/booking/{id}/checkout', function ($id) {
         $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp'); 
         $movie = ["title" => "Película Desconocida", "bgImg" => "", "bg" => "#222222", "textColor" => "white"];
@@ -485,9 +340,74 @@ Route::middleware('auth')->group(function () {
         } catch (\Exception $e) { }
         return view('checkout', ['id' => $id, 'movie' => $movie]);
     })->name('booking.checkout.view');
+
+
+    Route::post('/api/unlock-seats', function (Request $request) {
+        $movieTitle = $request->input('movie_title');
+        $seatsString = $request->input('seats');
+        if (!empty($movieTitle) && !empty($seatsString)) {
+            foreach (explode(',', $seatsString) as $seat) {
+                Cache::forget('locked_' . Str::slug($movieTitle) . '_' . trim($seat));
+            }
+        }
+        return response()->json(['success' => true]);
+    })->name('api.unlock.seats');
+
+
+    Route::delete('/reserva/{id}', function ($id) {
+        $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
+        try {
+            $resResponse = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/reservas/{$id}?acf_format=standard");
+            if ($resResponse->successful()) {
+                $acf = $resResponse->json()['acf'] ?? [];
+                $movieTitle = $acf['movie_title'] ?? '';
+                $seatsString = $acf['seats'] ?? '';
+                if (!empty($movieTitle) && !empty($seatsString)) {
+                    $movieSlug = Str::slug($movieTitle);
+                    foreach (explode(',', $seatsString) as $seat) {
+                        Cache::forget('locked_' . $movieSlug . '_' . trim($seat));
+                    }
+                }
+            }
+            Http::withBasicAuth(env('WP_USER'), env('WP_PASSWORD'))->withoutVerifying()->delete("{$wordpressUrl}/wp-json/wp/v2/reservas/{$id}?force=true");
+        } catch (\Exception $e) {}
+        return redirect()->route('profile.edit', ['tab' => 'bookings'])->with('status', 'Booking cancelled successfully.');
+    })->name('reserva.destroy');
+
+
+    Route::get('/ticket/{id}', function ($id) {
+        $user = Auth::user();
+        $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
+        try {
+            $resResponse = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/reservas/{$id}?acf_format=standard");
+            $reserva = $resResponse->json();
+            $acf = $reserva['acf'] ?? [];
+            if (($acf['user_email'] ?? '') !== $user->email) abort(403);
+
+            $movieTitle = $acf['movie_title'];
+            $moviesResponse = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/pelicula?acf_format=standard&per_page=100");
+            $movieData = collect($moviesResponse->json())->firstWhere('title.rendered', $movieTitle);
+
+            $ticket = [
+                'id'     => $id,
+                'movie'  => $movieTitle,
+                'seats'  => $acf['seats'],
+                'total'  => $acf['total_price'],
+                'items'  => json_decode($acf['items_json'] ?? '[]', true),
+                'date'   => $reserva['date'],
+                'poster' => $movieData['acf']['poster'] ?? '',
+                'bg'     => $movieData['acf']['bg'] ?? '#141414',
+                'color'  => $movieData['acf']['textcolor'] ?? 'white'
+            ];
+            return view('ticket-view', compact('ticket'));
+        } catch (\Exception $e) { abort(404); }
+    })->name('ticket.show');
 });
 
-// 8. PROCESAR PAGO STRIPE
+
+// =====================================================================
+// 5. PASARELA STRIPE
+// =====================================================================
 Route::post('/checkout', function (Request $request) {
     Stripe::setApiKey(env('STRIPE_SECRET'));
     Session::put('last_order', [
@@ -510,7 +430,6 @@ Route::post('/checkout', function (Request $request) {
     return redirect($checkout_session->url);
 })->name('checkout.process');
 
-// 9. ÉXITO Y GUARDADO EN WORDPRESS (CON CAPTURA DE ID)
 Route::get('/checkout/success', function () {
     $orderData = Session::get('last_order');
     if ($orderData) {
@@ -529,12 +448,7 @@ Route::get('/checkout/success', function () {
                         'items_json'  => $orderData['items']
                     ]
                 ]);
-            
-            // Atrapamos el ID de WordPress para que el botón del correo funcione
-            if ($response->successful()) {
-                $orderData['id'] = $response->json()['id'] ?? '';
-            }
-
+            if ($response->successful()) { $orderData['id'] = $response->json()['id'] ?? ''; }
             Mail::to($userEmail)->send(new \App\Mail\TicketConfirmation($orderData));
         } catch (\Exception $e) { }
 
@@ -545,4 +459,170 @@ Route::get('/checkout/success', function () {
             ->with('last_purchase', $orderData);
     }
     return redirect()->route('home');
-})->name('checkout.success');
+})->middleware('auth')->name('checkout.success');
+
+
+// =====================================================================
+// 6. COMUNIDAD / FORO (ESTILO REDDIT)
+// =====================================================================
+Route::get('/community', function () {
+    $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
+    $movies = [];
+    $allPosts = [];
+    $replies = [];
+
+    try {
+        // 1. Cargar Películas e inicializar el contador de posts
+        $movRes = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/pelicula?acf_format=standard&per_page=100");
+        if ($movRes->successful()) {
+            foreach ($movRes->json() as $wpMovie) {
+                $acf = $wpMovie['acf'] ?? [];
+                $movies[$acf['id_laravel'] ?? 0] = [
+                    'id' => $acf['id_laravel'] ?? 0,
+                    'title' => $wpMovie['title']['rendered'],
+                    'color' => $acf['bg'] ?? '#ffd000',
+                    'poster' => $acf['poster'] ?? '',
+                    'post_count' => 0 // Iniciar contador
+                ];
+            }
+        }
+
+        // 2. Cargar Mensajes
+        $revRes = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/reviews?per_page=100&acf_format=standard");
+        if ($revRes->successful()) {
+            $currentUserEmail = Auth::check() ? Auth::user()->email : null;
+
+            foreach ($revRes->json() as $review) {
+                $acf = $review['acf'] ?? [];
+                $movieId = $acf['id_pelicula_laravel'] ?? 0;
+                $parentId = (int)($acf['parent_id'] ?? 0);
+                $userEmail = $acf['user_email'] ?? '';
+                
+                // Sumamos 1 al contador de trending de la película
+                if (isset($movies[$movieId])) {
+                    $movies[$movieId]['post_count']++;
+                }
+
+                // AVATAR REAL DESDE LARAVEL DB
+                $localUser = \App\Models\User::where('email', $userEmail)->first();
+                $cleanName = str_replace('Review by ', '', $review['title']['rendered']);
+                
+                if ($localUser && !empty($localUser->avatar)) {
+                    $avatarUrl = asset('img/avatars/' . $localUser->avatar);
+                } else {
+                    // Fallback inicial
+                    $avatarUrl = 'https://ui-avatars.com/api/?name='.urlencode($cleanName).'&background=1A1A1B&color=D7DADC&bold=true';
+                }
+                
+                $likedBy = $acf['users_liked'] ?? '';
+                $hasLiked = $currentUserEmail && str_contains($likedBy, $currentUserEmail);
+
+                $postData = [
+                    'id' => $review['id'],
+                    'author' => $cleanName,
+                    'avatar' => $avatarUrl,
+                    'content' => strip_tags($review['content']['rendered']),
+                    'movie_info' => $movies[$movieId] ?? null,
+                    'date' => date('M j', strtotime($review['date'])),
+                    'likes' => (int)($acf['likes'] ?? 0),
+                    'has_liked' => $hasLiked,
+                    'parent_id' => $parentId,
+                    'movie_id' => $movieId,
+                    'replies' => []
+                ];
+
+                if ($parentId === 0) { $allPosts[$review['id']] = $postData; } 
+                else { $replies[] = $postData; }
+            }
+
+            // Anidamos respuestas
+            foreach ($replies as $reply) {
+                if (isset($allPosts[$reply['parent_id']])) {
+                    array_push($allPosts[$reply['parent_id']]['replies'], $reply);
+                }
+            }
+        }
+    } catch (\Exception $e) {}
+
+    // Ordenamos los posts (los más nuevos primero)
+    $posts = array_values($allPosts);
+    usort($posts, function($a, $b) { return $b['id'] <=> $a['id']; });
+
+    // Lógica real de TRENDING (Top 3 películas más comentadas)
+    $trendingMovies = array_filter($movies, function($m) { return $m['post_count'] > 0; });
+    usort($trendingMovies, function($a, $b) { return $b['post_count'] <=> $a['post_count']; });
+    $trendingMovies = array_slice($trendingMovies, 0, 3);
+
+    return view('community', compact('movies', 'posts', 'trendingMovies'));
+})->name('community.index');
+
+
+Route::post('/community/post', function (Request $request) {
+    $request->validate([
+        'content' => 'required|string|min:2',
+        'movie_id' => 'required',
+        'parent_id' => 'nullable'
+    ]);
+    
+    $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
+    
+    $response = Http::withBasicAuth(env('WP_USER'), env('WP_PASSWORD'))->withoutVerifying()
+        ->post("{$wordpressUrl}/wp-json/wp/v2/reviews", [
+            'title'   => Auth::user()->name,
+            'content' => $request->input('content'),
+            'status'  => 'publish',
+            'acf'     => [
+                'id_pelicula_laravel' => (string) $request->input('movie_id'),
+                'user_email' => Auth::user()->email,
+                'likes' => 0,
+                'users_liked' => '',
+                'parent_id' => (int) $request->input('parent_id', 0) 
+            ]
+        ]);
+
+    if ($response->failed()) {
+        return back()->with('error', 'WP Error: ' . $response->body());
+    }
+
+    return back()->with('status', 'Posted successfully!');
+})->middleware('auth')->name('community.post');
+
+
+Route::post('/api/community/like/{id}', function ($id) {
+    $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
+    $userEmail = Auth::user()->email;
+
+    $getRes = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/reviews/{$id}?acf_format=standard");
+    if ($getRes->successful()) {
+        $acf = $getRes->json()['acf'] ?? [];
+        $likedBy = $acf['users_liked'] ?? '';
+        $currentLikes = (int)($acf['likes'] ?? 0);
+        
+        $likedArray = array_filter(explode(',', $likedBy)); 
+
+        if (in_array($userEmail, $likedArray)) {
+            $likedArray = array_diff($likedArray, [$userEmail]);
+            $newLikes = max(0, $currentLikes - 1);
+            $isLiked = false;
+        } else {
+            $likedArray[] = $userEmail;
+            $newLikes = $currentLikes + 1;
+            $isLiked = true;
+        }
+
+        $newList = implode(',', $likedArray); 
+
+        $updateRes = Http::withBasicAuth(env('WP_USER'), env('WP_PASSWORD'))->withoutVerifying()
+            ->post("{$wordpressUrl}/wp-json/wp/v2/reviews/{$id}", [
+                'acf' => [ 
+                    'likes' => $newLikes,
+                    'users_liked' => $newList
+                ]
+            ]);
+
+        if ($updateRes->successful()) {
+            return response()->json(['success' => true, 'likes' => $newLikes, 'is_liked' => $isLiked]);
+        }
+    }
+    return response()->json(['success' => false], 500);
+})->middleware('auth');

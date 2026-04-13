@@ -454,7 +454,6 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            /* 👇 CAMBIO: Bajamos opacidad a 0.85 para más transparencia 👇 */
             background: rgba(0, 0, 0, 0.85); 
             z-index: 9999;
             justify-content: center;
@@ -531,7 +530,7 @@
             opacity: 1;
         }
 
-        /* --- 👇 NUEVO: FLECHAS DE NAVEGACIÓN DENTRO DEL MODAL 👇 --- */
+        /* FLECHAS DE NAVEGACIÓN DENTRO DEL MODAL */
         .modal-nav-btn {
             position: absolute;
             top: 50%;
@@ -548,10 +547,9 @@
             justify-content: center;
             transition: all 0.3s ease;
             z-index: 10;
-            opacity: 0; /* Ocultas por defecto */
+            opacity: 0; 
         }
         
-        /* Aparecen al pasar el ratón por el modal */
         .media-modal:hover .modal-nav-btn {
             opacity: 1;
         }
@@ -576,7 +574,6 @@
         .modal-nav-btn.prev:hover svg { transform: translateX(-4px); }
         .modal-nav-btn.next:hover svg { transform: translateX(4px); }
 
-        /* Ocultar flechas si solo hay 1 imagen/video */
         .media-modal.single-item .modal-nav-btn {
             display: none !important;
         }
@@ -691,61 +688,6 @@
                         }
                     }
                 }
-            }
-        }
-
-        /* --- REVIEWS SECTION --- */
-        .reviews-section {
-            padding: 20px 5% 80px;
-            background-color: var(--color-negro);
-            max-width: 1400px;
-            margin: 0 auto;
-
-            .reviews-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 20px;
-
-                .review-card {
-                    background: #0a0a0a;
-                    border: 1px solid #222;
-                    border-radius: 8px;
-                    padding: 25px;
-                    transition: border-color 0.3s ease, transform 0.3s ease;
-
-                    &:hover { 
-                        border-color: var(--color-principal); 
-                        transform: translateY(-5px);
-                    }
-
-                    .review-stars {
-                        color: var(--color-principal);
-                        margin-bottom: 10px;
-                        font-size: 20px;
-                        letter-spacing: 2px;
-                    }
-
-                    h4 {
-                        font-size: 18px;
-                        color: var(--color-blanco);
-                        margin-bottom: 10px;
-                        text-transform: uppercase;
-                    }
-
-                    p {
-                        color: #aaa;
-                        font-size: 14px;
-                        line-height: 1.6;
-                        font-family: Arial, sans-serif;
-                    }
-                }
-            }
-
-            .no-reviews {
-                color: #666;
-                font-family: Arial, sans-serif;
-                font-style: italic;
-                padding: 20px 0;
             }
         }
 
@@ -873,6 +815,7 @@
                 <li><a href="/">HOME</a></li>
                 <li><a href="/#cartelera">FILMS</a></li>
                 <li><a href="/#bar">MENUS</a></li>
+                <li><a href="/community">COMMUNITY</a></li>
 
                 @auth
                 <div class="user-nav">
@@ -1039,80 +982,13 @@
         </section>
     @endif
 
-    <section class="reviews-section" style="padding: 50px 10% 100px; background: #000; color: white;">
-        @if(session('error'))
-    <div style="background: #721c24; color: #f8d7da; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-        {{ session('error') }}
-    </div>
-@endif
-
-@if(session('status'))
-    <div style="background: #155724; color: #d4edda; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-        {{ session('status') }}
-    </div>
-@endif
-    <h2 style="color: var(--color-principal); margin-bottom: 30px; font-size: 2rem;">Audience Reviews</h2>
-
-    @auth
-        <div style="background: #111; padding: 25px; border-radius: 12px; margin-bottom: 40px; border: 1px solid #333;">
-            <h4 style="margin-bottom: 15px; color: #fff;">Hi {{ Auth::user()->name }}, share your thoughts!</h4>
-            
-            <form action="{{ route('pelicula.review', ['id' => $id]) }}" method="POST">
-                @csrf
-                <div style="margin-bottom: 15px;">
-                    <label style="color: #888; display: block; margin-bottom: 5px;">Score:</label>
-                    <select name="score" required style="background: #222; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px; width: 100px;">
-                        <option value="5">5 ★★★★★</option>
-                        <option value="4">4 ★★★★</option>
-                        <option value="3">3 ★★★</option>
-                        <option value="2">2 ★★</option>
-                        <option value="1">1 ★</option>
-                    </select>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <textarea name="content" required placeholder="Write your review here..." rows="4" style="width: 100%; background: #222; color: #fff; border: 1px solid #444; padding: 15px; border-radius: 8px; resize: none;"></textarea>
-                </div>
-
-                <button type="submit" style="background: var(--color-principal); color: #000; padding: 12px 30px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase;">
-                    Submit Review
-                </button>
-            </form>
-        </div>
-    @else
-        <div style="background: #111; padding: 20px; border-radius: 10px; border: 1px dashed #444; text-align: center; margin-bottom: 40px;">
-            <p style="color: #aaa;">You must be <a href="{{ route('login') }}" style="color: var(--color-principal); text-decoration: none; font-weight: bold;">logged in</a> to write a review.</p>
-        </div>
-    @endauth
-
-    <div class="reviews-list" style="display: grid; gap: 20px;">
-    @forelse($reviews as $review)
-        <div style="background: #111; padding: 20px; border-radius: 12px; display: flex; gap: 20px; align-items: flex-start; border: 1px solid #222;">
-            
-            @php
-                // Generamos un hash del nombre o email para tener una imagen única
-                $userHash = md5(strtolower(trim($review['title']))); 
-                $avatarUrl = "https://www.gravatar.com/avatar/{$userHash}?d=identicon&s=100";
-            @endphp
-            <img src="{{ $avatarUrl }}" alt="User" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--color-principal);">
-
-            <div style="flex: 1;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <strong style="color: #fff;">{{ str_replace('Review by ', '', $review['title']) }}</strong>
-                    <span style="color: var(--color-principal);">
-                        {{ str_repeat('★', $review['score']) }}{{ str_repeat('☆', 5 - $review['score']) }}
-                    </span>
-                </div>
-                <p style="color: #aaa; font-size: 0.95rem; line-height: 1.4; margin: 0;">
-                    "{{ $review['content'] }}"
-                </p>
-            </div>
-        </div>
-    @empty
-        <p style="color: #666; font-style: italic;">No reviews yet. Be the first one!</p>
-    @endforelse
-</div>
-</section>
+    <section style="padding: 60px 5%; background-color: var(--color-negro); text-align: center; border-top: 1px solid #222;">
+        <h2 style="color: var(--color-principal); font-size: 2rem; margin-bottom: 15px; text-transform: uppercase;">Join the Conversation</h2>
+        <p style="color: #aaa; margin-bottom: 30px; font-size: 16px;">What did you think of {{ $movie['title'] }}? Read theories, share your thoughts, and connect with other moviegoers.</p>
+        <button onclick="window.location.href='/community'" style="background: var(--color-principal); color: var(--color-texto-btn); padding: 15px 40px; border: none; border-radius: 30px; font-weight: 900; font-size: 14px; cursor: pointer; text-transform: uppercase; transition: transform 0.2s;">
+            Go to Community Thread
+        </button>
+    </section>
 
     <footer>
         <div class="footer-content">
@@ -1182,91 +1058,40 @@
             }
         });
 
-        // --- 👇 LÓGICA DEL MODAL MEJORADA (CIRCULAR) 👇 ---
-        
-        // Creamos un array vacío para guardar los datos reales al cargar la página
         let modalMediaData = []; 
-        let modalCurrentIndex = 0; // Índice de la imagen que estamos viendo en el modal
+        let modalCurrentIndex = 0; 
 
-        // Función que abre el modal por primera vez basándose en el índice clicado
         function openModal(index, type, url, thumbnail = '') {
             const modal = document.getElementById('mediaModal');
-            modalCurrentIndex = index; // Guardamos qué índice se ha abierto
+            modalCurrentIndex = index; 
             
-            // Si es la primera vez que abrimos, recolectamos datos del DOM
             if (modalMediaData.length === 0) {
                 collectModalData();
             }
             
-            // Ocultar flechas si solo hay 1 item
             if (modalMediaData.length <= 1) {
                 modal.classList.add('single-item');
             } else {
                 modal.classList.remove('single-item');
             }
 
-            renderModalContent(); // Pintamos el contenido
-            modal.classList.add('active'); // Mostramos el modal
+            renderModalContent(); 
+            modal.classList.add('active'); 
             
-            // Evitar scroll en el body
             document.body.style.overflow = 'hidden';
             
-            // Cerrar modal al hacer click fuera del contenido
-            modal.addEventListener('click', closeModal);
+            modal.addEventListener('click', closeModalOutside);
+            document.addEventListener('keydown', handleEsc);
         }
         
-        // Recolecta las URLs y tipos de las imágenes ORIGINALES (antes de clonar)
-        function collectModalData() {
-            const track = document.getElementById('media-track');
-            const items = Array.from(track.querySelectorAll('.media-item'));
-            
-            // El carrusel infinito duplica items. Necesitamos quedarnos con el set central original.
-            // Si el total es 15 (5 originales), los originales son del índice 5 al 9.
-            // Una forma más segura: Tu Blade genera 1 item por cada media real.
-            // Buscamos los onclicks que no sean clones (esto es complejo si ya clonaste).
-            
-            // LA FORMA MÁS FÁCIL: Usar el array que Laravel pasa a Blade si fuera posible,
-            // pero como no tenemos acceso a cambiar el backend, recolectamos del DOM *antes*
-            // de que el script del carrusel infinito haga los clones.
-            
-            // Para simplificar, asumimos que movieMediaData se llena con los datos pasados por onclick en Blade
-            // Modificamos la función openModal para que llene el array si está vacío.
-            if(modalMediaData.length === 0) {
-                // Buscamos todos los media-items originales generados por Blade
-                // Para esto, necesitamos hacerlo ANTES de que el carrusel infinito clone cosas.
-                // Como este script se ejecuta al final, recolectamos los datos directamente de los atributos del onclick de Blade.
-                modalMediaData = [];
-                const allItems = Array.from(document.querySelectorAll('#media-track .media-item'));
-                // Si el carrusel infinito ya actuó, hay clones. Los originales están en el centro.
-                // Es más seguro extraer los datos de los primeros 'N' items ANTES del transitionend.
-                
-                // NOTA: Como no puedo modificar tu carrusel infinito, esta parte es frágil.
-                // Lo ideal sería que Laravel pasara el array de media como JSON al JS: `const media = @json($movie['mediaCarousel']);`
-                // Asumiremos que el array se llena dinámicamente en openModal la primera vez
-            }
-        }
-        
-        // Esta versión de openModal es la que usaremos realmente.
-        // Recibe los datos completos para llenar el array la primera vez.
         let isDataCollected = false;
-        function openModal(index, type, url, thumbnail = '') {
-            const modal = document.getElementById('mediaModal');
-            
-            // Guardamos el índice actual
-            modalCurrentIndex = index;
-
-            // Recolectamos datos del DOM la primera vez (antes de que el carrusel duplique)
+        function collectModalData() {
             if(!isDataCollected) {
                 modalMediaData = [];
                 const track = document.getElementById('media-track');
-                // IMPORTANTE: Buscamos solo los elementos generados originalmente por Blade.
-                // Como no tienen ID, nos basamos en que al principio el track solo tiene los originales.
-                // El script del carrusel infinito se ejecuta en DOMContentLoaded, igual que este check.
-                // Asumiremos que este check corre ANTES del clonado del carrusel.
                 const originalItems = track.querySelectorAll('.media-item');
                 
                 originalItems.forEach((item, i) => {
-                    // Extraemos datos del onclick (feo pero funcional sin tocar backend)
                     const onclickStr = item.getAttribute('onclick');
                     const match = onclickStr.match(/openModal\(\s*\d+\s*,\s*'([^']+)'\s*,\s*'([^']+)'(?:,\s*'([^']*)')?\s*\)/);
                     
@@ -1280,35 +1105,17 @@
                 });
                 isDataCollected = true;
             }
-
-            // Ocultar flechas si solo hay 1 item real
-            if (modalMediaData.length <= 1) {
-                modal.classList.add('single-item');
-            } else {
-                modal.classList.remove('single-item');
-            }
-
-            renderModalContent(); // Pintamos el contenido del índice actual
-            modal.classList.add('active'); // Mostramos modal
-            document.body.style.overflow = 'hidden'; // Evitar scroll body
-            
-            // Listener para cerrar al hacer click fuera (en el fondo negro con transparencia)
-            modal.addEventListener('click', closeModalOutside);
-            // Soporte para tecla ESC
-            document.addEventListener('keydown', handleEsc);
         }
 
-        // Pinta la imagen o vídeo basándose en modalMediaData[modalCurrentIndex]
         function renderModalContent() {
             const container = document.getElementById('modalContent');
-            container.innerHTML = ''; // Limpiar
+            container.innerHTML = ''; 
             
             if (modalMediaData.length === 0) return;
             
             const item = modalMediaData[modalCurrentIndex];
 
             if (item.type === 'video') {
-                // Lógica de YouTube Embed
                 let embedUrl = item.url;
                 const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
                 const match = item.url.match(regExp);
@@ -1317,50 +1124,41 @@
                 }
                 container.innerHTML = `<iframe src="${embedUrl}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
             } else {
-                // Imagen normal
                 container.innerHTML = `<img src="${item.url}" alt="Media Viewer ${modalCurrentIndex + 1}">`;
             }
         }
 
-        // Lógica de navegación CIRCULAR dentro del modal
         function moveModalCarousel(direction) {
-            if (modalMediaData.length <= 1) return; // No navegar si solo hay uno
+            if (modalMediaData.length <= 1) return; 
             
             const total = modalMediaData.length;
-            // Sumamos total antes del módulo para manejar índices negativos correctamente
             modalCurrentIndex = (modalCurrentIndex + direction + total) % total;
             
-            // Pequeño efecto de fadeout/fadein al cambiar de contenido
             const container = document.getElementById('modalContent');
             container.style.opacity = '0';
             container.style.transition = 'opacity 0.15s ease';
             
             setTimeout(() => {
-                renderModalContent(); // Cambiamos el contenido
-                container.style.opacity = '1'; // Fade in
+                renderModalContent(); 
+                container.style.opacity = '1'; 
             }, 150);
         }
 
-        // Funciones de cierre
         function closeModal() {
             const modal = document.getElementById('mediaModal');
             const container = document.getElementById('modalContent');
             modal.classList.remove('active');
             
-            // IMPORTANTE: Vaciamos el HTML para detener la reproducción del vídeo de YouTube
             setTimeout(() => {
                 container.innerHTML = ''; 
-                document.body.style.overflow = ''; // Restaurar scroll body
-            }, 300); // Esperamos a que termine la animación de cierre
+                document.body.style.overflow = ''; 
+            }, 300); 
 
-            // Limpiar listeners
             modal.removeEventListener('click', closeModalOutside);
             document.removeEventListener('keydown', handleEsc);
         }
         
-        // Cierra solo si haces click en el fondo (no en las flechas ni contenido)
         function closeModalOutside(e) {
-            // Si el click fue directamente en el fondo negro (.media-modal)
             if (e.target.id === 'mediaModal') {
                 closeModal();
             }
@@ -1371,18 +1169,6 @@
             if (e.key === 'ArrowRight') moveModalCarousel(1);
             if (e.key === 'ArrowLeft') moveModalCarousel(-1);
         }
-
-
-        // --- LÓGICA ORIGINAL DEL CARRUSEL (No tocada) ---
-        // Header scroll effect
-        window.addEventListener('scroll', () => {
-            const headerEl = document.getElementById('main-header');
-            if (window.scrollY > 50) {
-                headerEl.classList.add('scrolled');
-            } else {
-                headerEl.classList.remove('scrolled');
-            }
-        });
 
         // Lógica de Carrusel Infinito y Auto-Play
         document.addEventListener('DOMContentLoaded', () => {
@@ -1470,4 +1256,4 @@
     </script>
 
 </body>
-</html>
+</html> 

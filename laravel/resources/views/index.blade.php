@@ -933,6 +933,7 @@
                     <li><a href="#main-hero">HOME</a></li>
                     <li><a href="#cartelera">FILMS</a></li>
                     <li><a href="#bar">MENUS</a></li>
+                    <li><a href="/community">COMMUNITY</a></li>
 
                     @auth
                     <div class="user-nav">
