@@ -33,7 +33,7 @@ Route::get('/', function () {
 
                 $movieData = [
                     'id' => $laravelId,
-                    'title' => $wpMovie['title']['rendered'],
+                    'title' => html_entity_decode($wpMovie['title']['rendered'], ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                     'age' => $acf['edad'] ?? 'TP',
                     'rating' => (int)($acf['puntuacion'] ?? 4),
                     'genre' => $acf['genero'] ?? 'Unknown',
@@ -116,8 +116,8 @@ Route::get('/pelicula/{id}', function ($id) {
                                 if ($isExclusive && $matchesMovie && !$isSpent) {
                                     $menuSpecial = [
                                         "enabled" => true,
-                                        "title"   => $item['title']['rendered'],
-                                        "text"    => $acfFood['description'] ?? "",
+                                        "title"   => html_entity_decode($item['title']['rendered'], ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                                        "text"    => html_entity_decode($acfFood['description'] ?? "", ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                                         "image"   => $acfFood['image'] ?? ""
                                     ];
                                     break; 
@@ -127,8 +127,8 @@ Route::get('/pelicula/{id}', function ($id) {
                     } catch (\Exception $e) {}
 
                     $movie = [
-                        "title" => $wpMovie['title']['rendered'],
-                        "desc" => strip_tags($wpMovie['content']['rendered']),
+                        "title" => html_entity_decode($wpMovie['title']['rendered'], ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                        "desc" => html_entity_decode(strip_tags($wpMovie['content']['rendered']), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                         "age" => $acf['edad'] ?? "?",
                         "genre" => $acf['genero'] ?? "Unknown",
                         "bgImg" => $acf['bgimg'] ?? "",
@@ -225,7 +225,7 @@ Route::middleware('auth')->group(function () {
                 foreach ($response->json() as $wpMovie) {
                     $acf = $wpMovie['acf'] ?? [];
                     if (isset($acf['id_laravel']) && (int)$acf['id_laravel'] === (int)$id) {
-                        $movieTitle = $wpMovie['title']['rendered'];
+                        $movieTitle = html_entity_decode($wpMovie['title']['rendered'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
                         $movie = ["title" => $movieTitle, "bgImg" => $acf['bgimg'] ?? "", "bg" => $acf['bg'] ?? "#000000", "textColor" => $acf['textcolor'] ?? "white"];
                         break;
                     }
@@ -276,7 +276,7 @@ Route::middleware('auth')->group(function () {
                 foreach ($response->json() as $wpMovie) {
                     $acf = $wpMovie['acf'] ?? [];
                     if (isset($acf['id_laravel']) && (int)$acf['id_laravel'] === (int)$id) {
-                        $movie = ["title" => $wpMovie['title']['rendered'], "bgImg" => $acf['bgimg'] ?? "", "bg" => $acf['bg'] ?? "#000000", "textColor" => $acf['textcolor'] ?? "white"];
+                        $movie = ["title" => html_entity_decode($wpMovie['title']['rendered'], ENT_QUOTES | ENT_HTML5, 'UTF-8'), "bgImg" => $acf['bgimg'] ?? "", "bg" => $acf['bg'] ?? "#000000", "textColor" => $acf['textcolor'] ?? "white"];
                         break;
                     }
                 }
@@ -296,10 +296,10 @@ Route::middleware('auth')->group(function () {
                     $acfFood = $item['acf'] ?? [];
                     $categoria = strtolower($acfFood['category'] ?? 'snacks'); 
                     $foodObj = [
-                        'name'  => $item['title']['rendered'],
+                        'name'  => html_entity_decode($item['title']['rendered'], ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                         'price' => (float)($acfFood['price'] ?? 0),
                         'img'   => $acfFood['image'] ?? '',
-                        'desc'  => $acfFood['description'] ?? '',
+                        'desc'  => html_entity_decode($acfFood['description'] ?? "", ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                         'stock' => (int)($acfFood['stock'] ?? 100),
                         'spent' => filter_var($acfFood['spent'] ?? false, FILTER_VALIDATE_BOOLEAN)
                     ];
@@ -332,7 +332,7 @@ Route::middleware('auth')->group(function () {
                 foreach ($response->json() as $wpMovie) {
                     $acf = $wpMovie['acf'] ?? [];
                     if (isset($acf['id_laravel']) && (int)$acf['id_laravel'] === (int)$id) {
-                        $movie = ["title" => $wpMovie['title']['rendered'], "bgImg" => $acf['bgimg'] ?? "", "bg" => $acf['bg'] ?? "#000000", "textColor" => $acf['textcolor'] ?? "white"];
+                        $movie = ["title" => html_entity_decode($wpMovie['title']['rendered'], ENT_QUOTES | ENT_HTML5, 'UTF-8'), "bgImg" => $acf['bgimg'] ?? "", "bg" => $acf['bg'] ?? "#000000", "textColor" => $acf['textcolor'] ?? "white"];
                         break;
                     }
                 }
@@ -463,7 +463,7 @@ Route::get('/checkout/success', function () {
 
 
 // =====================================================================
-// 6. COMUNIDAD / FORO (ESTILO REDDIT)
+// 6. COMUNIDAD / FORO 
 // =====================================================================
 Route::get('/community', function () {
     $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
@@ -472,22 +472,21 @@ Route::get('/community', function () {
     $replies = [];
 
     try {
-        // 1. Cargar Películas e inicializar el contador de posts
         $movRes = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/pelicula?acf_format=standard&per_page=100");
         if ($movRes->successful()) {
             foreach ($movRes->json() as $wpMovie) {
                 $acf = $wpMovie['acf'] ?? [];
                 $movies[$acf['id_laravel'] ?? 0] = [
                     'id' => $acf['id_laravel'] ?? 0,
-                    'title' => $wpMovie['title']['rendered'],
+                    'title' => html_entity_decode($wpMovie['title']['rendered'], ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                     'color' => $acf['bg'] ?? '#ffd000',
                     'poster' => $acf['poster'] ?? '',
-                    'post_count' => 0 // Iniciar contador
+                    'post_count' => 0
                 ];
             }
+            ksort($movies); 
         }
 
-        // 2. Cargar Mensajes
         $revRes = Http::withoutVerifying()->get("{$wordpressUrl}/wp-json/wp/v2/reviews?per_page=100&acf_format=standard");
         if ($revRes->successful()) {
             $currentUserEmail = Auth::check() ? Auth::user()->email : null;
@@ -496,34 +495,65 @@ Route::get('/community', function () {
                 $acf = $review['acf'] ?? [];
                 $movieId = $acf['id_pelicula_laravel'] ?? 0;
                 $parentId = (int)($acf['parent_id'] ?? 0);
-                $userEmail = $acf['user_email'] ?? '';
                 
-                // Sumamos 1 al contador de trending de la película
                 if (isset($movies[$movieId])) {
                     $movies[$movieId]['post_count']++;
                 }
 
-                // AVATAR REAL DESDE LARAVEL DB
+                $rawTitle = html_entity_decode($review['title']['rendered'] ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $userEmail = $acf['user_email'] ?? '';
+                $postTitle = $rawTitle;
+
+                // --- TRUCO INFALIBLE: SEPARAMOS EL EMAIL DEL TÍTULO ---
+                if (str_contains($rawTitle, '|||')) {
+                    $parts = explode('|||', $rawTitle);
+                    $userEmail = trim($parts[0]);
+                    $postTitle = trim($parts[1] ?? '');
+                }
+
+                // Buscamos al usuario 
                 $localUser = \App\Models\User::where('email', $userEmail)->first();
-                $cleanName = str_replace('Review by ', '', $review['title']['rendered']);
                 
-                if ($localUser && !empty($localUser->avatar)) {
-                    $avatarUrl = asset('img/avatars/' . $localUser->avatar);
+                if ($localUser) {
+                    $authorName = $localUser->name;
                 } else {
-                    // Fallback inicial
-                    $avatarUrl = 'https://ui-avatars.com/api/?name='.urlencode($cleanName).'&background=1A1A1B&color=D7DADC&bold=true';
+                    if (str_starts_with($postTitle, 'Review by ')) {
+                        $authorName = str_replace('Review by ', '', $postTitle);
+                    } elseif (!empty($userEmail)) {
+                        $authorName = explode('@', $userEmail)[0];
+                    } else {
+                        $authorName = 'Anonymous';
+                    }
+                }
+                
+                // AVATAR
+                if ($localUser && !empty($localUser->avatar)) {
+                    $avatarName = str_contains($localUser->avatar, '.png') ? $localUser->avatar : $localUser->avatar . '.png';
+                    $avatarUrl = asset('img/avatars/' . $avatarName);
+                } else {
+                    $randomId = (crc32($authorName) % 10) + 1; 
+                    $avatarUrl = asset('img/avatars/avatar' . $randomId . '.png');
                 }
                 
                 $likedBy = $acf['users_liked'] ?? '';
                 $hasLiked = $currentUserEmail && str_contains($likedBy, $currentUserEmail);
 
+                // Limpiamos los títulos por defecto para que no se vean
+                if (str_starts_with($postTitle, 'Review by') || str_starts_with($postTitle, 'Reserva -')) {
+                    $postTitle = '';
+                }
+
+                $rawContent = strip_tags($review['content']['rendered'] ?? '');
+                $cleanContent = html_entity_decode($rawContent, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
                 $postData = [
                     'id' => $review['id'],
-                    'author' => $cleanName,
+                    'author' => $authorName,
+                    'post_title' => $postTitle,
                     'avatar' => $avatarUrl,
-                    'content' => strip_tags($review['content']['rendered']),
+                    'content' => $cleanContent,
                     'movie_info' => $movies[$movieId] ?? null,
-                    'date' => date('M j', strtotime($review['date'])),
+                    'date' => date('M j, H:i', strtotime($review['date'])),
                     'likes' => (int)($acf['likes'] ?? 0),
                     'has_liked' => $hasLiked,
                     'parent_id' => $parentId,
@@ -535,7 +565,6 @@ Route::get('/community', function () {
                 else { $replies[] = $postData; }
             }
 
-            // Anidamos respuestas
             foreach ($replies as $reply) {
                 if (isset($allPosts[$reply['parent_id']])) {
                     array_push($allPosts[$reply['parent_id']]['replies'], $reply);
@@ -544,11 +573,15 @@ Route::get('/community', function () {
         }
     } catch (\Exception $e) {}
 
-    // Ordenamos los posts (los más nuevos primero)
     $posts = array_values($allPosts);
-    usort($posts, function($a, $b) { return $b['id'] <=> $a['id']; });
+    
+    usort($posts, function($a, $b) { 
+        if ($a['likes'] === $b['likes']) {
+            return $b['id'] <=> $a['id']; 
+        }
+        return $b['likes'] <=> $a['likes']; 
+    });
 
-    // Lógica real de TRENDING (Top 3 películas más comentadas)
     $trendingMovies = array_filter($movies, function($m) { return $m['post_count'] > 0; });
     usort($trendingMovies, function($a, $b) { return $b['post_count'] <=> $a['post_count']; });
     $trendingMovies = array_slice($trendingMovies, 0, 3);
@@ -559,6 +592,7 @@ Route::get('/community', function () {
 
 Route::post('/community/post', function (Request $request) {
     $request->validate([
+        'post_title' => 'nullable|string|max:150',
         'content' => 'required|string|min:2',
         'movie_id' => 'required',
         'parent_id' => 'nullable'
@@ -566,26 +600,36 @@ Route::post('/community/post', function (Request $request) {
     
     $wordpressUrl = env('WP_URL', 'http://127.0.0.1/proyecto/wp');
     
+    $titleToSave = $request->input('post_title');
+    if (empty($titleToSave)) {
+        $titleToSave = 'Review';
+    }
+
+    // --- TRUCO INFALIBLE: Unimos email y título para que WordPress lo guarde sí o sí ---
+    $composedTitle = Auth::user()->email . '|||' . $titleToSave;
+
+    $postData = [
+        'title'   => $composedTitle,
+        'content' => $request->input('content'),
+        'status'  => 'publish',
+        'acf'     => [
+            'id_pelicula_laravel' => (string) $request->input('movie_id'),
+            'user_email' => Auth::user()->email,
+            'likes' => 0,
+            'users_liked' => '',
+            'parent_id' => (int) $request->input('parent_id', 0) 
+        ]
+    ];
+
     $response = Http::withBasicAuth(env('WP_USER'), env('WP_PASSWORD'))->withoutVerifying()
-        ->post("{$wordpressUrl}/wp-json/wp/v2/reviews", [
-            'title'   => Auth::user()->name,
-            'content' => $request->input('content'),
-            'status'  => 'publish',
-            'acf'     => [
-                'id_pelicula_laravel' => (string) $request->input('movie_id'),
-                'user_email' => Auth::user()->email,
-                'likes' => 0,
-                'users_liked' => '',
-                'parent_id' => (int) $request->input('parent_id', 0) 
-            ]
-        ]);
+        ->post("{$wordpressUrl}/wp-json/wp/v2/reviews", $postData);
 
     if ($response->failed()) {
         return back()->with('error', 'WP Error: ' . $response->body());
     }
 
     return back()->with('status', 'Posted successfully!');
-})->middleware('auth')->name('community.post');
+})->name('community.post')->middleware('auth');
 
 
 Route::post('/api/community/like/{id}', function ($id) {
