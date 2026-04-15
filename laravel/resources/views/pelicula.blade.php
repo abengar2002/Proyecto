@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Screenbites Cinema - {{ $movie['title'] ?? 'Movie' }}</title>
+    <link rel="stylesheet" href="{{ asset('css/webbar.css') }}">
 
     <style>
         :root {
@@ -18,6 +19,16 @@
             --color-principal: {{ $movie['bg'] ?? '#ffd000' }}; 
             /* COLOR TEXTO BOTON DINÁMICO */
             --color-texto-btn: {{ $movie['textColor'] ?? 'black' }};
+        }
+
+        /* SOBREESCRIBIMOS LA BARRA DE SCROLL GLOBAL CON EL COLOR DE LA PELÍCULA */
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--color-principal) !important;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--color-principal) !important;
+            filter: brightness(0.85); /* La oscurece un pelín al pasar el ratón */
         }
 
         * {
@@ -261,7 +272,7 @@
 
                         .btn-buy {
                             background: var(--color-principal);
-                            color: var(--color-texto-btn);
+                            color: var(--color-texto-btn) !important;
                             padding: 12px 30px;
                             font-size: 13px;
                             font-weight: 900;
@@ -275,19 +286,18 @@
                             align-items: center;
                             gap: 10px;
 
-                            img {
-                                width: 18px;
-                                filter: {{ ($movie['textColor'] ?? 'black') === 'white' ? 'invert(0)' : 'invert(1)' }}; 
+                            svg {
+                                width: 20px;
+                                height: 20px;
+                                /* ESTA ES LA MAGIA: Coge el color exacto del texto */
+                                stroke: currentColor; 
+                                transition: stroke 0.3s ease;
                             }
 
                             &:hover:not(:disabled) {
                                 background: var(--color-blanco);
-                                color: var(--color-negro);
+                                color: var(--color-negro) !important; /* El texto se vuelve negro, el SVG le seguirá */
                                 transform: scale(1.05);
-                                
-                                img {
-                                    filter: invert(1);
-                                }
                             }
                             
                             &:disabled {
@@ -738,7 +748,7 @@
                         text-transform: uppercase;
                         letter-spacing: 2px;
                         margin-bottom: 20px;
-                        color: var(--color-principal);
+                        color: var(--color-principal); /* <-- AHORA ES DEL COLOR DE LA PELI */
                     }
 
                     .footer-links {
@@ -755,7 +765,7 @@
                                 transition: color 0.3s ease;
 
                                 &:hover {
-                                    color: var(--color-principal);
+                                    color: var(--color-principal); /* <-- AHORA ES DEL COLOR DE LA PELI */
                                 }
                             }
                         }
@@ -783,7 +793,7 @@
                     font-family: Arial, sans-serif;
 
                     span {
-                        color: var(--color-principal);
+                        color: var(--color-principal); /* <-- AHORA ES DEL COLOR DE LA PELI */
                         font-weight: bold;
                     }
 
@@ -904,7 +914,11 @@
                         </button>
                     @else
                         <button class="btn-buy" onclick="window.location.href='/booking/{{ $id }}'">
-                            <img src="{{ asset('img/img/Ticket-amarillo.png') }}" alt="Ticket"> BUY TICKETS
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 7h14a2 2 0 0 1 2 2v1.5a1.5 1.5 0 0 0 0 3V15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1.5a1.5 1.5 0 0 0 0-3V9a2 2 0 0 1 2-2z"></path>
+                                <line x1="8" y1="7" x2="8" y2="17" stroke-dasharray="2 2"></line>
+                            </svg>
+                            BUY TICKETS
                         </button>
                     @endif
                     <a href="/#cartelera" class="btn-back">BACK TO FILMS</a>
@@ -1256,4 +1270,4 @@
     </script>
 
 </body>
-</html> 
+</html>

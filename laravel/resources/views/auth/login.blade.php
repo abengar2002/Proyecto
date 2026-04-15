@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Screenbites - Entrar</title>
+    <link rel="stylesheet" href="{{ asset('css/webbar.css') }}">
     <style>
         body { margin: 0; font-family: 'Arial Black', sans-serif; background-color: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; }
         .auth-box { background: #111; padding: 40px; border-top: 5px solid #ffd000; border-radius: 8px; width: 100%; max-width: 400px; text-align: center; }

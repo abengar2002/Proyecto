@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Screenbites - Registro</title>
+    <link rel="stylesheet" href="{{ asset('css/webbar.css') }}">
     <style>
         body { margin: 0; font-family: 'Arial Black', sans-serif; background-color: #000; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px 0; }
         .auth-box { background: #111; padding: 40px; border-top: 5px solid #ffd000; border-radius: 8px; width: 100%; max-width: 500px; text-align: center; }

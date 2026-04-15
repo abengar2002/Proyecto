@@ -6,6 +6,7 @@
     <title>Ticket - {{ $ticket['movie'] }}</title>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="{{ asset('css/webbar.css') }}">
 
     <style>
         :root {
