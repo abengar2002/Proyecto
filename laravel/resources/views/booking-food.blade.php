@@ -161,7 +161,7 @@
                                 &:hover { transform: none; box-shadow: none; }
                             }
 
-                            .food-img { height: 180px; width: 100%; object-fit: cover; background-color: #111; }
+                            .food-img { height: 300px; width: 100%; object-fit: cover; background-color: #111; }
                             
                             .food-tag { 
                                 position: absolute; top: 10px; right: 10px; font-size: 10px; background: var(--color-principal); color: var(--color-texto-btn); padding: 5px 10px; border-radius: 8px; font-weight: bold; text-transform: uppercase; box-shadow: 0 2px 10px rgba(0,0,0,0.5); 
