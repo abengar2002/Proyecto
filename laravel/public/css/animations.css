@@ -1,0 +1,24 @@
+.menu_mobile {
+  &.grow {
+    .mobile-logo-container {
+      transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .menu_mobile_nav {
+      li {
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        opacity: 1;
+        transform: translateY(0);
+
+        &:nth-child(1) { transition-delay: 0.3s; }
+        &:nth-child(2) { transition-delay: 0.4s; }
+        &:nth-child(3) { transition-delay: 0.5s; }
+        &:nth-child(4) { transition-delay: 0.6s; }
+        &:nth-child(5) { transition-delay: 0.7s; }
+        &:nth-child(6) { transition-delay: 0.8s; } /* Por si hay más enlaces (Auth) */
+      }
+    }
+  }
+}

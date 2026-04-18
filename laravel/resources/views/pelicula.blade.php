@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Screenbites Cinema - {{ $movie['title'] ?? 'Movie' }}</title>
+    
     <link rel="stylesheet" href="{{ asset('css/webbar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/animations.css') }}">
 
     <style>
         :root {
@@ -24,11 +26,11 @@
         /* SOBREESCRIBIMOS LA BARRA DE SCROLL GLOBAL CON EL COLOR DE LA PELÍCULA */
         ::-webkit-scrollbar-thumb {
             background-color: var(--color-principal) !important;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background-color: var(--color-principal) !important;
-            filter: brightness(0.85); /* La oscurece un pelín al pasar el ratón */
+            
+            &:hover {
+                background-color: var(--color-principal) !important;
+                filter: brightness(0.85);
+            }
         }
 
         * {
@@ -47,9 +49,18 @@
             background-color: var(--color-negro);
             color: var(--color-blanco);
             width: 100%;
+
+            &.menu-open {
+                overflow: hidden;
+            }
         }
 
-        /* --- HEADER --- */
+        /* Ocultar el icono hamburguesa y el menú móvil en escritorio por defecto */
+        #nav-icon, .menu_mobile {
+            display: none;
+        }
+
+        /* --- HEADER (CON NESTING) --- */
         header {
             position: fixed;
             top: 0;
@@ -58,8 +69,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 5% 0 3%;
-            height: 100px;
+            padding: 0 clamp(3%, 5vw, 5%);
+            height: clamp(70px, 8vw, 100px);
             z-index: 1000;
             background-color: transparent;
             border-bottom: 1px solid transparent;
@@ -71,26 +82,29 @@
                 -webkit-backdrop-filter: blur(10px);
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+                nav a,
+                nav .logout-btn,
+                .user-profile .user-name,
+                .user-profile .chevron-icon {
+                    color: var(--color-blanco) !important;
+                    text-shadow: none !important;
+                }
             }
 
-            &.scrolled nav a,
-            &.scrolled nav .logout-btn,
-            &.scrolled .user-profile .user-name,
-            &.scrolled .user-profile .chevron-icon {
-                color: var(--color-blanco) !important;
-                text-shadow: none !important;
+            .logo {
+                img {
+                    height: clamp(40px, 5vw, 60px);
+                    transition: height 0.3s ease;
+                }
             }
 
-            .logo img {
-                height: 60px;
-            }
-
-            nav {
+            nav.desktop-nav {
                 ul {
                     list-style: none;
                     display: flex;
                     align-items: center;
-                    gap: 30px;
+                    gap: clamp(15px, 2vw, 30px);
                 }
 
                 a,
@@ -98,7 +112,7 @@
                     text-decoration: none;
                     color: var(--header-text-color, var(--color-blanco));
                     text-transform: uppercase;
-                    font-size: 13px;
+                    font-size: clamp(11px, 1vw, 13px);
                     font-weight: 900;
                     letter-spacing: 2px;
                     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
@@ -118,67 +132,66 @@
                     }
                 }
             }
-        }
 
-        /* --- USER NAVIGATION --- */
-        .user-nav {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            border-left: 2px solid rgba(255, 255, 255, 0.4);
-            padding-left: 20px;
-            margin-left: 10px;
-
-            .user-profile {
+            .user-nav {
                 display: flex;
                 align-items: center;
-                gap: 10px;
-                color: var(--header-text-color, var(--color-blanco));
-                transition: color 0.3s ease;
+                gap: 20px;
+                border-left: 2px solid rgba(255, 255, 255, 0.4);
+                padding-left: clamp(10px, 1.5vw, 20px);
+                margin-left: clamp(5px, 1vw, 10px);
 
-                .user-avatar {
-                    width: 35px;
-                    height: 35px;
-                    border-radius: 50%;
-                    object-fit: cover;
-                    border: none;
-                    transition: transform 0.3s ease, box-shadow 0.3s ease;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-                }
-
-                .user-name,
-                .chevron-icon {
+                .user-profile {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
                     color: var(--header-text-color, var(--color-blanco));
-                    transition: color 0.3s ease, text-shadow 0.3s ease;
-                }
+                    transition: color 0.3s ease;
 
-                .chevron-icon {
-                    width: 16px;
-                    height: 16px;
-                }
-
-                &:hover {
                     .user-avatar {
-                        transform: scale(1.1);
-                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+                        width: clamp(28px, 3vw, 35px);
+                        height: clamp(28px, 3vw, 35px);
+                        border-radius: 50%;
+                        object-fit: cover;
+                        border: none;
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
                     }
+
                     .user-name,
                     .chevron-icon {
-                        color: var(--color-principal) !important;
-                        text-shadow: 0px 2px 10px rgba(0, 0, 0, 1), 0px 0px 4px rgba(0, 0, 0, 1) !important;
+                        color: var(--header-text-color, var(--color-blanco));
+                        transition: color 0.3s ease, text-shadow 0.3s ease;
+                    }
+
+                    .chevron-icon {
+                        width: clamp(14px, 1.5vw, 16px);
+                        height: clamp(14px, 1.5vw, 16px);
+                    }
+
+                    &:hover {
+                        .user-avatar {
+                            transform: scale(1.1);
+                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+                        }
+                        .user-name,
+                        .chevron-icon {
+                            color: var(--color-principal) !important;
+                            text-shadow: 0px 2px 10px rgba(0, 0, 0, 1), 0px 0px 4px rgba(0, 0, 0, 1) !important;
+                        }
                     }
                 }
             }
         }
 
-        /* --- MOVIE HERO (NETFLIX STYLE) --- */
+        /* --- MOVIE HERO (NETFLIX STYLE) CON NESTING --- */
         .movie-hero {
             position: relative;
             width: 100%;
             min-height: 65vh;
             display: flex;
             align-items: center;
-            padding: 120px 5% 40px;
+            padding: clamp(100px, 12vw, 120px) 5% clamp(30px, 5vw, 40px);
 
             .backdrop-img {
                 position: absolute;
@@ -206,14 +219,14 @@
                 position: relative;
                 z-index: 10;
                 display: flex;
-                gap: 50px;
+                gap: clamp(20px, 5vw, 50px);
                 max-width: 1300px;
                 margin: 0 auto;
                 width: 100%;
                 align-items: center;
 
                 .movie-poster {
-                    width: 280px;
+                    width: clamp(180px, 30vw, 280px);
                     border-radius: 8px;
                     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
                     border: 2px solid var(--color-principal);
@@ -222,31 +235,34 @@
 
                 .movie-info {
                     flex: 1;
+                    min-width: 0; 
 
                     .movie-id {
                         color: var(--color-principal);
-                        font-size: 16px;
-                        letter-spacing: 5px;
+                        font-size: clamp(12px, 1.5vw, 16px);
+                        letter-spacing: clamp(2px, 0.5vw, 5px);
                         margin-bottom: 10px;
                         display: block;
                     }
 
                     .movie-title {
-                        font-size: 60px;
+                        font-size: clamp(18px, 4vw, 60px);
                         margin: 0 0 15px 0;
                         text-transform: uppercase;
                         line-height: 1.1;
                         text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+                        white-space: nowrap; 
                     }
 
                     .movie-meta {
                         display: flex;
-                        gap: 20px;
+                        gap: clamp(10px, 2vw, 20px);
                         align-items: center;
                         font-family: Arial, sans-serif;
-                        font-size: 14px;
-                        margin-bottom: 25px;
+                        font-size: clamp(11px, 1.5vw, 14px);
+                        margin-bottom: clamp(15px, 2.5vw, 25px);
                         color: #ddd;
+                        flex-wrap: wrap; 
 
                         .age-badge {
                             border: 2px solid currentColor;
@@ -260,21 +276,23 @@
                         font-family: Arial, sans-serif;
                         line-height: 1.6;
                         color: #ccc;
-                        margin-bottom: 35px;
-                        font-size: 16px;
+                        margin-bottom: clamp(20px, 3vw, 35px);
+                        font-size: clamp(13px, 1.5vw, 16px);
                         max-width: 800px;
+                        white-space: normal; 
                     }
 
                     .action-buttons {
                         display: flex;
-                        gap: 15px;
+                        gap: clamp(10px, 1.5vw, 15px);
                         align-items: center;
+                        flex-wrap: wrap;
 
                         .btn-buy {
                             background: var(--color-principal);
                             color: var(--color-texto-btn) !important;
-                            padding: 12px 30px;
-                            font-size: 13px;
+                            padding: clamp(10px, 1.5vw, 12px) clamp(20px, 3vw, 30px);
+                            font-size: clamp(11px, 1.2vw, 13px);
                             font-weight: 900;
                             text-transform: uppercase;
                             border: none;
@@ -287,16 +305,15 @@
                             gap: 10px;
 
                             svg {
-                                width: 20px;
-                                height: 20px;
-                                /* ESTA ES LA MAGIA: Coge el color exacto del texto */
+                                width: clamp(16px, 2vw, 20px);
+                                height: clamp(16px, 2vw, 20px);
                                 stroke: currentColor; 
                                 transition: stroke 0.3s ease;
                             }
 
                             &:hover:not(:disabled) {
                                 background: var(--color-blanco);
-                                color: var(--color-negro) !important; /* El texto se vuelve negro, el SVG le seguirá */
+                                color: var(--color-negro) !important;
                                 transform: scale(1.05);
                             }
                             
@@ -310,8 +327,8 @@
                         .btn-back {
                             background: transparent;
                             color: var(--color-blanco);
-                            padding: 12px 30px;
-                            font-size: 13px;
+                            padding: clamp(10px, 1.5vw, 12px) clamp(20px, 3vw, 30px);
+                            font-size: clamp(11px, 1.2vw, 13px);
                             font-weight: 900;
                             text-transform: uppercase;
                             border: 2px solid var(--color-blanco);
@@ -334,20 +351,20 @@
 
         /* --- TÍTULOS DE SECCIÓN --- */
         .section-title {
-            font-size: 24px;
+            font-size: clamp(20px, 3vw, 24px);
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: -1px;
             color: var(--color-blanco);
             border-left: 5px solid var(--color-principal);
             padding-left: 15px;
-            margin-bottom: 30px;
+            margin-bottom: clamp(20px, 3vw, 30px);
             line-height: 1;
         }
 
-        /* --- MEDIA CAROUSEL INFINITO --- */
+        /* --- MEDIA CAROUSEL INFINITO (CON NESTING) --- */
         .media-carousel-section {
-            padding: 20px 5% 60px;
+            padding: clamp(30px, 5vw, 60px) 5%;
             background-color: var(--color-negro);
             max-width: 1400px;
             margin: 0 auto;
@@ -356,7 +373,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 20px;
+                gap: clamp(10px, 2vw, 20px);
                 width: 100%;
 
                 .media-nav-btn {
@@ -367,14 +384,14 @@
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding: 10px;
+                    padding: clamp(5px, 1vw, 10px);
                     opacity: 0.6;
                     transition: all 0.3s ease;
                     flex-shrink: 0;
 
                     svg {
-                        width: 36px;
-                        height: 36px;
+                        width: clamp(24px, 3vw, 36px);
+                        height: clamp(24px, 3vw, 36px);
                         stroke-width: 3;
                         transition: transform 0.3s ease;
                     }
@@ -396,12 +413,12 @@
 
                 .carousel-track {
                     display: flex;
-                    gap: 20px;
+                    gap: 20px; 
                 }
 
                 .media-item {
                     flex: 0 0 calc(33.333% - 14px); 
-                    height: 300px;
+                    height: clamp(180px, 25vw, 300px);
                     border-radius: 8px;
                     background-color: #111;
                     border: 1px solid #222;
@@ -426,8 +443,8 @@
                         top: 50%;
                         left: 50%;
                         transform: translate(-50%, -50%);
-                        width: 60px;
-                        height: 60px;
+                        width: clamp(40px, 6vw, 60px);
+                        height: clamp(40px, 6vw, 60px);
                         background: rgba(0, 0, 0, 0.6);
                         border-radius: 50%;
                         display: flex;
@@ -439,8 +456,8 @@
                         pointer-events: none;
 
                         svg {
-                            width: 24px;
-                            height: 24px;
+                            width: clamp(16px, 2.5vw, 24px);
+                            height: clamp(16px, 2.5vw, 24px);
                             margin-left: 4px;
                             fill: currentColor;
                         }
@@ -456,7 +473,7 @@
             }
         }
 
-        /* --- MODAL (LIGHTBOX) PARA MEDIA --- */
+        /* --- MODAL (LIGHTBOX) PARA MEDIA (CON NESTING) --- */
         .media-modal {
             display: none;
             position: fixed;
@@ -472,125 +489,127 @@
             -webkit-backdrop-filter: blur(5px);
             opacity: 0;
             transition: opacity 0.3s ease;
+
+            &.active {
+                display: flex;
+                opacity: 1;
+
+                .media-modal-content {
+                    transform: scale(1);
+                }
+            }
+
+            .media-modal-content {
+                position: relative;
+                width: 90%;
+                max-width: 1200px;
+                aspect-ratio: 16/9;
+                background: #000;
+                border-radius: 12px;
+                box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+                border: 2px solid var(--color-principal);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                transform: scale(0.9);
+                transition: transform 0.3s ease;
+
+                img, iframe {
+                    max-width: 100%;
+                    max-height: 100%;
+                    border-radius: 10px;
+                    border: none;
+                    display: block;
+                }
+                
+                img {
+                    object-fit: contain; 
+                }
+                
+                iframe {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+            .media-modal-close {
+                position: absolute;
+                top: clamp(10px, 2vw, 20px);
+                right: clamp(15px, 3vw, 30px);
+                background: none;
+                border: none;
+                color: var(--color-blanco);
+                font-size: clamp(35px, 5vw, 50px);
+                font-family: Arial, sans-serif;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                line-height: 1;
+                z-index: 10;
+                opacity: 0.7;
+
+                &:hover {
+                    color: var(--color-principal);
+                    transform: scale(1.1);
+                    opacity: 1;
+                }
+            }
+
+            .modal-nav-btn {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background: rgba(0, 0, 0, 0.5);
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                color: var(--color-blanco);
+                width: clamp(40px, 6vw, 60px);
+                height: clamp(40px, 6vw, 60px);
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+                z-index: 10;
+                opacity: 0; 
+
+                svg {
+                    width: clamp(20px, 3vw, 30px);
+                    height: clamp(20px, 3vw, 30px);
+                    stroke-width: 3;
+                    transition: transform 0.3s ease;
+                }
+
+                &:hover {
+                    background: var(--color-principal);
+                    border-color: var(--color-principal);
+                    color: var(--color-texto-btn);
+                    box-shadow: 0 0 20px rgba(255, 208, 0, 0.5);
+                }
+
+                &.prev { 
+                    left: clamp(10px, 3vw, 30px); 
+                    &:hover svg { transform: translateX(-4px); }
+                }
+                
+                &.next { 
+                    right: clamp(10px, 3vw, 30px); 
+                    &:hover svg { transform: translateX(4px); }
+                }
+            }
+
+            &:hover .modal-nav-btn {
+                opacity: 1;
+            }
+
+            &.single-item .modal-nav-btn {
+                display: none !important;
+            }
         }
 
-        .media-modal.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .media-modal-content {
-            position: relative;
-            width: 90%;
-            max-width: 1200px;
-            aspect-ratio: 16/9;
-            background: #000;
-            border-radius: 12px;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
-            border: 2px solid var(--color-principal);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-        
-        .media-modal.active .media-modal-content {
-            transform: scale(1);
-        }
-
-        .media-modal-content img,
-        .media-modal-content iframe {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 10px;
-            border: none;
-            display: block;
-        }
-        
-        .media-modal-content img {
-            object-fit: contain; 
-        }
-        
-        .media-modal-content iframe {
-            width: 100%;
-            height: 100%;
-        }
-
-        .media-modal-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            background: none;
-            border: none;
-            color: var(--color-blanco);
-            font-size: 50px;
-            font-family: Arial, sans-serif;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            line-height: 1;
-            z-index: 10;
-            opacity: 0.7;
-        }
-
-        .media-modal-close:hover {
-            color: var(--color-principal);
-            transform: scale(1.1);
-            opacity: 1;
-        }
-
-        /* FLECHAS DE NAVEGACIÓN DENTRO DEL MODAL */
-        .modal-nav-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            color: var(--color-blanco);
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            z-index: 10;
-            opacity: 0; 
-        }
-        
-        .media-modal:hover .modal-nav-btn {
-            opacity: 1;
-        }
-
-        .modal-nav-btn svg {
-            width: 30px;
-            height: 30px;
-            stroke-width: 3;
-            transition: transform 0.3s ease;
-        }
-
-        .modal-nav-btn:hover {
-            background: var(--color-principal);
-            border-color: var(--color-principal);
-            color: var(--color-texto-btn);
-            box-shadow: 0 0 20px rgba(var(--color-principal-rgb, 255, 208, 0), 0.5);
-        }
-
-        .modal-nav-btn.prev { left: 30px; }
-        .modal-nav-btn.next { right: 30px; }
-        
-        .modal-nav-btn.prev:hover svg { transform: translateX(-4px); }
-        .modal-nav-btn.next:hover svg { transform: translateX(4px); }
-
-        .media-modal.single-item .modal-nav-btn {
-            display: none !important;
-        }
-
-        /* --- EXCLUSIVE MENU --- */
+        /* --- EXCLUSIVE MENU (CON NESTING) --- */
         .exclusive-movie-menu {
-            padding: 20px 5% 80px;
+            padding: clamp(30px, 5vw, 60px) 5% clamp(60px, 8vw, 80px);
             background-color: var(--color-negro);
             max-width: 1400px;
             margin: 0 auto;
@@ -599,10 +618,10 @@
                 background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
                 border: 1px solid #333;
                 border-radius: 12px;
-                padding: 40px;
+                padding: clamp(20px, 4vw, 40px);
                 display: flex;
                 align-items: center;
-                gap: 40px;
+                gap: clamp(20px, 4vw, 40px);
                 position: relative;
                 overflow: hidden;
 
@@ -620,8 +639,8 @@
 
                 .exclusive-img-container {
                     flex-shrink: 0;
-                    width: 380px; 
-                    height: 260px; 
+                    width: clamp(200px, 30vw, 380px); 
+                    height: clamp(150px, 20vw, 260px); 
                     border-radius: 8px;
                     overflow: hidden;
                     border: 2px solid var(--color-principal);
@@ -645,7 +664,7 @@
                         display: inline-block;
                         background-color: var(--color-principal);
                         color: var(--color-texto-btn);
-                        font-size: 11px;
+                        font-size: clamp(9px, 1.2vw, 11px);
                         font-weight: 900;
                         padding: 4px 10px;
                         border-radius: 12px;
@@ -654,7 +673,7 @@
                     }
 
                     h3 {
-                        font-size: 32px;
+                        font-size: clamp(22px, 4vw, 32px);
                         color: var(--color-blanco);
                         text-transform: uppercase;
                         margin-bottom: 10px;
@@ -664,7 +683,7 @@
                     p {
                         font-family: Arial, sans-serif;
                         color: #aaa;
-                        font-size: 15px;
+                        font-size: clamp(13px, 1.5vw, 15px);
                         line-height: 1.6;
                         margin-bottom: 25px;
                         max-width: 500px;
@@ -673,8 +692,8 @@
                     .btn-unlock {
                         background: transparent;
                         color: var(--color-principal);
-                        padding: 12px 25px;
-                        font-size: 13px;
+                        padding: clamp(10px, 1.5vw, 12px) clamp(15px, 2vw, 25px);
+                        font-size: clamp(11px, 1.2vw, 13px);
                         font-weight: 900;
                         text-transform: uppercase;
                         border: 2px solid var(--color-principal);
@@ -687,8 +706,8 @@
                         gap: 10px;
 
                         svg {
-                            width: 18px;
-                            height: 18px;
+                            width: clamp(16px, 1.8vw, 18px);
+                            height: clamp(16px, 1.8vw, 18px);
                         }
 
                         &:hover {
@@ -701,10 +720,10 @@
             }
         }
 
-        /* --- FOOTER --- */
+        /* --- FOOTER (CON NESTING) --- */
         footer {
             background-color: var(--color-negro);
-            padding: 60px 5% 40px;
+            padding: clamp(40px, 6vw, 60px) 5% 40px;
             border-top: 1px solid var(--color-gris-claro);
 
             .footer-content {
@@ -722,11 +741,10 @@
                     &:first-child {
                         display: flex;
                         flex-direction: column;
-                        align-items: center;
-                        text-align: center;
-                        
+                        align-items: flex-start;
+
                         .footer-logo img {
-                            height: 60px;
+                            height: clamp(40px, 5vw, 60px);
                             margin-bottom: 20px;
                             display: block;
                         }
@@ -739,16 +757,16 @@
                     p {
                         font-family: Arial, sans-serif;
                         color: #888;
-                        font-size: 13px;
+                        font-size: clamp(12px, 1vw, 13px);
                         line-height: 1.6;
                     }
 
                     h4 {
-                        font-size: 16px;
+                        font-size: clamp(14px, 1.5vw, 16px);
                         text-transform: uppercase;
                         letter-spacing: 2px;
                         margin-bottom: 20px;
-                        color: var(--color-principal); /* <-- AHORA ES DEL COLOR DE LA PELI */
+                        color: var(--color-principal); 
                     }
 
                     .footer-links {
@@ -761,11 +779,11 @@
                                 color: var(--color-blanco);
                                 text-decoration: none;
                                 font-family: Arial, sans-serif;
-                                font-size: 14px;
+                                font-size: clamp(12px, 1vw, 14px);
                                 transition: color 0.3s ease;
 
                                 &:hover {
-                                    color: var(--color-principal); /* <-- AHORA ES DEL COLOR DE LA PELI */
+                                    color: var(--color-principal); 
                                 }
                             }
                         }
@@ -782,7 +800,7 @@
                 justify-content: space-between;
                 align-items: center;
                 font-family: Arial, sans-serif;
-                font-size: 12px;
+                font-size: clamp(10px, 1vw, 12px);
                 color: #666;
 
                 .footer-credits {
@@ -793,7 +811,7 @@
                     font-family: Arial, sans-serif;
 
                     span {
-                        color: var(--color-principal); /* <-- AHORA ES DEL COLOR DE LA PELI */
+                        color: var(--color-principal); 
                         font-weight: bold;
                     }
 
@@ -811,6 +829,200 @@
                 }
             }
         }
+
+        /* =========================================================================
+           --- MEDIA QUERIES (DISEÑO RESPONSIVE Y MENÚ MÓVIL) ---
+           ========================================================================= */
+
+        @media (max-width: 1024px) {
+            .media-carousel-section .carousel-container .media-item {
+                flex: 0 0 calc(50% - 10px); 
+            }
+        }
+
+        @media (max-width: 768px) {
+            .desktop-nav { display: none; }
+
+            #nav-icon {
+                display: block;
+                width: 30px;
+                height: 22px;
+                position: relative;
+                cursor: pointer;
+                z-index: 1001; 
+                
+                span {
+                    display: block;
+                    position: absolute;
+                    height: 3px;
+                    width: 100%;
+                    background: var(--color-principal); 
+                    border-radius: 3px;
+                    opacity: 1;
+                    left: 0;
+                    transition: 0.25s ease-in-out, background-color 0.3s ease;
+                    
+                    &:nth-child(1) { top: 0px; }
+                    &:nth-child(2) { top: 9px; }
+                    &:nth-child(3) { top: 18px; }
+                }
+
+                &.open {
+                    span:nth-child(1) { top: 9px; transform: rotate(135deg); }
+                    span:nth-child(2) { opacity: 0; left: -60px; }
+                    span:nth-child(3) { top: 9px; transform: rotate(-135deg); }
+                }
+            }
+
+            .menu_mobile {
+                display: flex;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background-color: var(--color-negro);
+                z-index: 1000;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.4s ease;
+
+                &.grow {
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+
+                .menu-mobile-close {
+                    position: absolute;
+                    top: clamp(20px, 4vw, 30px);
+                    right: clamp(20px, 5vw, 30px);
+                    background: none;
+                    border: none;
+                    color: var(--color-blanco);
+                    font-size: clamp(45px, 8vw, 60px);
+                    cursor: pointer;
+                    z-index: 1002;
+                    line-height: 1;
+                    transition: color 0.3s ease, transform 0.3s ease;
+
+                    &:hover {
+                        color: var(--color-principal);
+                        transform: scale(1.1);
+                    }
+                }
+
+                .mobile-logo-container {
+                    margin-bottom: 40px;
+                    opacity: 0;
+                    transform: translateY(-20px);
+                    
+                    img { height: 60px; }
+                }
+
+                .menu_mobile_nav {
+                    list-style: none;
+                    text-align: center;
+                    padding: 0;
+
+                    li {
+                        margin: 20px 0;
+                        opacity: 0;
+                        transform: translateY(20px);
+
+                        a, .logout-btn-mobile {
+                            color: var(--color-blanco);
+                            text-decoration: none;
+                            font-size: clamp(20px, 5vw, 24px);
+                            font-weight: 900;
+                            text-transform: uppercase;
+                            letter-spacing: 2px;
+                            transition: color 0.3s ease;
+
+                            &:hover {
+                                color: var(--color-principal); 
+                            }
+                        }
+                    }
+                }
+            }
+
+            /* --- Adaptación del Hero de Película al Móvil --- */
+            .movie-hero {
+                padding-top: 120px; 
+                min-height: auto; 
+                padding-bottom: 40px;
+
+                .movie-content {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 25px; 
+
+                    .movie-poster {
+                        width: 150px; 
+                        margin: 0 auto;
+                        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+                    }
+
+                    .movie-info {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        
+                        .movie-meta {
+                            justify-content: center;
+                            gap: 10px; 
+                        }
+
+                        .action-buttons {
+                            justify-content: center;
+                        }
+                    }
+                }
+            }
+
+            /* Carrusel móvil - 1 elemento por vista */
+            .media-carousel-section .carousel-container .media-item {
+                flex: 0 0 100%; 
+            }
+
+            /* Exclusivo móvil */
+            .exclusive-movie-menu .exclusive-banner {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+
+                .exclusive-img-container {
+                    width: 100%;
+                    height: auto;
+                    aspect-ratio: 16/9;
+                }
+
+                .exclusive-info {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+            }
+
+            /* Footer móvil */
+            footer {
+                .footer-content {
+                    flex-direction: column;
+                    text-align: center;
+
+                    .footer-col:first-child {
+                        align-items: center;
+                    }
+                }
+                .footer-bottom {
+                    flex-direction: column;
+                    gap: 15px;
+                }
+            }
+        }
     </style>
 </head>
 
@@ -820,7 +1032,8 @@
         <div class="logo">
             <a href="/"><img src="{{ asset('img/img/Logo-Blanco.png') }}" alt="Screenbites Logo"></a>
         </div>
-        <nav>
+        
+        <nav class="desktop-nav">
             <ul>
                 <li><a href="/">HOME</a></li>
                 <li><a href="/#cartelera">FILMS</a></li>
@@ -883,7 +1096,40 @@
                 @endauth
             </ul>
         </nav>
+
+        <div id="nav-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     </header>
+
+    <div class="menu_mobile">
+        <button id="close-menu-btn" class="menu-mobile-close">&times;</button>
+
+        <div class="mobile-logo-container">
+            <a href="/"><img src="{{ asset('img/img/Logo-Blanco.png') }}" alt="Cinema Logo"></a>
+        </div>
+        <ul class="menu_mobile_nav">
+            <li><a href="/">HOME</a></li>
+            <li><a href="/#cartelera">FILMS</a></li>
+            <li><a href="/#bar">MENUS</a></li>
+            <li><a href="/community">COMMUNITY</a></li>
+            
+            @auth
+                <li><a href="/profile">MY PROFILE</a></li>
+                <li>
+                    <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="logout-btn-mobile" style="background:none; border:none; color:inherit; font:inherit; cursor:pointer; padding:0;">SIGN OUT</button>
+                    </form>
+                </li>
+            @else
+                <li><a href="{{ route('login') }}">SIGN IN</a></li>
+                <li><a href="{{ route('register') }}">CREATE ACCOUNT</a></li>
+            @endauth
+        </ul>
+    </div>
 
     <div class="movie-hero">
         <img src="{{ $movie['bgImg'] ?? '' }}" class="backdrop-img" onerror="this.src='https://via.placeholder.com/1920x1080/111/ffd000?text=Backdrop'">
@@ -996,10 +1242,10 @@
         </section>
     @endif
 
-    <section style="padding: 60px 5%; background-color: var(--color-negro); text-align: center; border-top: 1px solid #222;">
-        <h2 style="color: var(--color-principal); font-size: 2rem; margin-bottom: 15px; text-transform: uppercase;">Join the Conversation</h2>
-        <p style="color: #aaa; margin-bottom: 30px; font-size: 16px;">What did you think of {{ $movie['title'] }}? Read theories, share your thoughts, and connect with other moviegoers.</p>
-        <button onclick="window.location.href='/community'" style="background: var(--color-principal); color: var(--color-texto-btn); padding: 15px 40px; border: none; border-radius: 30px; font-weight: 900; font-size: 14px; cursor: pointer; text-transform: uppercase; transition: transform 0.2s;">
+    <section style="padding: clamp(40px, 6vw, 60px) 5%; background-color: var(--color-negro); text-align: center; border-top: 1px solid #222;">
+        <h2 style="color: var(--color-principal); font-size: clamp(24px, 4vw, 32px); margin-bottom: 15px; text-transform: uppercase;">Join the Conversation</h2>
+        <p style="color: #aaa; margin-bottom: 30px; font-size: clamp(14px, 1.5vw, 16px);">What did you think of {{ $movie['title'] }}? Read theories, share your thoughts, and connect with other moviegoers.</p>
+        <button onclick="window.location.href='/community'" style="background: var(--color-principal); color: var(--color-texto-btn); padding: clamp(12px, 1.5vw, 15px) clamp(25px, 4vw, 40px); border: none; border-radius: 30px; font-weight: 900; font-size: clamp(12px, 1.2vw, 14px); cursor: pointer; text-transform: uppercase; transition: transform 0.2s;">
             Go to Community Thread
         </button>
     </section>
@@ -1268,6 +1514,8 @@
             resetAutoPlay();
         });
     </script>
+    
+    <script src="{{ asset('js/hamburguer.js') }}"></script>
 
 </body>
 </html>
