@@ -31,10 +31,11 @@
 
         body {
             font-family: 'Arial Black', 'Arial Bold', sans-serif;
-            overflow-x: hidden;
             background-color: var(--color-negro);
             color: var(--color-blanco);
             width: 100%;
+            margin: 0;
+            padding: 0;
 
             &.menu-open {
                 overflow: hidden;
@@ -74,7 +75,7 @@
             align-items: center;
             padding: 0 clamp(3%, 5vw, 5%);
             height: clamp(70px, 8vw, 100px);
-            z-index: 1000;
+            z-index: 100002;
             background-color: transparent;
             border-bottom: 1px solid transparent;
             transition: background-color 0.3s ease, box-shadow 0.3s ease, border-bottom 0.3s ease;
@@ -92,10 +93,6 @@
                 .user-profile .chevron-icon {
                     color: var(--color-blanco) !important;
                     text-shadow: none !important;
-                }
-
-                #nav-icon span {
-                    background: var(--color-blanco) !important;
                 }
             }
 
@@ -191,7 +188,25 @@
             }
         }
 
-        /* --- HERO SECTION (CON NESTING) --- */
+        /* --- CUANDO EL MENÚ MÓVIL ESTÁ ABIERTO --- */
+        body.menu-open header {
+            background-color: transparent !important;
+            backdrop-filter: none !important;
+            box-shadow: none !important;
+            border-bottom: none !important;
+
+            .logo {
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+
+            #nav-icon span {
+                background: var(--color-blanco) !important;
+            }
+        }
+
+        /* --- HERO SECTION (CON NESTING Y OVERFLOW) --- */
         .hero {
             height: 100vh;
             display: flex;
@@ -200,6 +215,7 @@
             position: relative;
             color: var(--color-negro);
             transition: color 0.4s ease;
+            overflow: hidden; 
 
             .hero-container {
                 display: flex;
@@ -219,7 +235,7 @@
                         gap: clamp(10px, 2vw, 20px);
 
                         .number {
-                            font-size: clamp(80px, 10vw, 150px);
+                            font-size: clamp(60px, 10vw, 150px);
                             font-weight: 100;
                             font-family: Arial, sans-serif;
                             color: transparent;
@@ -233,12 +249,12 @@
                             width: 100%;
 
                             h1 {
-                                font-size: clamp(12px, 3vw, 50px);
-                                white-space: nowrap;
+                                font-size: clamp(18px, 3vw, 50px);
                                 margin: 0 0 5px 0;
                                 font-weight: 900;
                                 display: flex;
                                 align-items: center;
+                                flex-wrap: wrap;
                                 gap: clamp(8px, 1.5vw, 15px);
                                 letter-spacing: -1px;
                                 text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
@@ -261,7 +277,7 @@
                                 filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.5));
 
                                 .star-icon {
-                                    width: clamp(14px, 1.5vw, 18px);
+                                    width: clamp(12px, 1.5vw, 18px);
                                     height: auto;
                                 }
                             }
@@ -278,6 +294,7 @@
                     .hero-buttons {
                         margin-top: clamp(20px, 3vw, 40px);
                         display: flex;
+                        flex-wrap: wrap;
                         gap: clamp(10px, 1.5vw, 20px);
 
                         .btn-primary,
@@ -302,11 +319,7 @@
 
                         .btn-primary {
                             gap: 10px;
-
-                            svg {
-                                width: clamp(16px, 1.8vw, 20px);
-                                height: auto;
-                            }
+                            svg { width: clamp(16px, 1.8vw, 20px); height: auto; }
                         }
 
                         .btn-secondary {
@@ -321,7 +334,7 @@
                 .hero-slider-section {
                     width: 45%;
                     position: relative;
-                    height: clamp(300px, 40vw, 400px);
+                    height: clamp(250px, 40vw, 400px);
 
                     .custom-slider {
                         position: relative;
@@ -332,7 +345,7 @@
                             position: absolute;
                             top: 50%;
                             left: 50%;
-                            width: clamp(150px, 20vw, 220px);
+                            width: clamp(120px, 20vw, 220px);
                             transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
                             pointer-events: none;
 
@@ -352,13 +365,8 @@
                                 z-index: 10;
                                 pointer-events: auto;
 
-                                .progress-track {
-                                    opacity: 1;
-                                }
-
-                                .progress-fill {
-                                    animation: fillBar 6s linear forwards;
-                                }
+                                .progress-track { opacity: 1; }
+                                .progress-fill { animation: fillBar 6s linear forwards; }
                             }
 
                             &.prev {
@@ -391,18 +399,15 @@
 
                             .progress-track {
                                 position: absolute;
-                                bottom: -15px;
-                                left: 0;
-                                width: 100%;
-                                height: 4px;
+                                bottom: -15px; left: 0;
+                                width: 100%; height: 4px;
                                 background: rgba(128, 128, 128, 0.3);
                                 border-radius: 2px;
                                 opacity: 0;
                                 transition: opacity 0.3s ease;
 
                                 .progress-fill {
-                                    height: 100%;
-                                    width: 0%;
+                                    height: 100%; width: 0%;
                                     background: currentColor;
                                     border-radius: 2px;
                                 }
@@ -438,17 +443,9 @@
                                 transition: transform 0.3s ease;
                             }
 
-                            &:hover {
-                                transform: scale(1.15);
-                            }
-
-                            &#btn-prev:hover svg {
-                                transform: translateX(-5px);
-                            }
-
-                            &#btn-next:hover svg {
-                                transform: translateX(5px);
-                            }
+                            &:hover { transform: scale(1.15); }
+                            &#btn-prev:hover svg { transform: translateX(-5px); }
+                            &#btn-next:hover svg { transform: translateX(5px); }
                         }
                     }
                 }
@@ -460,7 +457,7 @@
             100% { width: 100%; }
         }
 
-        /* --- MOVIES SECTION (CON NESTING) --- */
+        /* --- MOVIES SECTION --- */
         .movies-section {
             padding: clamp(50px, 8vw, 80px) 5%;
             background-color: var(--color-gris-oscuro);
@@ -608,7 +605,7 @@
             }
         }
 
-        /* --- FOOD SECTION (CON NESTING) --- */
+        /* --- FOOD SECTION --- */
         .food-section {
             padding: clamp(50px, 8vw, 80px) 5%;
             background-color: var(--color-negro);
@@ -632,9 +629,7 @@
                         letter-spacing: -1px;
                         margin-bottom: 10px;
 
-                        span {
-                            color: var(--color-amarillo);
-                        }
+                        span { color: var(--color-amarillo); }
                     }
 
                     p {
@@ -821,7 +816,7 @@
             }
         }
 
-        /* --- FOOTER (CON NESTING) --- */
+        /* --- FOOTER --- */
         footer {
             background-color: var(--color-negro);
             padding: clamp(40px, 6vw, 60px) 5% 40px;
@@ -932,114 +927,127 @@
         }
 
         /* =========================================================================
-           --- MEDIA QUERIES (DISEÑO RESPONSIVE Y MENÚ MÓVIL) ---
+           --- MEDIA QUERIES (MÓVIL Y HAMBURGUESA DE 6 SPANS AL ESTILO BRASIL) ---
            ========================================================================= */
 
         @media (max-width: 1024px) {
-            .movies-section .movies-container .movies-grid-full {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
+            .movies-section .movies-container .movies-grid-full { grid-template-columns: repeat(3, 1fr); }
             .food-section .food-container .food-grid,
-            .food-section .food-container .exclusive-section .exclusive-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .food-section .food-container .exclusive-section .exclusive-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero .hero-container .hero-info { width: 50%; }
+            .hero .hero-container .hero-slider-section { width: 45%; }
+        }
 
-            .hero-container .hero-info { width: 50%; }
-            .hero-container .hero-slider-section { width: 45%; }
+        @media (max-width: 900px) {
+            footer .footer-content { flex-direction: column; text-align: center; }
+            footer .footer-content .footer-col:first-child { align-items: center; }
+            footer .footer-bottom { flex-direction: column; gap: 15px; }
         }
 
         @media (max-width: 768px) {
-            .desktop-nav { display: none; }
+            .desktop-nav { display: none !important; }
 
+            /* --- LA HAMBURGUESA PERFECTA (6 SPANS SIN OVERFLOW) --- */
             #nav-icon {
-                display: block;
+                display: block !important;
                 width: 30px;
                 height: 22px;
                 position: relative;
                 cursor: pointer;
-                z-index: 1001; 
-                
+                z-index: 100005; /* Siempre por encima del menú */
+
                 span {
                     display: block;
                     position: absolute;
+                    width: 50%;
                     height: 3px;
-                    width: 100%;
                     background: var(--header-text-color, var(--color-blanco));
-                    border-radius: 3px;
-                    opacity: 1;
-                    left: 0;
-                    transition: 0.25s ease-in-out, background-color 0.3s ease;
+                    transition: .25s ease-in-out;
+
+                    &:nth-child(odd) { left: 0; border-radius: 3px 0 0 3px; }
+                    &:nth-child(even) { left: 50%; border-radius: 0 3px 3px 0; }
                     
-                    &:nth-child(1) { top: 0px; }
-                    &:nth-child(2) { top: 9px; }
-                    &:nth-child(3) { top: 18px; }
+                    &:nth-child(1), &:nth-child(2) { top: 0px; }
+                    &:nth-child(3), &:nth-child(4) { top: 9px; }
+                    &:nth-child(5), &:nth-child(6) { top: 18px; }
                 }
 
-                &.open {
-                    span:nth-child(1) { top: 9px; transform: rotate(135deg); }
-                    span:nth-child(2) { opacity: 0; left: -60px; }
-                    span:nth-child(3) { top: 9px; transform: rotate(-135deg); }
+                &.open span {
+                    background: var(--color-blanco) !important;
+                    
+                    &:nth-child(1), &:nth-child(6) { transform: rotate(45deg); }
+                    &:nth-child(2), &:nth-child(5) { transform: rotate(-45deg); }
+                    
+                    /* Formando la X perfecta */
+                    &:nth-child(1) { left: 3px; top: 5px; }
+                    &:nth-child(2) { left: calc(50% - 3px); top: 5px; }
+                    
+                    /* MAGIA: En lugar de hacer que vuelen a los lados (causando overflow), simplemente desaparecen en su sitio */
+                    &:nth-child(3), &:nth-child(4) { transform: scaleX(0); opacity: 0; }
+                    
+                    &:nth-child(5) { left: 3px; top: 15px; }
+                    &:nth-child(6) { left: calc(50% - 3px); top: 15px; }
                 }
             }
 
+            /* --- EL MENÚ CORTINA (ALTURA DE 0 A 100VH) --- */
             .menu_mobile {
-                display: flex;
+                display: flex !important;
                 position: fixed;
                 top: 0;
                 left: 0;
                 width: 100%;
-                height: 100vh;
+                height: 0; /* Empieza cerrado */
                 background-color: var(--color-negro);
-                z-index: 1000;
+                z-index: 100001;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                opacity: 0;
-                pointer-events: none;
-                transition: opacity 0.4s ease;
+                gap: 2rem;
+                overflow: hidden;
+                transition: height 0.5s ease-in-out; /* Despliegue persiana */
 
                 &.grow {
-                    opacity: 1;
-                    pointer-events: auto;
-                }
+                    height: 100vh; /* Se abre entero */
 
-                .menu-mobile-close {
-                    position: absolute;
-                    top: clamp(20px, 4vw, 30px);
-                    right: clamp(20px, 5vw, 30px);
-                    background: none;
-                    border: none;
-                    color: var(--color-blanco);
-                    font-size: clamp(45px, 8vw, 60px);
-                    cursor: pointer;
-                    z-index: 1002;
-                    line-height: 1;
-                    transition: color 0.3s ease, transform 0.3s ease;
+                    .mobile-logo-container {
+                        opacity: 1; transform: translateY(0);
+                    }
 
-                    &:hover {
-                        color: var(--color-amarillo);
-                        transform: scale(1.1);
+                    .menu_mobile_nav li {
+                        opacity: 1; transform: translateY(0);
                     }
                 }
 
                 .mobile-logo-container {
-                    margin-bottom: 40px;
+                    text-align: center;
                     opacity: 0;
                     transform: translateY(-20px);
+                    transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
                     
-                    img { height: 60px; }
+                    img { height: 60px; margin-bottom: 1rem; }
                 }
 
                 .menu_mobile_nav {
                     list-style: none;
                     text-align: center;
                     padding: 0;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
 
                     li {
-                        margin: 20px 0;
                         opacity: 0;
                         transform: translateY(20px);
+                        transition: opacity 0.5s ease, transform 0.5s ease;
+
+                        /* Retardos en cascada como en Brasil */
+                        &:nth-child(1) { transition-delay: 0.3s; }
+                        &:nth-child(2) { transition-delay: 0.4s; }
+                        &:nth-child(3) { transition-delay: 0.5s; }
+                        &:nth-child(4) { transition-delay: 0.6s; }
+                        &:nth-child(5) { transition-delay: 0.7s; }
+                        &:nth-child(6) { transition-delay: 0.8s; }
 
                         a, .logout-btn-mobile {
                             color: var(--color-blanco);
@@ -1048,10 +1056,17 @@
                             font-weight: 900;
                             text-transform: uppercase;
                             letter-spacing: 2px;
-                            transition: color 0.3s ease;
+                            transition: color 0.3s ease, transform 0.3s ease;
+                            background: none;
+                            border: none;
+                            cursor: pointer;
+                            padding: 0;
+                            font-family: inherit;
+                            display: inline-block;
 
                             &:hover {
                                 color: var(--color-amarillo);
+                                transform: scale(1.1);
                             }
                         }
                     }
@@ -1069,9 +1084,7 @@
                     gap: clamp(40px, 8vw, 80px);
                     text-align: center;
 
-                    .hero-info, .hero-slider-section {
-                        width: 100%;
-                    }
+                    .hero-info, .hero-slider-section { width: 100%; }
 
                     .hero-info {
                         .title-wrapper {
@@ -1079,42 +1092,17 @@
                             align-items: center;
                             gap: 5px;
 
-                            .title-details h1 {
-                                justify-content: center;
-                            }
-                            .stars {
-                                justify-content: center;
-                            }
+                            .title-details h1 { justify-content: center; }
+                            .stars { justify-content: center; }
                         }
-                        .hero-buttons {
-                            justify-content: center;
-                        }
+                        .hero-buttons { justify-content: center; }
                     }
                 }
-            }
-
-            .movies-section .movies-container .movies-grid-full {
-                grid-template-columns: repeat(2, 1fr);
             }
 
             .food-section .food-container {
                 .food-grid, .exclusive-section .exclusive-grid {
                     grid-template-columns: 1fr;
-                }
-            }
-
-            footer {
-                .footer-content {
-                    flex-direction: column;
-                    text-align: center;
-
-                    .footer-col:first-child {
-                        align-items: center;
-                    }
-                }
-                .footer-bottom {
-                    flex-direction: column;
-                    gap: 15px;
                 }
             }
         }
@@ -1203,15 +1191,11 @@
             </nav>
 
             <div id="nav-icon">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
             </div>
         </header>
 
         <div class="menu_mobile">
-            <button id="close-menu-btn" class="menu-mobile-close">&times;</button>
-
             <div class="mobile-logo-container">
                 <img src="{{ asset('img/img/Logo-Blanco.png') }}" alt="Cinema Logo">
             </div>
@@ -1226,7 +1210,7 @@
                     <li>
                         <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                             @csrf
-                            <button type="submit" class="logout-btn-mobile" style="background:none; border:none; color:inherit; font:inherit; cursor:pointer; padding:0;">SIGN OUT</button>
+                            <button type="submit" class="logout-btn-mobile">SIGN OUT</button>
                         </form>
                     </li>
                 @else
@@ -1256,7 +1240,6 @@
         </style>
 
         <script>
-            // Autodestrucción del mensaje a los 4 segundos
             setTimeout(() => {
                 const toast = document.getElementById('toast-message');
                 if(toast) {
@@ -1473,7 +1456,6 @@
     </footer>
 
     <script>
-        // LA MAGIA ESTÁ AQUÍ: ARRAY DINÁMICO DESDE LARAVEL
         const movies = @json($movies);
         const comingSoonMovies = @json($comingSoonMovies);
 
@@ -1597,7 +1579,7 @@
                 btnBuyHero.style.color = '#000000';
             } else {
                 btnBuyHero.style.background = '#000000';
-                btnBuyHero.style.color = activeMovie.bg ? activeMovie.bg : '#ffffff'; 
+                btnBuyHero.style.color = '#ffffff'; 
             }
 
             const btnViewHero = document.getElementById('btn-view-film');
